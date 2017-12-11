@@ -38,9 +38,9 @@
                            <!-- <div id="login_captcha"></div>-->
                             <input type="hidden" name="redirect" value="<?=$redirect?>" />
                             
-		    <p><a href="<?=site_url('autenticacion/olvido')?>">¿Olvidaste tu contraseña?</a> - <!-- <a href="<?= site_url('autenticacion/registrar') ?>">¿No estas registrado?</a> --></p>
-                            <p>O utilice <a href="<?=site_url('autenticacion/login_openid?redirect='.$redirect)?>"><img src="<?= base_url() ?>assets/img/claveunica-medium.png" alt="ClaveÚnica"/></a></p>
-
+		    <p><a href="<?=site_url('autenticacion/olvido')?>">¿Olvidaste tu contraseña?</a>  <!-- <a href="<?= site_url('autenticacion/registrar') ?>">¿No estas registrado?</a> --></p>
+                          <!-- <p>O utilice <a href="<?=site_url('autenticacion/login_openid?redirect='.$redirect)?>"><img src="<?= base_url() ?>assets/img/claveunica-medium.png" alt="ClaveÚnica"/></a></p>
+-->
                             <div class="form-actions">
                                 <a class="btn" href="#" onclick="javascript:history.back();">Volver</a>
                                 <button class="btn btn-primary" type="submit">Ingresar</button>
