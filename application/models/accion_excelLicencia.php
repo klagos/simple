@@ -5,7 +5,7 @@ require_once('ChromePhp.php');
 Esta accion permite procesar un archivo excel. Este archivo contiene una serie de datos de las licencias medicas.
 Cada fila se convierte en una instancia del proceso: "Subsidios"
 Hay que verificar que en el valor de una licencia no se encuentre en otro proceso. 
-
+te
 */
 
 class AccionExcelLicencia extends Accion {
@@ -62,18 +62,21 @@ class AccionExcelLicencia extends Accion {
 
 		//Datos del proceso a insertar
 		$idProceso = 2;
+		
 		//Read values
 		log_message('info',"Read values");
 		for ($row = 2; $row <= $highestRow; ++ $row){			
-			/*Reviso si la licencia no fue agregada con anterioridad*/
+			/*Reviso si existe el valor de la licencia*/
 			$cell = $sheet->getCellByColumnAndRow($colLicenciaNumero, $row);
                         $val  = $cell->getValue();
 			if($val!=null){
-				if(true){
+			/*Reviso si la licencia no fue agregada con anterioridad*/
+				if(!$this->verifyLicencia($val,$idProceso)){
 					//TRAMITE
                                 	$tramite=new Tramite();
                                 	$tramite->iniciar($idProceso);
                                 	$idEtapa = $tramite->getEtapasActuales()->get(0)->id;
+					$etapaIngreso = $tramite->getEtapasActuales()->get(0);
 										
 					/**LICENCIA**/
 					//numero
@@ -142,9 +145,8 @@ class AccionExcelLicencia extends Accion {
                                                 $datoLTR->etapa_id=$idEtapa;
                                                 $datoLTR->save();
                                         }
-					
-					//$paso = $tramite->getEtapasActuales()->get(0)->getPasoEjecutable(0);
-					$etapa->save();	
+					//Cerramos la etapa y la avanzamos					
+					$etapaIngreso->avanzar();	
 				}
 				else{
 					log_message('info',"Licencia agregada anteriormente");
@@ -152,8 +154,16 @@ class AccionExcelLicencia extends Accion {
 			}
 		}		
 
-	}
-	
+	}	
+    } 
+
+    /* El metodo verifica si la licencia ya esta ingresada al sistema*/
+    public function verifyLicencia($licencia,$proceso){ 
+	$query= Doctrine_Query::create()
+        	->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
+                ->where('p.activo=1 AND p.id = ?', array($proceso))
+		->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia.'%');
+	return ($query->count()!=0)?true:false;
     }
    
 }
