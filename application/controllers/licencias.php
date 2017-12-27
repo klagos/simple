@@ -9,6 +9,12 @@ class Licencias extends MY_Controller {
     	}
 
     	public function buscador(){
+		//Verificamos que el usuario ya se haya logeado 
+		if (!UsuarioSesion::usuario()->registrado) {
+            		$this->session->set_flashdata('redirect', current_url());
+            		redirect('tramites/disponibles');
+        	}
+				
                 $data['sidebar']='licencia';
                 $data['content'] = 'licencias/buscador';
                 $data['title'] = 'Buscador de Licencias';
@@ -16,7 +22,13 @@ class Licencias extends MY_Controller {
 
 	}
 
-	public function buscar(){
+	public function buscar(){	
+		//Verificamos que el usuario ya se haya logeado	
+		if (!UsuarioSesion::usuario()->registrado) {
+                        $this->session->set_flashdata('redirect', current_url());
+                        redirect('tramites/disponibles');
+                }
+
 		//Datos del formulario
         	$licencia_numero =($this->input->get('licencia_numero'))?$this->input->get('licencia_numero'):null;
         	$trabajador_rut  =($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null;

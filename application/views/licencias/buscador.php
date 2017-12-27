@@ -12,7 +12,9 @@
         <label>Número de licencia</label>
                 <input type="number" name="licencia_numero" value=""/>
         <label>Rut del trabajador</label>
-                <input type="number" maxlenght="8" name="trabajador_rut" value=""/>
+		<input type="number" maxlenght="8" name="trabajador_rut" value=""/>
+		<br>	
+		<font size="2">Rut sin puntos ni dígito verificador</font> 
 
 
         <div class="form-actions">

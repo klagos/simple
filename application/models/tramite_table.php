@@ -60,10 +60,12 @@ class TramiteTable extends Doctrine_Table {
 	public function findLicencias($licencia_numero, $trabajador_rut, $proceso_id, $inicio, $limite){
 
                 $query= Doctrine_Query::create()
-                        ->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
+                        ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
                         ->where('p.activo=1 AND p.id = ?', array($proceso_id));
 
-                if($licencia_numero && $trabajador_rut){
+                if($licencia_numero && $trabajador_rut){ 
+			$query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');	
+			$query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'rut_trabajador_subsidio' AND ds.valor LIKE ?)", '%'.$trabajador_rut.'%'); 	
 
                 }else{
                         if($licencia_numero)
