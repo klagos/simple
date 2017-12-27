@@ -87,16 +87,18 @@
                                 $npendientes=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
                                 $nsinasignar=Doctrine::getTable('Etapa')->findSinAsignar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
                                 $nparticipados=Doctrine::getTable('Tramite')->findParticipadosALL(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
+				$revisarLicencia=Doctrine::getTable('Proceso')->canRevisarLicencia(UsuarioSesion::usuario()->id);
                                 ?>
                                 <li class="<?= isset($sidebar) && $sidebar == 'inbox' ? 'active' : '' ?>"><a href="<?= site_url('etapas/inbox') ?>">Bandeja de Entrada (<?= $npendientes ?>)</a></li>
                                 <?php if($nsinasignar): ?><li class="<?= isset($sidebar) && $sidebar == 'sinasignar' ? 'active' : '' ?>"><a href="<?= site_url('etapas/sinasignar') ?>">Sin asignar  (<?=$nsinasignar  ?>)</a></li><?php endif ?>
                                 <li class="<?= isset($sidebar) && $sidebar == 'participados' ? 'active' : '' ?>"><a href="<?= site_url('tramites/participados') ?>">Historial de Trámites  (<?= $nparticipados ?>)</a></li>
                                <!-- <li class="<?= isset($sidebar) && $sidebar == 'miagenda' ? 'active' : '' ?>"><a href="<?= site_url('agenda/miagenda') ?>">Mi Agenda</a></li>-->
-                            <?php endif; ?>
+                             <?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia' ? 'active' : '' ?>"><a href="<?= site_url('licencias/buscador') ?>">Buscar Licencias</a></li><?php endif ?>
+			    <?php endif; ?>
                         </ul>
                     </div>
                     <div class="offset1 span8">
-                        <?php $this->load->view('messages') ?>
+                        <?php $this->load->view('messages')?>
                         <?php $this->load->view($content) ?>
                     </div>
                 </div>

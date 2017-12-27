@@ -55,4 +55,30 @@ class TramiteTable extends Doctrine_Table {
 
         return $query->execute();
     }
+	//Dentro del proceso de subsidios, busca el dato licencias
+	//los criterios de busqueda son el numero de la licencia y el rut del trabajado
+	public function findLicencias($licencia_numero, $trabajador_rut, $proceso_id, $inicio, $limite){
+
+                $query= Doctrine_Query::create()
+                        ->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
+                        ->where('p.activo=1 AND p.id = ?', array($proceso_id));
+
+                if($licencia_numero && $trabajador_rut){
+
+                }else{
+                        if($licencia_numero)
+                                $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');
+                        else
+                                $query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
+
+                }
+                if($inicio) $query->offset($inicio);
+                if($limite) $query->limit($limite);
+                $query->orderBy('t.updated_at desc');
+
+                return $query->execute();
+        }
+
+
+
 }

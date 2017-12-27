@@ -43,7 +43,7 @@ function descargarSeleccionados() {
 
 <h2 style="line-height: 28px;">
     Solicitudes en que ha participado
-    <!--buscador-->   
+    <!--buscador  
     <div class='pull-right'>
         <form class="form-search" method="POST" action="<?= preg_replace('/\/\d+/', '', current_url()) ?>">            
             <div class="input-append">
@@ -51,7 +51,7 @@ function descargarSeleccionados() {
                 <button type="submit" class="btn">Buscar</button>
             </div>
         </form>
-    </div>
+    </div>-->
 </h2>
 <?php if (count($tramites) > 0): ?>
     <table id="mainTable" class="table">
