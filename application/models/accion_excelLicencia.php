@@ -49,7 +49,8 @@ class AccionExcelLicencia extends Accion {
 		$highestRow = $sheet->getHighestRow(); 
 		$highestColumn = $sheet->getHighestColumn();
 		$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-				
+		
+		/* PASO 1 : INGRESAR LICENCIA */		
 		//Column Trabajador
                 $colTrabajadorNombre = 2;
                 $colTrabajadorRut = 1;
@@ -59,6 +60,20 @@ class AccionExcelLicencia extends Accion {
                 $colLicenciaFechaInicio = 4;
                 $colLicenciaFechaTermino = 5;
                 $colLicenciaOrganismoSalud = 6;
+		
+		/* PASO 2 : PAGO SUBSIDIO */
+		$col_Subsidio_Fecha = 0;
+		$col_Subsidio_PagadoAnt = 7;
+		$col_Subsidio_Anticipo  = 8;
+		$col_Subsidio_Meses_ant = 9;
+		$col_Subsidio_Dias	= 10;
+		$col_Subsidio_Complement= 11;
+		$col_Subsiodio_Observaci= 15;	
+
+		/* PASO 3 : RETORNO SUBSIDIO */		
+		$col_Retorno_fecha	= 12;
+		$col_Retorno_pago	= 13;
+		$col_Retorno_saldo	= 14;	
 
 		//Datos del proceso a insertar
 		$idProceso = 2;
@@ -75,7 +90,9 @@ class AccionExcelLicencia extends Accion {
 					//TRAMITE
                                 	$tramite=new Tramite();
                                 	$tramite->iniciar($idProceso);
-                                	$idEtapa = $tramite->getEtapasActuales()->get(0)->id;
+                                	
+					/* PASO 1: INGRESO LICENCIA */
+					$idEtapa = $tramite->getEtapasActuales()->get(0)->id;
 					$etapaIngreso = $tramite->getEtapasActuales()->get(0);
 										
 					/**LICENCIA**/
@@ -119,7 +136,7 @@ class AccionExcelLicencia extends Accion {
                                         if($val!=null){
                                                 $datoLO = new DatoSeguimiento();
                                                 $datoLO->nombre = 'organismo_salud_licencia';
-                                                $datoLO->valor  = $val;
+                                                $datoLO->valor  = rtrim($val);
                                                 $datoLO->etapa_id=$idEtapa;
                                                 $datoLO->save();
                                         }
@@ -144,9 +161,156 @@ class AccionExcelLicencia extends Accion {
                                                 $datoLTR->valor  = $val;
                                                 $datoLTR->etapa_id=$idEtapa;
                                                 $datoLTR->save();
-                                        }
+			                 }
+					 $datoLTA = new DatoSeguimiento();
+                                         $datoLTA->nombre = 'ingreso_continuidad';
+                                         $datoLTA->valor  = 'avanzar';
+                                         $datoLTA->etapa_id=$idEtapa;
+                                         $datoLTA->save();		
+					
 					//Cerramos la etapa y la avanzamos					
-					$etapaIngreso->avanzar();	
+					$etapaIngreso->avanzar();
+
+
+					/* PASO 2: PAGO SUBSIDIO */
+
+					//Reviso que exista al menos un parametro
+					$idEtapa	= $tramite->getEtapasActuales()->get(0)->id;
+                                        $etapaPago 	= $tramite->getEtapasActuales()->get(0);
+					
+
+					//fecha
+					$cell = $sheet->getCellByColumnAndRow($col_Subsidio_Fecha,$row);
+                                        $val  = $cell->getValue();
+                                        if($val!=null){
+						$val = PHPExcel_Style_NumberFormat::toFormattedString($val, 'DD-MM-YYYY');
+                                                $datoLSF = new DatoSeguimiento();
+                                                $datoLSF->nombre = 'fecha_pago_subsidio';
+                                                $datoLSF->valor  = $val;
+                                                $datoLSF->etapa_id=$idEtapa;
+                                                $datoLSF->save();
+                                        }
+					//pago anterior
+					$cell = $sheet->getCellByColumnAndRow($col_Subsidio_PagadoAnt,$row);
+                                        $val  = $cell->getValue();
+                                        if($val!=null){
+                                                $datoLSPA = new DatoSeguimiento();
+                                                $datoLSPA->nombre = 'pagado_anterior_subsidio';
+                                                $datoLSPA->valor  = $val;
+                                                $datoLSPA->etapa_id=$idEtapa;
+                                                $datoLSPA->save();
+                                        }
+					//anticipo subsidio
+					$cell = $sheet->getCellByColumnAndRow($col_Subsidio_Anticipo,$row);
+                                        $val  = $cell->getValue();
+                                        if($val!=null){
+                                                $datoLSPAN = new DatoSeguimiento();
+                                                $datoLSPAN->nombre = 'anticipo_subsidio';
+                                                $datoLSPAN->valor  = $val;
+                                                $datoLSPAN->etapa_id=$idEtapa;
+                                                $datoLSPAN->save();
+                                        }
+					//meses anteriores
+                                        $cell = $sheet->getCellByColumnAndRow($col_Subsidio_Meses_ant,$row);
+                                        $val  = $cell->getValue();
+                                        if($val!=null){
+                                                $datoLSPMA = new DatoSeguimiento();
+                                                $datoLSPMA->nombre = 'meses_anteriores_subsidio';
+                                                $datoLSPMA->valor  = $val;
+                                                $datoLSPMA->etapa_id=$idEtapa;
+                                                $datoLSPMA->save();
+                                        }
+					//dias no cubiertos
+                                        $cell = $sheet->getCellByColumnAndRow($col_Subsidio_Dias,$row);
+                                        $val  = $cell->getValue();
+                                        if($val!=null){
+                                                $datoLSPD = new DatoSeguimiento();
+                                                $datoLSPD->nombre = 'dias_no_cubiertos_subsidio';
+                                                $datoLSPD->valor  = $val;
+                                                $datoLSPD->etapa_id=$idEtapa;
+                                                $datoLSPD->save();
+                                        }
+					//Complemento
+					$cell = $sheet->getCellByColumnAndRow($col_Subsidio_Complement,$row);
+                                        $val  = $cell->getValue();
+                                        if($val!=null){
+                                                $datoLSPC = new DatoSeguimiento();
+                                                $datoLSPC->nombre = 'complemento_subsidio';
+                                                $datoLSPC->valor  = $val;
+                                                $datoLSPC->etapa_id=$idEtapa;
+                                                $datoLSPC->save();
+                                        }
+					//Observacion
+                                        $cell = $sheet->getCellByColumnAndRow($col_Subsiodio_Observaci,$row);
+                                        $val  = $cell->getValue();
+                                        if($val!=null){
+                                                $datoLSPO = new DatoSeguimiento();
+                                                $datoLSPO->nombre = 'observacion_pago_sub';
+                                                $datoLSPO->valor  = $val;
+                                                $datoLSPO->etapa_id=$idEtapa;
+                                                $datoLSPO->save();
+                                        }
+
+					$datoLTP = new DatoSeguimiento();
+                                        $datoLTP->nombre = 'pago_continuidad';
+                                        $datoLTP->valor  = 'avanzar';
+                                        $datoLTP->etapa_id=$idEtapa;
+                                        $datoLTP->save();
+
+					//Cerramos la etapa y la avanzamos                                      
+                                        $etapaPago->avanzar();	
+					
+					/* PASO 3: RETORNO SUBSIDIO */
+					
+					$cell 	= $sheet->getCellByColumnAndRow($col_Retorno_fecha,$row);
+                                        $fecha  = $cell->getValue();
+					
+					$cell	= $sheet->getCellByColumnAndRow($col_Retorno_pago,$row);
+                                        $retorno= $cell->getValue();
+
+					$cell   = $sheet->getCellByColumnAndRow($col_Retorno_saldo,$row);
+                                        $saldo	= $cell->getValue();
+					
+					//Reviso que exista al menos un parametro
+					if($fecha!=null ||  $retorno!=null || $saldo!=null){
+						$idEtapa        = $tramite->getEtapasActuales()->get(0)->id;
+                                        	$etapaRetorno   = $tramite->getEtapasActuales()->get(0);
+						
+						 if($fecha!=null){
+                                                	$val = PHPExcel_Style_NumberFormat::toFormattedString($fecha, 'DD-MM-YYYY');
+                                                	$datoRSF = new DatoSeguimiento();
+                                                	$datoRSF->nombre = 'fecha_retorno_subsidio';
+                                                	$datoRSF->valor  = $val;
+                                                	$datoRSF->etapa_id=$idEtapa;
+                                                	$datoRSF->save();
+                                        	}
+
+						if($retorno!=null){
+                                                        $datoRSR = new DatoSeguimiento();
+                                                        $datoRSR->nombre = 'monto_retorno_subsidio';
+                                                        $datoRSR->valor  = $retorno;
+                                                        $datoRSR->etapa_id=$idEtapa;
+                                                        $datoRSR->save();
+                                                }
+
+						if($saldo!=null){
+                                                        $datoRSS = new DatoSeguimiento();
+                                                        $datoRSS->nombre = 'saldo_retorno_subsidio';
+                                                        $datoRSS->valor  = $saldo;
+                                                        $datoRSS->etapa_id=$idEtapa;
+                                                        $datoRSS->save();
+                                                }
+						$datoLTP = new DatoSeguimiento();
+                                        	$datoLTP->nombre = 'retorno_continuidad';
+                                        	$datoLTP->valor  = 'cerrar';
+                                        	$datoLTP->etapa_id=$idEtapa;
+                                        	$datoLTP->save();
+						
+						//Cerramos la etapa y la avanzamos                                      
+                                        	$etapaRetorno->avanzar();
+						
+					}
+					
 				}
 				else{
 					log_message('info',"Licencia agregada anteriormente");

@@ -22,7 +22,7 @@ class Licencias extends MY_Controller {
 
 	}
 
-	public function buscar(){	
+	public function buscar($inicio=0){	
 		//Verificamos que el usuario ya se haya logeado	
 		if (!UsuarioSesion::usuario()->registrado) {
                         $this->session->set_flashdata('redirect', current_url());
@@ -33,14 +33,19 @@ class Licencias extends MY_Controller {
         	$licencia_numero =($this->input->get('licencia_numero'))?$this->input->get('licencia_numero'):null;
         	$trabajador_rut  =($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null;
 		
+		
+	
 		//Variables de la query
 		$proceso_id = 2;
 		$contador = 0;
 		$rowtramites = [];
-		$inicio =0;//inciio
-		$limite =50;//limite
-
+		$inicio =0;//incio
+		$limite =30;//limite
+		
+		//librerias
 		$this->load->library('pagination');
+        	$this->load->helper('form');
+        	$this->load->helper('url');
 		
 		$contador = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$trabajador_rut,$proceso_id,null,null)->count();	
 		if($contador >0){
@@ -48,7 +53,7 @@ class Licencias extends MY_Controller {
 		}
 		
 		
-		$config['base_url'] = site_url('licencias/encontrados');
+		$config['base_url'] = site_url('licencias/buscar');
         	$config['total_rows'] = $contador;
         	$config['per_page']   = $limite;
         	$config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';

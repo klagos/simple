@@ -48,7 +48,7 @@
 				$date_i = new DateTime( $licencia_fecha_i);
 				$date_t = new DateTime( $licencia_fecha_t);
 				
-				$licencia_cant_d = $date_t->diff($date_i)->format("%a");
+				$licencia_cant_d = intval($date_t->diff($date_i)->format("%a"))+1;
 				
 			    }
 			    $etapa_id=0;
@@ -99,6 +99,7 @@
             <?php endforeach; ?>
         </tbody>
     </table>
+    <p><?= $links ?></p>
 <?php else: ?>
     <p>No hay licencias asociadas a esta busqueda.</p>
 <?php endif; ?>
