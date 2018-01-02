@@ -61,13 +61,12 @@ class TramiteTable extends Doctrine_Table {
 
                 $query= Doctrine_Query::create()
                         ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
-                        ->where('p.activo=1 AND p.id = ?', array($proceso_id));
-
+			->where('p.activo=1 AND p.id = ?', $proceso_id);
                 if($licencia_numero && $trabajador_rut){ 
 			$query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');	
 			$query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'rut_trabajador_subsidio' AND ds.valor LIKE ?)", '%'.$trabajador_rut.'%'); 	
-
-                }else{
+                }
+		else{
                         if($licencia_numero)
                                 $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');
                         else

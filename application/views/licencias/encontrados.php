@@ -57,19 +57,20 @@
 			    }
 			    $etapa_id=implode(', ', $etapas_array);
 			    $etapa_nombre=implode(', ', $etapas_array_n);
-	                    $etapa_nombre = (count($t->getTareasCompletadas())==3)?'Completada':((count($t->getTareasCompletadas())==2)?'Pagada':'Ingresada')
+			    $tareas_completadas = count($t->getTareasCompletadas());
+	                    $etapa_nombre = (($tareas_completadas>=3)?'Retornada':(($tareas_completadas==2)?'Pagada':'Ingresada'));
                 ?>
 
                 <tr>
-                    <!-- <td><?= $t->id ?></td>-->                  
+                                     
                     <td class="name"> <?php echo $licencia_nro != '' ? $licencia_nro : 'N/A';?> </td>
                     <td class="name"> <?php echo $trabajador_rut!=''?$trabajador_rut:'N/A'; ?> </td>
                     <td class="name"> <?php echo ($licencia_fecha_i !='')?$licencia_fecha_i:'N/A';?> </td>
                     <td class="name"> <?php echo $licencia_fecha_t!=''?$licencia_fecha_t:'N/A';?> </td>
 		    <td class="name"> <?php echo $licencia_cant_d!=0?$licencia_cant_d:'N/A';?> </td>
-		    <td class="name"> <?php echo $etapa_nombre!=''?$etapa_nombre:'N/A'; ?></td>
+		    <td class="name"> <?php echo $t->pendiente ? $etapa_nombre : 'Finalizada'  ?></td>
 	            <td class="actions" style="text-align:center;"> <?php  if($etapa_id != 0) : ?>
-			<a  href="<?= site_url('etapas/asignar_ejecutar/' . $etapa_id) ?>" class="btn btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i> <?= (count($t->getTareasCompletadas())==1)?'Pagar':'Retornar';?></a>
+			<a  href="<?= site_url('etapas/asignar_ejecutar/' . $etapa_id) ?>" class="btn btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i> <?= $tareas_completadas==1?'Pagar':'Retornar';?></a>
 		    <?php else: ?>
 			- 
 	           <?php endif ?>
