@@ -78,7 +78,7 @@
                     <td class="actions">
                         <?php $etapas = $t->getEtapasTramites() ?>
                         <?php if (count($etapas) == 3e4354) : ?>
-                            <a href="<?= site_url('etapas/ver/' . $etapas[0]->id) ?>" class="btn btn-info">Ver historial</a>
+                            <a href="<?= site_url('etapas/ver_sinpermiso/' . $etapas[0]->id) ?>" class="btn btn-info">Ver historial</a>
                         <?php else: ?>
                             <div class="btn-group">
                                 <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
@@ -87,7 +87,7 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <?php foreach ($etapas as $e): ?>
-                                        <li><a href="<?= site_url('etapas/ver/' . $e->id) ?>"><?= $e->Tarea->nombre ?></a></li>
+                                        <li><a href="<?= site_url('etapas/ver_sinpermiso/' . $e->id) ?>"><?= $e->Tarea->nombre ?></a></li>
                                     <?php endforeach ?>
                                 </ul>
                             </div>
