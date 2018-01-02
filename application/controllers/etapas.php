@@ -309,6 +309,27 @@ class Etapas extends MY_Controller {
         redirect('etapas/inbox');
     }
 
+    public function asignar_ejecutar($etapa_id) {
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+
+        //usuario ya tiene asignada la etapa
+	if ($etapa->usuario_id != UsuarioSesion::usuario()->id ) {
+            $etapa->asignar(UsuarioSesion::usuario()->id);
+        }
+	/*
+        if (!$etapa->canUsuarioAsignarsela(UsuarioSesion::usuario()->id)) {
+            echo 'Usuario no puede asignarse esta etapa.';
+            exit;
+        }
+
+        $etapa->asignar(UsuarioSesion::usuario()->id);
+	*/
+	
+        redirect('etapas/ejecutar/'.$etapa_id);
+    }	
+
+
+
     public function ejecutar_fin($etapa_id) {
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 

@@ -69,13 +69,13 @@
 		    <td class="name"> <?php echo $licencia_cant_d!=0?$licencia_cant_d:'N/A';?> </td>
 		    <td class="name"> <?php echo $etapa_nombre!=''?$etapa_nombre:'N/A'; ?></td>
 	            <td class="actions" style="text-align:center;"> <?php  if($etapa_id != 0) : ?>
-			<a  href="<?= site_url('etapas/ejecutar/' . $etapa_id) ?>" class="btn btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i> <?= (count($t->getTareasCompletadas())==1)?'Pagar':'Retornar';?></a>
+			<a  href="<?= site_url('etapas/asignar_ejecutar/' . $etapa_id) ?>" class="btn btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i> <?= (count($t->getTareasCompletadas())==1)?'Pagar':'Retornar';?></a>
 		    <?php else: ?>
 			- 
 	           <?php endif ?>
 	            </td>
                     <td class="actions">
-                        <?php $etapas = $t->getEtapasParticipadas(UsuarioSesion::usuario()->id) ?>
+                        <?php $etapas = $t->getEtapasTramites() ?>
                         <?php if (count($etapas) == 3e4354) : ?>
                             <a href="<?= site_url('etapas/ver/' . $etapas[0]->id) ?>" class="btn btn-info">Ver historial</a>
                         <?php else: ?>
