@@ -77,7 +77,7 @@ class AccionExcelLicencia extends Accion {
 
 		//Datos del proceso a insertar
 		$idProceso = 2;
-		
+				
 		//Read values
 		log_message('info',"Read values");
 		for ($row = 2; $row <= $highestRow; ++ $row){			
@@ -179,7 +179,7 @@ class AccionExcelLicencia extends Accion {
                                         $etapaPago 	= $tramite->getEtapasActuales()->get(0);
 					
 
-					//fecha
+					//fecha de pag de pagoo
 					$cell = $sheet->getCellByColumnAndRow($col_Subsidio_Fecha,$row);
                                         $val  = $cell->getValue();
                                         if($val!=null && $val!=""){
