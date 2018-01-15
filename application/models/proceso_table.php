@@ -1,5 +1,5 @@
 <?php
-
+require_once(FCPATH."procesos.php");
 class ProcesoTable extends Doctrine_Table {
 
     public function findProcesosDisponiblesParaIniciar($usuario_id,$cuenta='localhost',$orderby='id',$direction='desc'){
@@ -28,7 +28,7 @@ class ProcesoTable extends Doctrine_Table {
     }
 	/*Proceso verifica si el usuario puede revisar el historial de Licencias*/
    	public function canRevisarLicencia($usuario_id){
-		$procesoLicencia = 4;
+		$procesoLicencia = proceso_subsidio_id;
 		$usuario=Doctrine::getTable('Usuario')->find($usuario_id);
 		$query=Doctrine_Query::create()
 		->from('Proceso p, p.Cuenta c, p.Tareas t')
