@@ -1,6 +1,7 @@
 <?php
 require_once('accion.php');
 require_once('ChromePhp.php');
+require_once(FCPATH."procesos.php");
 /*
 Esta accion permite procesar un archivo excel. Este archivo contiene una serie de datos de las licencias medicas.
 Cada fila se convierte en una instancia del proceso: "Subsidios"
@@ -76,7 +77,7 @@ class AccionExcelLicencia extends Accion {
 		$col_Retorno_saldo	= 14;	
 
 		//Datos del proceso a insertar
-		$idProceso = 2;
+		$idProceso = proceso_subsidio_id;
 				
 		//Read values
 		log_message('info',"Read values");

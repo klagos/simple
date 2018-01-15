@@ -1,4 +1,5 @@
 <?php
+require_once(FCPATH."procesos.php");
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -36,7 +37,7 @@ class Licencias extends MY_Controller {
 		
 	
 		//Variables de la query
-		$proceso_id = 2;
+		$proceso_id = proceso_subsidio_id;
 		$contador = 0;
 		$rowtramites = [];
 		$inicio =0;//incio
