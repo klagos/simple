@@ -36,7 +36,7 @@ class Licencias extends MY_Controller {
 		
 	
 		//Variables de la query
-		$proceso_id = 2;
+		$proceso_id = 4;
 		$contador = 0;
 		$rowtramites = [];
 		$inicio =0;//incio

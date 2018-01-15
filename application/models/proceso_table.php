@@ -28,7 +28,7 @@ class ProcesoTable extends Doctrine_Table {
     }
 	/*Proceso verifica si el usuario puede revisar el historial de Licencias*/
    	public function canRevisarLicencia($usuario_id){
-		$procesoLicencia = 2;
+		$procesoLicencia = 4;
 		$usuario=Doctrine::getTable('Usuario')->find($usuario_id);
 		$query=Doctrine_Query::create()
 		->from('Proceso p, p.Cuenta c, p.Tareas t')

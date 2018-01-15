@@ -76,7 +76,7 @@ class AccionExcelLicencia extends Accion {
 		$col_Retorno_saldo	= 14;	
 
 		//Datos del proceso a insertar
-		$idProceso = 2;
+		$idProceso = 4;
 		
 		//Read values
 		log_message('info',"Read values");
