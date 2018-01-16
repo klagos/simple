@@ -20,7 +20,7 @@
                 <?php
 
 			    $licencia_nro ='';
-			    $trabajdor_rut='';
+			    $trabajador_rut='';
                             $licencia_fecha_i='';
                             $licencia_fecha_t='';
                             $licencia_cant_d=0;
@@ -64,7 +64,7 @@
                 <tr>
                                      
                     <td class="name"> <?php echo $licencia_nro != '' ? $licencia_nro : 'N/A';?> </td>
-                    <td class="name"> <?php echo $trabajador_rut!=''?$trabajador_rut:'N/A'; ?> </td>
+                    <td class="name"> <?php echo $trabajador_rut !=''?$trabajador_rut:'N/A'; ?> </td>
                     <td class="name"> <?php echo ($licencia_fecha_i !='')?$licencia_fecha_i:'N/A';?> </td>
                     <td class="name"> <?php echo $licencia_fecha_t!=''?$licencia_fecha_t:'N/A';?> </td>
 		    <td class="name"> <?php echo $licencia_cant_d!=0?$licencia_cant_d:'N/A';?> </td>
