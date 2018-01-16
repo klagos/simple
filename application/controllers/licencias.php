@@ -32,15 +32,15 @@ class Licencias extends MY_Controller {
 
 		//Datos del formulario
         	$licencia_numero =($this->input->get('licencia_numero'))?$this->input->get('licencia_numero'):null;
-        	$trabajador_rut  =($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null;
-		
+        	$licencia_estado =($this->input->get('licencia_estado'))?$this->input->get('licencia_estado'):null;
+		$trabajador_rut  =($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null;
 		
 	
 		//Variables de la query
 		$proceso_id = proceso_subsidio_id;
 		$contador = 0;
 		$rowtramites = [];
-		$inicio =0;//incio
+		//$inicio =0;//incio
 		$limite =30;//limite
 		
 		//librerias
@@ -48,17 +48,16 @@ class Licencias extends MY_Controller {
         	$this->load->helper('form');
         	$this->load->helper('url');
 		
-		$contador = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$trabajador_rut,$proceso_id,null,null)->count();	
+		$contador = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_estado,$trabajador_rut,$proceso_id,null,null)->count();	
 		if($contador >0){
-			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$trabajador_rut,$proceso_id,$inicio, $limite);
+			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_estado,$trabajador_rut,$proceso_id,$inicio, $limite);
 		}
-		
 		
 		$config['base_url'] = site_url('licencias/buscar');
         	$config['total_rows'] = $contador;
         	$config['per_page']   = $limite;
         	$config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
-		
+		if (count($_GET) > 0) $config['suffix'] = '?' . http_build_query($_GET, '', "&");	
 		$config['full_tag_close'] = '</ul></div>';
         	$config['page_query_string']=false;
         	$config['query_string_segment']='offset';

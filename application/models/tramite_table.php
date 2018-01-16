@@ -57,10 +57,10 @@ class TramiteTable extends Doctrine_Table {
     }
 	//Dentro del proceso de subsidios, busca el dato licencias
 	//los criterios de busqueda son el numero de la licencia y el rut del trabajado
-	public function findLicencias($licencia_numero, $trabajador_rut, $proceso_id, $inicio, $limite){
-
+	public function findLicencias($licencia_numero,$licencia_estado,$trabajador_rut, $proceso_id, $inicio, $limite){
+	
                 $query= Doctrine_Query::create()
-                        ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
+                        ->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
 			->where('p.activo=1 AND p.id = ?', $proceso_id);
                 if($licencia_numero && $trabajador_rut){ 
 			$query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');	
@@ -69,8 +69,18 @@ class TramiteTable extends Doctrine_Table {
 		else{
                         if($licencia_numero)
                                 $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');
-                        else
-                                $query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
+                        
+			if($trabajador_rut)
+				$query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
+			
+			if($licencia_estado){
+				if($licencia_estado=="ingresada")
+					$query->andWhere("t.id NOT IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'fecha_pago_subsidio' AND ds.valor IS NOT NULL)");
+				if($licencia_estado=="pagada")
+					$query->andWhere("d.nombre = 'fecha_pago_subsidio' AND d.valor IS NOT NULL");
+				if($licencia_estado=="retornada")
+					$query->andWhere("d.nombre = 'fecha_retorno_subsidio' AND d.valor IS NOT NULL");
+			}
 
                 }
                 if($inicio) $query->offset($inicio);
