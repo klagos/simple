@@ -127,7 +127,7 @@ class AccionGuardarLicencia extends Accion {
 	$json.= '"return_value": '.(isset($return_value) ? ($return_value == null ? '0' : $return_value) : '0').', ';
 	$json.= '"return_saldo": '.(isset($return_saldo) ? ($return_saldo == null ? '0' : $return_saldo) : '0').', ';
 	$json.= '"return_observation": '.(isset($return_observation) ? '"'.$return_observation.'"' : '""').'}';
-	ChromePhp::log($json);
+	
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "private-120a8-apisimple1.apiary-mock.com/Licenses"); 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
