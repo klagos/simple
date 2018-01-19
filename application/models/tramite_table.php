@@ -89,7 +89,18 @@ class TramiteTable extends Doctrine_Table {
 
                 return $query->execute();
         }
+	
+	//Se busca las licencias que coincidan con la fecha de busqueda
+	public function findLicenciasPago($fecha_pago,$proceso_id){
+		ChromePhp::log($fecha_pago);
 
-
+		$query= Doctrine_Query::create()
+                        ->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
+                        ->where('p.activo=1 AND p.id = ?', $proceso_id);
+		$query->andWhere("d.nombre = 'fecha_pago_subsidio' AND d.valor LIKE ?",'%'.$fecha_pago.'%');
+		$query->orderBy('t.updated_at desc');
+                return $query->execute();
+		
+	}
 
 }
