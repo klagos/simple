@@ -47,6 +47,9 @@
 				$licencia_cant_d = intval($date_t->diff($date_i)->format("%a"))+1;
 				
 			    }
+
+			    if($licencia_nro=='')
+				continue;	
 			    $etapa_id=0;
 			    $etapa_nombre='';
 			    $etapas_array=array();
