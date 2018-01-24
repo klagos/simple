@@ -40,6 +40,10 @@
                                         $licencia_fecha_t = $tra_nro->valor;            
                                                 
                             }
+
+			   if($licencia_nro=='')
+				continue;
+		
 			    if($licencia_fecha_i!='' && $licencia_fecha_t!=''){
 				$date_i = new DateTime( $licencia_fecha_i);
 				$date_t = new DateTime( $licencia_fecha_t);
