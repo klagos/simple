@@ -18,7 +18,6 @@
         <tbody>
             <?php foreach ($tramites as $t): ?>
                 <?php
-
 			    $licencia_nro ='';
 			    $trabajador_rut='';
                             $licencia_fecha_i='';
