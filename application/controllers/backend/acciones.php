@@ -84,6 +84,8 @@ class Acciones extends MY_BackendController {
             $accion=new AccionVariable();
 	else if($tipo=='excel_licencia')
             $accion=new AccionExcelLicencia();
+	else if($tipo=='guardar_finiquito')
+            $accion= new AccionGuardarFiniquito();
         
         $data['edit']=FALSE;
         $data['proceso']=$proceso;
@@ -127,6 +129,9 @@ class Acciones extends MY_BackendController {
                 $accion=new AccionVariable();
 	    else if($this->input->post('tipo')=='excel_licencia')
                 $accion=new AccionExcelLicencia();
+            else if($this->input->post('tipo')=='guardar_finiquito')
+                $accion=new AccionGuardarFiniquito();
+	   
             $accion->proceso_id=$this->input->post('proceso_id');
             $accion->tipo=$this->input->post('tipo');
         }
