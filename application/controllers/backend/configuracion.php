@@ -124,7 +124,23 @@ class Configuracion extends MY_BackendController {
     }
 
     public function usuario_editar_form($usuario_id = NULL) {
-        $usuario=NULL;
+
+	$json = '{"name": "'.$this->input->post('nombres').'", "lastName": "'.$this->input->post('apellido_paterno').' '.$this->input->post('apellido_materno').'", "rut": "'; 
+	$json.= $this->input->post('rut').'", "email": "'.$this->input->post('email').'"}'; 
+
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, "private-120a8-apisimple1.apiary-mock.com/users/"); //link apiary
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POST, true);		//se enviaran datos a apiary por post
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $json);	//json que se envia a apiary
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                "Content-Type: application/json"
+	            ));
+	curl_exec($ch);
+	curl_close($ch);
+
+	
+	$usuario = NULL;
         if ($usuario_id) {
             $usuario = Doctrine::getTable('Usuario')->find($usuario_id);
 
@@ -159,7 +175,8 @@ class Configuracion extends MY_BackendController {
             $usuario->nombres = $this->input->post('nombres');
             $usuario->apellido_paterno = $this->input->post('apellido_paterno');
             $usuario->apellido_materno = $this->input->post('apellido_materno');
-            $usuario->email = $this->input->post('email');
+            $usuario->rut = $this->input->post('rut');
+	    $usuario->email = $this->input->post('email');
             $usuario->vacaciones = $this->input->post('vacaciones');
             $usuario->setGruposUsuariosFromArray($this->input->post('grupos_usuarios'));
             $usuario->cuenta_id = UsuarioBackendSesion::usuario()->cuenta_id;

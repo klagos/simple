@@ -58,9 +58,8 @@ class TramiteTable extends Doctrine_Table {
 	//Dentro del proceso de subsidios, busca el dato licencias
 	//los criterios de busqueda son el numero de la licencia y el rut del trabajado
 	public function findLicencias($licencia_numero,$licencia_estado,$trabajador_rut, $proceso_id, $inicio, $limite){
-	
                 $query= Doctrine_Query::create()
-                        ->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
+                        ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
 			->where('p.activo=1 AND p.id = ?', $proceso_id);
                 if($licencia_numero && $trabajador_rut){ 
 			$query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');	
@@ -68,8 +67,7 @@ class TramiteTable extends Doctrine_Table {
                 }
 		else{
                         if($licencia_numero)
-                                $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');
-                        
+                                $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');                   
 			if($trabajador_rut)
 				$query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
 			
@@ -81,6 +79,8 @@ class TramiteTable extends Doctrine_Table {
 				if($licencia_estado=="retornada")
 					$query->andWhere("d.nombre = 'fecha_retorno_subsidio' AND d.valor IS NOT NULL");
 			}
+                        else
+                                $query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
 
                 }
                 if($inicio) $query->offset($inicio);
@@ -92,8 +92,6 @@ class TramiteTable extends Doctrine_Table {
 	
 	//Se busca las licencias que coincidan con la fecha de busqueda
 	public function findLicenciasPago($fecha_pago,$proceso_id){
-		ChromePhp::log($fecha_pago);
-
 		$query= Doctrine_Query::create()
                         ->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
                         ->where('p.activo=1 AND p.id = ?', $proceso_id);
@@ -103,4 +101,27 @@ class TramiteTable extends Doctrine_Table {
 		
 	}
 
+	
+	//retorna los tramites que completaron la segunda etapa (pago), pero aun no la tercera (retorno) 
+	//y que pasaron asi una cierta cantidad de dias
+	public function findLicenciasNoRetornadas($proceso_id, $days){
+		
+		$days_invalid = array();
+		
+		for ($i=-90; $i < $days; $i++){
+			$days_invalid[] = date("d-m-Y",mktime(0,0,0,date("m"),date("d")-$i,date("Y"))); 
+		}
+	
+                $query= Doctrine_Query::create()
+                        ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
+                        ->where('p.activo=1 AND p.id = ?', $proceso_id)
+			
+			->andWhere('d.nombre = "fecha_pago_subsidio" AND d.valor IS NOT NULL');
+		foreach ($days_invalid as $day){
+			$query->andWhere("d.nombre = 'fecha_pago_subsidio' AND d.valor NOT LIKE ?",'%'.$day.'%');
+		}
+			
+			$query->andWhere("t.id NOT IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'fecha_retorno_subsidio' AND ds.valor IS NOT NULL)");
+		return $query->execute();
+        }
 }

@@ -15,7 +15,8 @@ class Accion extends Doctrine_Record {
                 'AccionExcelLicencia'  => array('tipo' => 'excel_licencia'),
 		'AccionWebservice'  => array('tipo' => 'webservice'),
                 'AccionVariable'  => array('tipo' => 'variable'),
-		'AccionGuardarFiniquito'  => array('tipo' => 'guardar_finiquito')
+		'AccionGuardarFiniquito'  => array('tipo' => 'guardar_finiquito'),
+		'AccionGuardarLicencia'  => array('tipo' => 'guardar_licencia')
             )
         );
     }
