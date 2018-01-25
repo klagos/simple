@@ -58,23 +58,24 @@ class AccionExcelLicencia extends Accion {
 
                 //Column Licencia
                 $colLicenciaNumero = 3;
-                $colLicenciaFechaInicio = 4;
-                $colLicenciaFechaTermino = 5;
-                $colLicenciaOrganismoSalud = 6;
-		
+                $colLicenciaFechaInicio = 5;
+                $colLicenciaFechaTermino = 6;
+                $colLicenciaOrganismoSalud = 7;
+		$colLicenciaTipo=4;		
+	
 		/* PASO 2 : PAGO SUBSIDIO */
 		$col_Subsidio_Fecha = 0;
-		$col_Subsidio_PagadoAnt = 7;
-		$col_Subsidio_Anticipo  = 8;
-		$col_Subsidio_Meses_ant = 9;
-		$col_Subsidio_Dias	= 10;
-		$col_Subsidio_Complement= 11;
-		$col_Subsiodio_Observaci= 15;	
+		$col_Subsidio_PagadoAnt = 8;
+		$col_Subsidio_Anticipo  = 9;
+		$col_Subsidio_Meses_ant = 10;
+		$col_Subsidio_Dias	= 11;
+		$col_Subsidio_Complement= 12;
+		$col_Subsiodio_Observaci= 16;	
 
 		/* PASO 3 : RETORNO SUBSIDIO */		
-		$col_Retorno_fecha	= 12;
-		$col_Retorno_pago	= 13;
-		$col_Retorno_saldo	= 14;	
+		$col_Retorno_fecha	= 13;
+		$col_Retorno_pago	= 14;
+		$col_Retorno_saldo	= 15;	
 
 		//Datos del proceso a insertar
 		$idProceso = proceso_subsidio_id;
@@ -107,10 +108,12 @@ class AccionExcelLicencia extends Accion {
 					}
 					//fecha inicio
 					$cell = $sheet->getCellByColumnAndRow($colLicenciaFechaInicio, $row);			
-					$val  = $cell->getValue();	
+					$val  = $cell->getValue();
+					$fecha_inicio="";	
 					if($val!=null){
 						if(PHPExcel_Shared_Date::isDateTime($cell)){
 							$val = PHPExcel_Style_NumberFormat::toFormattedString($val, 'DD-MM-YYYY');
+							$fecha_inicio = $val;
 							$datoLFI = new DatoSeguimiento();
                                         		$datoLFI->nombre = 'fecha_inicio_licencia';
                                         		$datoLFI->valor  = $val;
@@ -121,9 +124,11 @@ class AccionExcelLicencia extends Accion {
 					//fecha termino
 					$cell = $sheet->getCellByColumnAndRow($colLicenciaFechaTermino,$row);
                                         $val  = $cell->getValue();
+					$fecha_termino="";
                                         if($val!=null){
                                                 if(PHPExcel_Shared_Date::isDateTime($cell)){
                                                         $val = PHPExcel_Style_NumberFormat::toFormattedString($val, 'DD-MM-YYYY');
+							$fecha_termino = $val;
                                                         $datoLFT = new DatoSeguimiento();
                                                         $datoLFT->nombre = 'fecha_termino_licencia';
                                                         $datoLFT->valor  = $val;
@@ -131,6 +136,30 @@ class AccionExcelLicencia extends Accion {
                                                         $datoLFT->save();
                                                 }
                                         }
+					
+					//Cantidad dias licencia
+					$fecha_inicio  = new DateTime($fecha_inicio);
+                                	$fecha_termino = new DateTime($fecha_termino);
+					$dias_licencia = intval($fecha_termino->diff($fecha_inicio)->format("%a"))+1;;
+					if($dias_licencia!=0){
+                                                $datoLO = new DatoSeguimiento();
+                                                $datoLO->nombre = 'dias_licencia';
+                                                $datoLO->valor  = $dias_licencia;
+                                                $datoLO->etapa_id=$idEtapa;
+                                                $datoLO->save();
+                                        }
+					
+					//tipo de licencia
+                                        $cell = $sheet->getCellByColumnAndRow($colLicenciaTipo,$row);
+                                        $val  = $cell->getValue();
+                                        if($val!=null){
+                                                $datoLO = new DatoSeguimiento();
+                                                $datoLO->nombre = 'tipo_licencia';
+                                                $datoLO->valor  = rtrim($val);
+                                                $datoLO->etapa_id=$idEtapa;
+                                                $datoLO->save();
+                                        }
+			
 					//organismo de salud
 					$cell = $sheet->getCellByColumnAndRow($colLicenciaOrganismoSalud,$row);
                                         $val  = $cell->getValue();

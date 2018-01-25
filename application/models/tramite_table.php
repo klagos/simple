@@ -57,32 +57,60 @@ class TramiteTable extends Doctrine_Table {
     }
 	//Dentro del proceso de subsidios, busca el dato licencias
 	//los criterios de busqueda son el numero de la licencia y el rut del trabajado
-	public function findLicencias($licencia_numero,$licencia_estado,$trabajador_rut, $proceso_id, $inicio, $limite){
+	public function findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut, $proceso_id, $inicio, $limite){
                 $query= Doctrine_Query::create()
                         ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
 			->where('p.activo=1 AND p.id = ?', $proceso_id);
-                if($licencia_numero && $trabajador_rut){ 
-			$query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');	
-			$query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'rut_trabajador_subsidio' AND ds.valor LIKE ?)", '%'.$trabajador_rut.'%'); 	
-                }
-		else{
-                        if($licencia_numero)
-                                $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');                   
-			if($trabajador_rut)
-				$query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
-			
-			if($licencia_estado){
-				if($licencia_estado=="ingresada")
-					$query->andWhere("t.id NOT IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'fecha_pago_subsidio' AND ds.valor IS NOT NULL)");
-				if($licencia_estado=="pagada")
-					$query->andWhere("d.nombre = 'fecha_pago_subsidio' AND d.valor IS NOT NULL");
-				if($licencia_estado=="retornada")
-					$query->andWhere("d.nombre = 'fecha_retorno_subsidio' AND d.valor IS NOT NULL");
-			}
-                        else
-                                $query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
+
+		if($licencia_numero && $trabajador_rut && $licencia_tipo){
+                        $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');
+                        //RUT
+                        $query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'rut_trabajador_subsidio' AND ds.valor LIKE ?)", '%'.$trabajador_rut.'%');
+                        //TIPO
+                        $query->andWhere("t.id IN (SELECT trTi.id FROM Tramite trTi INNER JOIN trTi.Etapas etTi INNER JOIN etTi.DatosSeguimiento dsTi WHERE dsTi.nombre = 'tipo_licencia' AND dsTi.valor LIKE ?)", '%'.$licencia_tipo.'%');
+                }elseif($licencia_numero){
+                        $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');
+                        //RUT
+                        if($trabajador_rut)
+                                $query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'rut_trabajador_subsidio' AND ds.valor LIKE ?)", '%'.$trabajador_rut.'%');
+                        //TIPO
+                        if($licencia_tipo)
+                                $query->andWhere("t.id IN (SELECT trTi.id FROM Tramite trTi INNER JOIN trTi.Etapas etTi INNER JOIN etTi.DatosSeguimiento dsTi WHERE dsTi.nombre = 'tipo_licencia' AND dsTi.valor LIKE ?)", '%'.$licencia_tipo.'%');
+
 
                 }
+                elseif($trabajador_rut){
+                        $query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
+                        //NUMERO
+                        if($licencia_numero)
+                               $query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'numero_licencia' AND ds.valor LIKE ?)", '%'.$licencia_numero.'%');  
+                        //TIPO
+                        if($licencia_tipo)
+                                $query->andWhere("t.id IN (SELECT trTi.id FROM Tramite trTi INNER JOIN trTi.Etapas etTi INNER JOIN etTi.DatosSeguimiento dsTi WHERE dsTi.nombre = 'tipo_licencia' AND dsTi.valor LIKE ?)", '%'.$licencia_tipo.'%');           
+                }
+                elseif($licencia_tipo){
+                        $query->andWhere("d.nombre = 'tipo_licencia' AND d.valor LIKE ?",'%'.$licencia_tipo.'%');
+                        //NUMERO
+                        if($licencia_numero)
+                               $query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'numero_licencia' AND ds.valor LIKE ?)", '%'.$licencia_numero.'%');  
+                        //RUT
+                        if($trabajador_rut)
+                                $query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'rut_trabajador_subsidio' AND ds.valor LIKE ?)", '%'.$trabajador_rut.'%'); 
+                }
+		
+		//ESTADO DE LICENCIA	
+		if($licencia_estado){
+                        if($licencia_estado=="ingresada")
+                                        $query->andWhere("t.id NOT IN (SELECT trES.id FROM Tramite trES INNER JOIN trES.Etapas etES INNER JOIN etES.DatosSeguimiento dsES WHERE dsES.nombre = 'fecha_pago_subsidio' AND dsES.valor IS NOT NULL)");
+                        if($licencia_estado=="pagada"){
+                                        $query->andWhere("t.id IN     (SELECT trES.id FROM Tramite trES INNER JOIN trES.Etapas etES INNER JOIN etES.DatosSeguimiento dsES WHERE dsES.nombre = 'fecha_pago_subsidio' AND dsES.valor IS NOT NULL)");
+
+                                        $query->andWhere("t.id NOT IN (SELECT tra.id FROM Tramite tra INNER JOIN tra.Etapas eta INNER JOIN eta.DatosSeguimiento dse WHERE dse.nombre = 'fecha_retorno_subsidio' AND dse.valor IS NOT NULL)");
+                        }
+                        if($licencia_estado=="retornada")
+                                        $query->andWhere("t.id IN     (SELECT trES.id FROM Tramite trES INNER JOIN trES.Etapas etES INNER JOIN etES.DatosSeguimiento dsES WHERE dsES.nombre = 'fecha_retorno_subsidio' AND dsES.valor IS NOT NULL)");
+                } 	
+
                 if($inicio) $query->offset($inicio);
                 if($limite) $query->limit($limite);
                 $query->orderBy('t.updated_at desc');

@@ -47,7 +47,8 @@ class Licencias extends MY_Controller {
 
 		//Datos del formulario
         	$licencia_numero =($this->input->get('licencia_numero'))?$this->input->get('licencia_numero'):null;
-        	$licencia_estado =($this->input->get('licencia_estado'))?$this->input->get('licencia_estado'):null;
+        	$licencia_tipo   =($this->input->get('licencia_tipo'))?$this->input->get('licencia_tipo'):null;
+		$licencia_estado =($this->input->get('licencia_estado'))?$this->input->get('licencia_estado'):null;
 		$trabajador_rut  =($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null;
 		
 	
@@ -63,9 +64,9 @@ class Licencias extends MY_Controller {
         	$this->load->helper('form');
         	$this->load->helper('url');
 		
-		$contador = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_estado,$trabajador_rut,$proceso_id,null,null)->count();	
+		$contador = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,null,null)->count();	
 		if($contador >0){
-			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_estado,$trabajador_rut,$proceso_id,$inicio, $limite);
+			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,$inicio, $limite);
 		}
 		
 		$config['base_url'] = site_url('licencias/buscar');
