@@ -62,6 +62,7 @@ class TramiteTable extends Doctrine_Table {
                 $query= Doctrine_Query::create()
                         ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
 			->where('p.activo=1 AND p.id = ?', $proceso_id);
+			
                 if($licencia_numero && $trabajador_rut){ 
 			$query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');	
 			$query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'rut_trabajador_subsidio' AND ds.valor LIKE ?)", '%'.$trabajador_rut.'%'); 	
@@ -69,16 +70,16 @@ class TramiteTable extends Doctrine_Table {
 		else{
                         if($licencia_numero)
                                 $query->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia_numero.'%');
-                        else
+                        if($trabajador_rut)
                                 $query->andWhere("d.nombre = 'rut_trabajador_subsidio' AND d.valor LIKE ?",'%'.$trabajador_rut.'%');
 
                 }
                 if($inicio) $query->offset($inicio);
                 if($limite) $query->limit($limite);
                 $query->orderBy('t.updated_at desc');
-
-                return $query->execute();
-        }
+		//comentario
+                return $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY); 
+	     }
 
 	
 	//retorna los tramites que completaron la segunda etapa (pago), pero aun no la tercera (retorno) 
