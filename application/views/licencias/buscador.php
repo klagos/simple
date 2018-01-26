@@ -31,5 +31,4 @@
 		<button class="btn btn-primary" type="submit">Buscar</button>
         </div>
 </fieldset>
-</form>
- 
+</form> 
