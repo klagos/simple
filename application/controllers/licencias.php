@@ -46,11 +46,14 @@ class Licencias extends MY_Controller {
                 }
 
 		//Datos del formulario
-        	$licencia_numero =($this->input->get('licencia_numero'))?$this->input->get('licencia_numero'):null;
-        	$licencia_estado =($this->input->get('licencia_estado'))?$this->input->get('licencia_estado'):null;
-		$trabajador_rut  =($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null;
+        	$licencia_numero =trim(($this->input->get('licencia_numero'))?$this->input->get('licencia_numero'):null);
+        	$licencia_tipo   =trim(($this->input->get('licencia_tipo'))?$this->input->get('licencia_tipo'):null);
+		$licencia_estado =trim(($this->input->get('licencia_estado'))?$this->input->get('licencia_estado'):null);
+		$trabajador_rut  =trim(($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null);
 		
-	
+		//Frase para cache
+		$cacheString = $licencia_numero +  $licencia_tipo + $licencia_estado + $trabajador_rut;		
+
 		//Variables de la query
 		$proceso_id = proceso_subsidio_id;
 		$contador = 0;
@@ -62,17 +65,76 @@ class Licencias extends MY_Controller {
 		$this->load->library('pagination');
         	$this->load->helper('form');
         	$this->load->helper('url');
+
+		$contador    = count(Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,null, null));
+		if($contador>0)
+			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,$inicio, $limite);	
+		$objlicencias = array();
+		foreach ($rowtramites as $tr){
+			if ($tr["Etapas"][0]["DatosSeguimiento"]){
+				$licencia = new Licencia(); //se crea objeto licencia
+				$estado = 'Ingresada'; //estado por defecto
+
+				if (isset($tr["Etapas"][0]["DatosSeguimiento"]))
+                        	        foreach($tr["Etapas"][0]["DatosSeguimiento"] as $d){
+                        	                if ($d["nombre"] == "rut_trabajador_subsidio")
+                        	                        $licencia->rut_trabajador_subsidio =  substr($d["valor"],1,-1);
+                        	                if ($d["nombre"] == "numero_licencia")
+							if ($d["valor"][0] == '"' and substr($d["valor"],-1) == '"')
+								$licencia->numero_licencia = (int) substr($d["valor"],1,-1);
+							else 
+                        	                       		$licencia->numero_licencia = (int) $d["valor"];
+                        	                if ($d["nombre"] == "fecha_inicio_licencia")
+                        	                        $licencia->fecha_inicio_licencia = substr($d["valor"],1,-1);
+                        	                if ($d["nombre"] == "fecha_termino_licencia")
+                        	                        $licencia->fecha_termino_licencia = substr($d["valor"],1,-1);
+                        	        }
+				if (isset($tr["Etapas"][1]["DatosSeguimiento"]))
+                        	        foreach($tr["Etapas"][1]["DatosSeguimiento"] as $d){
+						if ($d["nombre"] == "fecha_pago_subsidio")
+							if ($d["valor"]){
+								$estado = 'Pagada';
+								break;
+							}						
+				}
+				if (isset($tr["Etapas"][2]["DatosSeguimiento"]))
+                        	        foreach($tr["Etapas"][2]["DatosSeguimiento"] as $d){
+						if ($d["nombre"] == "fecha_retorno_subsidio")
+                        	                        if ($d["valor"]){
+                        	                                $estado = 'Retornada';
+								break;
+							}
+				}
+				if (isset($tr["Etapas"][2]["pendiente"]))
+					if (!$tr["Etapas"][2]["pendiente"])
+						$estado = 'Finalizada';
+				
+				$tareas_completadas = 0;
+				$etapas_array = array();
+                        
+				foreach($tr["Etapas"] as $e){
+                        	        if ($e["pendiente"]){  //analogo a getEtapasActuales, metodo de clase tramite
+                        	                $etapas_array[] = $e["id"];	
+        	                        }
+        	                        else
+        	                                $tareas_completadas ++; //analogo a getTareasCompletadas, metodo de clase tramite
+        	                }
+				$licencia->id = $tr["id"];
+				$licencia->pendiente = (int) $tr["pendiente"];
+				$licencia->etapa_id = implode(', ', $etapas_array);
+				$licencia->tareas_completadas = $tareas_completadas;
+				$licencia->estado_licencia = $estado;
 		
-		$contador = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_estado,$trabajador_rut,$proceso_id,null,null)->count();	
-		if($contador >0){
-			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_estado,$trabajador_rut,$proceso_id,$inicio, $limite);
+				$objlicencias[] = $licencia;
+			}
 		}
-		
+			
 		$config['base_url'] = site_url('licencias/buscar');
         	$config['total_rows'] = $contador;
         	$config['per_page']   = $limite;
         	$config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
 		if (count($_GET) > 0) $config['suffix'] = '?' . http_build_query($_GET, '', "&");	
+		
 		$config['full_tag_close'] = '</ul></div>';
         	$config['page_query_string']=false;
         	$config['query_string_segment']='offset';
@@ -94,7 +156,8 @@ class Licencias extends MY_Controller {
         	$config['num_tag_close'] = '</li>';	
 		
 		$this->pagination->initialize($config);
-        	$data['tramites']=$rowtramites;
+        	//$data['tramites']=$rowtramites;
+        	$data['tramites']=$objlicencias;
 			
 		$data['sidebar'] ='licencia';
         	$data['content'] ='licencias/encontrados';

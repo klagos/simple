@@ -13,6 +13,16 @@
 			<option value="pagada">Pagada</option>
 			<option value="retornada">Retornada</option>
 		</select>
+	<label>Tipo licencia</label>
+                <select name="licencia_tipo">
+                        <option value=""></option>
+                        <option value=1>Enfermedad o accidente común</option>
+                        <option value=2>Medicina preventiva</option>
+			<option value=3>Pre y postnatal</option>
+			<option value=4>Enfermedad grave del niño</option>
+			<option value=5>Accidente del trabajo</option>
+			<option value=6>Enfermedad profesional</option>
+                </select>
 	<label>Rut del trabajador</label>
                 <input type="text" maxlenght="8" name="trabajador_rut" value=""/>
 	
