@@ -22,8 +22,7 @@
 			    $trabajador_rut='';
                             $licencia_fecha_i='';
                             $licencia_fecha_t='';
-                            $licencia_cant_d=0;
-                        
+                            $licencia_cant_d=0;                        
         
                             foreach ($t->getValorDatoSeguimiento() as $tra_nro){
                                if($tra_nro->nombre == 'numero_licencia')
