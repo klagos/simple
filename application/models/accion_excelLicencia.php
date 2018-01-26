@@ -358,8 +358,10 @@ class AccionExcelLicencia extends Accion {
 	$query= Doctrine_Query::create()
         	->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
                 ->where('p.activo=1 AND p.id = ?', array($proceso))
-		->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",'%'.$licencia.'%');
-	return ($query->count()!=0)?true:false;
+		->andWhere("d.nombre = 'numero_licencia' AND d.valor LIKE ?",$licencia);
+		
+	$row = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+	return (count($row)!=0)?true:false;
     }
    
 }
