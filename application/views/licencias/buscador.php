@@ -22,6 +22,7 @@
 			<option value=4>Enfermedad grave del niño</option>
 			<option value=5>Accidente del trabajo</option>
 			<option value=6>Enfermedad profesional</option>
+			<option value=7>Patologías del embarazo</option>
                 </select>
 	<label>Rut del trabajador</label>
                 <input type="text" maxlenght="8" name="trabajador_rut" value=""/>
