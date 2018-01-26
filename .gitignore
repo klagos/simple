@@ -23,3 +23,4 @@ vendor
 application/logs/log-*.php
 uploads/
 README.md
+procesos.php
