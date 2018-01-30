@@ -88,12 +88,14 @@
                                 $nsinasignar=Doctrine::getTable('Etapa')->findSinAsignar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
                                 $nparticipados=Doctrine::getTable('Tramite')->findParticipadosALL(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
 				$revisarLicencia=Doctrine::getTable('Proceso')->canRevisarLicencia(UsuarioSesion::usuario()->id);
+				$descargarDocumentosEstudio=Doctrine::getTable('Proceso')->canDesargarDocEstudio(UsuarioSesion::usuario()->id);
                                 ?>
                                 <li class="<?= isset($sidebar) && $sidebar == 'inbox' ? 'active' : '' ?>"><a href="<?= site_url('etapas/inbox') ?>">Bandeja de Entrada (<?= $npendientes ?>)</a></li>
                                 <?php if($nsinasignar): ?><li class="<?= isset($sidebar) && $sidebar == 'sinasignar' ? 'active' : '' ?>"><a href="<?= site_url('etapas/sinasignar') ?>">Sin asignar  (<?=$nsinasignar  ?>)</a></li><?php endif ?>
                                 <li class="<?= isset($sidebar) && $sidebar == 'participados' ? 'active' : '' ?>"><a href="<?= site_url('tramites/participados') ?>">Historial de Trámites  (<?= $nparticipados ?>)</a></li>
                              <?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia' ? 'active' : '' ?>"><a href="<?= site_url('licencias/buscador') ?>">Buscar Licencias</a></li><?php endif ?>
 			     <?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_pago' ? 'active' : '' ?>"><a href="<?= site_url('licencias/pago') ?>">Pago Licencias</a></li><?php endif ?>
+			     <?php if($descargarDocumentosEstudio): ?><li class="<?= isset($sidebar) && $sidebar == 'documentos_estudio' ? 'active' : '' ?>"><a href="<?= site_url('tramites/docestudio') ?>">Documentos Estudios</a></li><?php endif ?>
 			    <?php endif; ?>
                         </ul>
                     </div>

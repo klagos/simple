@@ -130,4 +130,16 @@ class TramiteTable extends Doctrine_Table {
 			$query->andWhere("t.id NOT IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'fecha_retorno_subsidio' AND ds.valor IS NOT NULL)");
 		return $query->execute();
         }
+
+
+	public function getDocumentosProcesoEstudios($proceso_id){
+		$query= Doctrine_Query::create()
+                        ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
+                        ->where('p.activo=1 AND p.id = ?', $proceso_id);
+		return $query->execute();
+	}
+
+
+
+
 }
