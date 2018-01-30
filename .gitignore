@@ -24,3 +24,4 @@ application/logs/log-*.php
 uploads/
 README.md
 assets/*
+procesos.php
