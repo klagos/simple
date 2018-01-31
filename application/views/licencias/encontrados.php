@@ -45,7 +45,7 @@
 		    <td class="name"> <?php echo $licencia_cant_d!=0?$licencia_cant_d:'N/A';?> </td>
 		    <td class="name"> <?php echo $t->pendiente ? $etapa_nombre : 'Finalizada'  ?></td>
 	            <td class="actions" style="text-align:center;"> <?php  if($etapa_id != 0) : ?>
-			<a  href="<?= site_url('etapas/asignar_ejecutar/' . $etapa_id) ?>" target="_blank" class="btn btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i> <?= $tareas_completadas==1?'Pagar':'Retornar';?></a>
+			<a  href="<?= site_url('etapas/asignar_ejecutar/' . $etapa_id) ?>" class="btn btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i> <?= $tareas_completadas==1?'Pagar':'Retornar';?></a>
 		    <?php else: ?>
 			- 
 	           <?php endif ?>

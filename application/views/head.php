@@ -33,7 +33,7 @@
             var base_url = "<?= base_url() ?>";
             var site_key = "<?= sitekey() ?>";
 
-            var onloadCallback = function() {
+            /*var onloadCallback = function() {
                 if ($('#login_captcha').length && '<?=$this->session->flashdata('login_erroneo')?>' == 'TRUE') {
                     grecaptcha.render('login_captcha', {
                         'sitekey' : site_key
@@ -45,7 +45,7 @@
                         sitekey : site_key
                     });
                 }
-            };
+            };*/
 
         </script>
 

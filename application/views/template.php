@@ -145,6 +145,6 @@
                 </div>
             </div>
         </footer>
-        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=es"></script>
+       <!-- <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=es"></script>-->
     </body>
 </html>
