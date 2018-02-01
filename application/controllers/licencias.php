@@ -50,7 +50,7 @@ class Licencias extends MY_Controller {
         	$licencia_tipo   =trim(($this->input->get('licencia_tipo'))?$this->input->get('licencia_tipo'):null);
 		$licencia_estado =trim(($this->input->get('licencia_estado'))?$this->input->get('licencia_estado'):null);
 		$trabajador_rut  =trim(($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null);
-		
+		$trabajador_rut  =str_replace('.','', $trabajador_rut);	
 		//Frase para cache
 		$cacheString = $licencia_numero +  $licencia_tipo + $licencia_estado + $trabajador_rut;		
 
