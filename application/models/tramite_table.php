@@ -66,7 +66,7 @@ class TramiteTable extends Doctrine_Table {
 
 		//LICENCIA NUMERO
 		if($licencia_numero)
-			$query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'numero_licencia' AND ds.valor LIKE ?)", '%'.$licencia_numero.'%');
+			$query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'numero_licencia' AND ds.valor LIKE ?)",''.$licencia_numero);
 
 		//TRABAJADOR RUT
 		if($trabajador_rut)
