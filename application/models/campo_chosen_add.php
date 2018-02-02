@@ -53,9 +53,9 @@ class CampoChosenAdd extends Campo {
 
                 foreach ($json_ws as $json){
                         if($dato){
-                                $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->costCenter.'-'.$json->service.'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->costCenter.'-'.$json->service == $dato->valor ? 'selected' : ' ') .'>'.$json->lastName.' '.$json->name.' - '.$json->rut.'</option>';
+                                $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->costCenter.'-'.$json->service.'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->costCenter.'-'.$json->service == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                         }else{
-                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->costCenter.'-'.$json->service. '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->costCenter.'-'.$json->service == $valor_default ? 'selected' : ' ') .'>'.$json->lastName.' '.$json->name.' - '.$json->rut.'</option>';
+                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->costCenter.'-'.$json->service. '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->costCenter.'-'.$json->service == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                         }
                 }
         }else{
@@ -108,6 +108,7 @@ class CampoChosenAdd extends Campo {
 </div>';
 	$display.=
 	'<script>
+		 $("#'.$this->id.'").chosen({ search_contains: true});
 		//enviar post a apiary con los datos ingresados del usuario
 		function Save(){
 		var url = "http://private-120a8-apisimpleist.apiary-mock.com/users";
@@ -124,14 +125,13 @@ class CampoChosenAdd extends Campo {
 		
 		//agrega la nueva opción al chosen y lo actualiza
 		var opt = document.createElement("option");
-		opt.text = lastName+" "+name+" - "+rut;
+		opt.text = name.split(" ")[0]+" "+lastName+" - "+rut;
 		opt.setAttribute("value",lastName+"/"+name+"-"+rut);;
 		document.getElementById("'.$this->id.'").appendChild(opt); 
 	
 		$("#'.$this->id.'").val(lastName+"/"+name+"-"+rut).change();
-		$("#'.$this->id.'").data("chosen").default_text = lastName+" "+name+" - "+rut;	
+		$("#'.$this->id.'").data("chosen").default_text = name.split(" ")[0]+" "+lastName+" - "+rut;	
 		$("#'.$this->id.'").trigger("liszt:updated"); //se actualiza chosen
-	
 		//limpia los datos del modal	
 		var rut = document.getElementById("rut").value = "";
                 var name = document.getElementById("name").value = "";
