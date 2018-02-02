@@ -29,7 +29,10 @@
         </div>
         <div class="btn-group">
             <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'text')">Textbox</button>
-            <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'textarea')">Textarea</button>
+            <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'chosenUsuario')">ChosenUsuario</button>
+	    <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'chosenUnitario')">ChosenUnitario</button>
+	    <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'chosenAdd')">ChosenAdd</button>
+	    <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'textarea')">Textarea</button>
             <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'select')">Select</button>
             <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'radio')">Radio</button>
             <button class="btn btn-inverse" onclick="return agregarCampo(<?= $formulario->id ?>,'checkbox')">Checkbox</button>
