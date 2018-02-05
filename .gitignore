@@ -25,4 +25,5 @@ uploads/
 README.md
 assets/*
 procesos.php
-node_modules/
+node_modules/*
+.htaccess
