@@ -93,7 +93,7 @@ function descargarSeleccionados() {
                   }
             ?>
 	    
-            <tr> <?$prev?'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="'.htmlspecialchars($prev.'" data-trigger="hover" data-placement="bottom"':''?>
+           <tr>  <?php $prev?'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="'.htmlspecialchars($prev).'"data-trigger="hover" data-placement="bottom"':''?>
 		<?php if(Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                   <?php if($file): ?>
                   <td><div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]" value="<?=$e["tramite_id"]?>"></label></div></td>
