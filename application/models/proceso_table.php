@@ -1,5 +1,5 @@
 <?php
-
+require_once(FCPATH."procesos.php");
 class ProcesoTable extends Doctrine_Table {
 
     public function findProcesosDisponiblesParaIniciar($usuario_id,$cuenta='localhost',$orderby='id',$direction='desc'){
@@ -26,4 +26,22 @@ class ProcesoTable extends Doctrine_Table {
             
         return $procesos;
     }
+	/*Proceso verifica si el usuario puede revisar el historial de Licencias*/
+   	public function canRevisarLicencia($usuario_id){
+		$procesoLicencia = proceso_subsidio_id;
+		$usuario=Doctrine::getTable('Usuario')->find($usuario_id);
+		$query=Doctrine_Query::create()
+		->from('Proceso p, p.Cuenta c, p.Tareas t')
+                ->where('p.activo=1 AND t.inicial = 1')
+		->andWhere('p.id=?',$procesoLicencia)
+		->andWhere('1!=(t.activacion="no" OR ( t.activacion="entre_fechas" AND ((t.activacion_inicio IS NOT NULL AND t.activacion_inicio>NOW()) OR (t.activacion_fin IS NOT NULL AND NOW()>t.activacion_fin) )))');
+		$procesos=$query->execute();
+			
+		//Chequeamos los permisos de acceso
+        	foreach($procesos as $key=>$p)
+            		if(!$p->canUsuarioListarlo($usuario_id))
+                		unset($procesos[$key]);
+		return (count($procesos)!=0)?true:false;
+	}
+
 }

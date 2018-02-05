@@ -309,6 +309,27 @@ class Etapas extends MY_Controller {
         redirect('etapas/inbox');
     }
 
+    public function asignar_ejecutar($etapa_id) {
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+
+        //usuario ya tiene asignada la etapa
+	if ($etapa->usuario_id != UsuarioSesion::usuario()->id ) {
+            $etapa->asignar(UsuarioSesion::usuario()->id);
+        }
+	/*
+        if (!$etapa->canUsuarioAsignarsela(UsuarioSesion::usuario()->id)) {
+            echo 'Usuario no puede asignarse esta etapa.';
+            exit;
+        }
+
+        $etapa->asignar(UsuarioSesion::usuario()->id);
+	*/
+	
+        redirect('etapas/ejecutar/'.$etapa_id);
+    }	
+
+
+
     public function ejecutar_fin($etapa_id) {
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
@@ -423,6 +444,22 @@ class Etapas extends MY_Controller {
         $data['content'] = 'etapas/ver';
         $this->load->view('template', $data);
     }
+   
+    public function ver_sinpermiso($etapa_id, $secuencia = 0) {
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+
+        $paso = $etapa->getPasoEjecutable($secuencia);
+
+        $data['etapa'] = $etapa;
+        $data['paso'] = $paso;
+        $data['secuencia'] = $secuencia;
+
+        $data['sidebar'] = 'participados';
+        $data['title'] = 'Historial - ' . $etapa->Tarea->nombre;
+        $data['content'] = 'etapas/ver';
+        $this->load->view('template', $data);
+    }
+
 
     public function descargar($tramites){
         $data['tramites'] = $tramites;

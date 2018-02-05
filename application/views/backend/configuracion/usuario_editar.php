@@ -13,7 +13,7 @@
             </li>
             <li class="active"><?= isset($usuario) ?$usuario->usuario:'Crear' ?></li>
         </ul>
-
+	
         <form class="ajaxForm" method="post" action="<?= site_url('backend/configuracion/usuario_editar_form/' . (isset($usuario)?$usuario->id:'')) ?>">
             <fieldset>
                 <legend>Editar usuario</legend>
@@ -30,7 +30,12 @@
                 <input type="text" name="apellido_paterno" class="input-xxlarge" value="<?=isset($usuario)?$usuario->apellido_paterno:''?>"/>
                 <label>Apellido Materno</label>
                 <input type="text" name="apellido_materno" class="input-xxlarge" value="<?=isset($usuario)?$usuario->apellido_materno:''?>"/>
-                <label>Correo electrónico</label>
+		<!--<label>Rut</label> 
+		<input type="text" name="rut" class="input-xxlarge" value="<?=isset($usuario)?$usuario->rut:''?>"/>     		
+		
+                <input type="text" name="apellido_materno" class="input-xxlarge" value="<?=isset($usuario)?$usuario->apellido_materno:''?>"/>  		
+		-->
+		<label>Correo electrónico</label>
                 <input type="text" name="email" class="input-xxlarge" value="<?=isset($usuario)?$usuario->email:''?>"/>
                 <label class="checkbox"><input type="checkbox" name="vacaciones" value="1" <?=isset($usuario) && $usuario->vacaciones?'checked':''?> /> ¿Fuera de oficina?</label>    
                 <label>Grupos de Usuarios</label>
