@@ -70,7 +70,7 @@ class EtapaTable extends Doctrine_Table {
         if($cuenta!='localhost')
             $query->andWhere('c.nombre = ?',$cuenta->nombre);
         
-        return $query->execute();
+        return $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
     }
     
 }
