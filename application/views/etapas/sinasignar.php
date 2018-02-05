@@ -79,13 +79,13 @@ function descargarSeleccionados() {
 
             <?php
                   $file = false;
-                  if(Doctrine::getTable('File')->findByTramiteId($e->Tramite->id)->count() > 0){
+                  if(Doctrine::getTable('File')->findByTramiteId($e["tramite_id"])->count() > 0){
                       $file = true;
                       $registros=true;
                   }
             ?>
 
-            <tr <?=$e->getPrevisualizacion()?'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="'.htmlspecialchars($e->getPrevisualizacion()).'" data-trigger="hover" data-placement="bottom"':''?>>
+            <tr <?//=$e->getPrevisualizacion()?'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="'.htmlspecialchars($e->getPrevisualizacion()).'" data-trigger="hover" data-placement="bottom"':''?>>
                 <?php if(Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                   <?php if($file): ?>
                   <td><div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]" value="<?=$e->Tramite->id?>"></label></div></td>
@@ -95,17 +95,17 @@ function descargarSeleccionados() {
                   <?php else: ?>
                   <td></td>
                 <?php endif; ?>
-                <td><?=$e->Tramite->id?></td>
+                <td><?=$e["tramite_id"]?></td>
                 <td class="name"><?//= $e->Tramite->Proceso->nombre ?>
                     <?php
-                        $t = Doctrine::getTable('Tramite')->find($e->Tramite->id); 
+                        $t = Doctrine::getTable('Tramite')->find($e["tramite_id"]); 
                         $tramite_nro ='';
                         foreach ($t->getValorDatoSeguimiento() as $tra_nro){
                            if($tra_nro->nombre == 'tramite_ref'){
                                 $tramite_nro = $tra_nro->valor;
                             }                              
                         }                         
-                        echo $tramite_nro != '' ? $tramite_nro : $e->Tramite->Proceso->nombre;
+                        echo $tramite_nro != '' ? $tramite_nro : $e["proceso_nombre"];
                     ?>
                 </td>
                 <td class="name">
@@ -116,17 +116,17 @@ function descargarSeleccionados() {
                                 $tramite_descripcion = $tra->valor;
                             }  
                         }
-                        echo $tramite_descripcion != '' ? $tramite_descripcion : $e->Tramite->Proceso->nombre;
+                        echo $tramite_descripcion != '' ? $tramite_descripcion : $e["proceso_nombre"];
                     ?>
                 </td>
-                <td><?=$e->Tarea->nombre ?></td>
-                <td class="time"><?= strftime('%d.%b.%Y',mysql_to_unix($e->updated_at))?><br /><?= strftime('%H:%M:%S',mysql_to_unix($e->updated_at))?></td>
-                <td><?=$e->vencimiento_at?strftime('%c',strtotime($e->vencimiento_at)):'N/A'?></td>
+                <td><?=$e["tarea_nombre"] ?></td>
+                <td class="time"><?= strftime('%d.%b.%Y',mysql_to_unix($e["updated_at"]))?><br /><?= strftime('%H:%M:%S',mysql_to_unix($e["updated_at"]))?></td>
+                <td><?=$e->["vencimiento_at"]?strftime('%c',strtotime($e["vencimiento_at"])):'N/A'?></td>
                 <td class="actions">
-                    <a href="<?=site_url('etapas/asignar/'.$e->id)?>" class="btn btn-primary"><i class="icon-check icon-white"></i> Asignármelo</a>
+                    <a href="<?=site_url('etapas/asignar/'.$e["id"])?>" class="btn btn-primary"><i class="icon-check icon-white"></i> Asignármelo</a>
                     <?php if(Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                       <?php if($file): ?>
-                      <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);" class="btn btn-success"><i class="icon-download icon-white"></i> Descargar</a>
+                      <a href="#" onclick="return descargarDocumentos(<?=$e["tramite_id"]?>);" class="btn btn-success"><i class="icon-download icon-white"></i> Descargar</a>
                       <?php endif; ?>
                     <?php endif; ?>
                 </td>

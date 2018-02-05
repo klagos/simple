@@ -23,6 +23,6 @@ vendor
 application/logs/log-*.php
 uploads/
 README.md
-procesos.php
 assets/*
 procesos.php
+node_modules/*

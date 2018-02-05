@@ -33,6 +33,7 @@
 		<!--<label>Rut</label> 
 		<input type="text" name="rut" class="input-xxlarge" value="<?=isset($usuario)?$usuario->rut:''?>"/>     		
 		
+	
                 <input type="text" name="apellido_materno" class="input-xxlarge" value="<?=isset($usuario)?$usuario->apellido_materno:''?>"/>  		
 		-->
 		<label>Correo electrónico</label>

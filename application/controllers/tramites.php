@@ -1,5 +1,5 @@
 <?php
-
+require_once(FCPATH."procesos.php");
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -154,5 +154,99 @@ class Tramites extends MY_Controller {
         $tramite->delete();
         redirect($this->input->server('HTTP_REFERER'));
     }
+   
+   //Funcion que muestra los documentos del estudio psicolaboral	
+    public function docestudio(){
+	 //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+         	redirect('tramites/disponibles');
+        }
+
+	$idProcesoDocumentacion =proceso_estudio_documentacion_id;
+	$canDescargarDocEstudio=Doctrine::getTable('Proceso')->canDesargarDocEstudio(UsuarioSesion::usuario()->id);
+	if($canDescargarDocEstudio){
+		$tramiteDoc	= Doctrine::getTable('Tramite')->getDocumentosProcesoEstudios($idProcesoDocumentacion);
+		$rowEtapas 	= $tramiteDoc[0]->getEtapasTramites();
+		$sizeEtapas	= count($rowEtapas);
+		
+		//Nombre de los documentos dentro del formulario
+		$url_formato_acta = null;
+		$url_instructivo  = null;
+		$url_instructivo_trabajadores = null;
+		$url_registro_entrega_codigos = null;		
+		$url_taller_trabajadores_mail = null;
+		$url_taller_trabajadores_presencial= null;		
+
+		$pos_formato = 0;
+		for ($i = $sizeEtapas-1  ; $i >=0 ; $i--) {
+			$etapa 	  = $rowEtapas[$i];
+    			$paso = $etapa->getPasoEjecutable(0);
+			foreach ($paso->Formulario->Campos as $c){
+				$string = $c->displayConDatoSeguimiento($etapa->id, 'visualizacion');
+				
+				//Formato de acta
+				if ((strpos($string, 'formato_acta') !== false)  && !$url_formato_acta ) {
+					$s = "";
+	                                preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
+					$url_formato_acta= $s['href'][0];
+				}
+
+				//Instructivo_aplicacion
+				if ((strpos($string, 'instructivo_aplicacion') !== false)  && !$url_instructivo) {
+                                        $s = "";
+                                        preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
+                                        $url_instructivo= $s['href'][0];
+				}
+
+				//Instructivo para trabajadores
+                                if ((strpos($string, 'instructivo_trabajadores') !== false)  && !$url_instructivo_trabajadores) {
+                                        $s = "";
+                                        preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
+                                        $url_instructivo_trabajadores= $s['href'][0];
+                                }
+				
+				//Registro entrega de codigos
+                                if ((strpos($string, 'registro_entrega_codigos') !== false)  && !$url_registro_entrega_codigos){
+                                        $s = "";
+                                        preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
+                                        $url_registro_entrega_codigos= $s['href'][0];
+                                }
+				
+				//Taller informativo trabajadores
+                                if ((strpos($string, 'taller_trabajadores_mail') !== false)  && !$url_taller_trabajadores_mail) {
+                                        $s = "";
+                                        preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
+                                        $url_taller_trabajadores_mail= $s['href'][0];
+                                }
+
+				//Taller informativo trabajadores
+                                if ((strpos($string, 'taller_trabajadores_mail') !== false)  && !$url_taller_trabajadores_presencial) {
+                                        $s = "";
+                                        preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
+                                        $url_taller_trabajadores_presencial= $s['href'][0];
+                                }	
+			}
+		}
+	}
+	
+	$data['some_doc']=true;
+	if(!$url_formato_acta && !$url_instructivo && !$url_instructivo_trabajadores && !$url_registro_entrega_codigos && !$url_taller_trabajadores_mail &&!$url_taller_trabajadores_presencial)
+		$data['some_doc']=false;	
+	$data['url_formato_acta'] = $url_formato_acta;
+        $data['url_instructivo']  = $url_instructivo;
+	$data['url_instructivo_trabajadores']=$url_instructivo_trabajadores;
+	$data['url_registro_entrega_codigos']=$url_registro_entrega_codigos;
+ 	$data['url_taller_trabajadores_mail']=$url_taller_trabajadores_mail;
+ 	$data['url_taller_trabajadores_presencial']=$url_taller_trabajadores_presencial;
+	
+	$data['sidebar']='licencia_pago';
+        $data['content'] = 'tramites/docestudio';
+        $data['title'] = 'Documentación estudio psicosocial';
+        $this->load->view('template', $data);
+
+
+    }
+
 
 }

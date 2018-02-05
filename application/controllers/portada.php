@@ -13,7 +13,7 @@ class Portada extends MY_Controller {
     public function index() {
         $pendientes=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id);
         
-        if(UsuarioSesion::usuario()->registrado && $pendientes->count()>0)
+        if(UsuarioSesion::usuario()->registrado && count($pendientes)>0)
             redirect('etapas/inbox');
         else
             redirect('tramites/disponibles');

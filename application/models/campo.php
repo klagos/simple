@@ -11,6 +11,8 @@ class Campo extends Doctrine_Record {
     public static function factory($tipo){
         if($tipo=='text')
             $campo=new CampoText();
+        else if($tipo=='textrut')
+	    $campo=new CampoTextRut();
         else if($tipo=='textarea')
             $campo=new CampoTextArea();
         else if($tipo=='select')
@@ -75,7 +77,8 @@ class Campo extends Doctrine_Record {
         
         $this->setSubclasses(array(
                 'CampoText'  => array('tipo' => 'text'),
-                'CampoTextArea'  => array('tipo' => 'textarea'),
+                'CampoTextRut' => array('tipo' => 'textrut'),
+		'CampoTextArea'  => array('tipo' => 'textarea'),
                 'CampoSelect'  => array('tipo' => 'select'),
                 'CampoRadio'  => array('tipo' => 'radio'),
                 'CampoCheckbox'  => array('tipo' => 'checkbox'),
