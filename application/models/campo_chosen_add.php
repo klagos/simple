@@ -34,12 +34,12 @@ class CampoChosenAdd extends Campo {
                 $display.='<option value="null"> </option>';
 
                 foreach ($json_ws as $json){
-			if($dato){
-                                $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location . (isset($json->costCenter)?'-'. $json->costCenter :'').'-'. (isset($json->service)? '-'.$json->service : '')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->costCenter.  (isset($json->service)?'-'.$json->service : '')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+                	 if($dato){
+                                $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->dias_asignados.'-'.$json->medias_jornadas_asignadas.'-'.$json->dias_tomados.'-'.$json->dias_pendientes.'-'.$json->medias_jornadas_pendientes. (isset($json->costCenter)?'-'. $json->costCenter :'').'-'. (isset($json->service)? '-'.$json->service : '')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->dias_asignados.'-'.$json->medias_jornadas_asignadas.'-'.$json->dias_tomados.'-'.$json->dias_pendientes.'-'.$json->medias_jornadas_pendientes. (isset($json->costCenter)?'-'.$json->costCenter : '') .  (isset($json->service)?'-'.$json->service : '')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                         }else{
-                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location . (isset($json->costCenter)?'-'. $json->costCenter :'') . (isset($json->service)? '-'.$json->service : ''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location. (isset($json->costCenter)?'-'. $json->costCenter :'')  . (isset($json->service)?'-'.$json->service : '') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location . '-'.$json->dias_asignados.'-'.$json->medias_jornadas_asignadas.'-'.$json->dias_tomados.'-'.$json->dias_pendientes.'-'.$json->medias_jornadas_pendientes.(isset($json->costCenter)?'-'. $json->costCenter :'') . (isset($json->service)? '-'.$json->service : ''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location. '-'.$json->dias_asignados.'-'.$json->medias_jornadas_asignadas.'-'.$json->dias_tomados.'-'.$json->dias_pendientes.'-'.$json->medias_jornadas_pendientes.(isset($json->costCenter)?'-'. $json->costCenter :'')  . (isset($json->service)?'-'.$json->service : '') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                         }
-                }
+		}
         }else{
                 $display.='<select size="35" style="width:270px" data-placeholder="Selecciona una opción" class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
