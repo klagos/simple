@@ -12,8 +12,14 @@ class Campo extends Doctrine_Record {
         if($tipo=='text')
             $campo=new CampoText();
         else if($tipo=='textrut')
-	    $campo=new CampoTextRut();
-        else if($tipo=='textarea')
+	    $campo=new CampoTextRut();	
+        else if($tipo=='chosenUsuario')
+	    $campo=new CampoChosenUsuario();
+	 else if($tipo=='chosenUnitario')
+            $campo=new CampoChosenUnitario();
+        else if($tipo=='chosenAdd')
+	    $campo=new CampoChosenAdd();
+	else if($tipo=='textarea')
             $campo=new CampoTextArea();
         else if($tipo=='select')
             $campo=new CampoSelect();
@@ -78,6 +84,9 @@ class Campo extends Doctrine_Record {
         $this->setSubclasses(array(
                 'CampoText'  => array('tipo' => 'text'),
                 'CampoTextRut' => array('tipo' => 'textrut'),
+                'CampoChosenUsuario' => array('tipo' => 'chosenUsuario'),
+		'CampoChosenUnitario' => array('tipo' => 'chosenUnitario'),
+		'CampoChosenAdd' => array('tipo' => 'chosenAdd'),
 		'CampoTextArea'  => array('tipo' => 'textarea'),
                 'CampoSelect'  => array('tipo' => 'select'),
                 'CampoRadio'  => array('tipo' => 'radio'),
