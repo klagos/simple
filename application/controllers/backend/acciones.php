@@ -78,6 +78,8 @@ class Acciones extends MY_BackendController {
         
         if($tipo=='enviar_correo')
             $accion=new AccionEnviarCorreo();
+	else if($tipo=='enviar_admin_days')
+            $accion=new AccionEnviarAdminDays();
         else if($tipo=='webservice')
             $accion=new AccionWebservice();
         else if($tipo=='variable')
@@ -124,6 +126,8 @@ class Acciones extends MY_BackendController {
         }else{
             if($this->input->post('tipo')=='enviar_correo')
                 $accion=new AccionEnviarCorreo();
+	    if($this->input->post('tipo')=='enviar_admin_days')
+                $accion=new AccionEnviarAdminDays();
             else if($this->input->post('tipo')=='webservice')
                 $accion=new AccionWebservice();
             else if($this->input->post('tipo')=='variable')
