@@ -26,17 +26,17 @@ class CampoChosenUsuario extends Campo {
         	    ));
         	$result=curl_exec($ch);
        		curl_close($ch);
-		
+				
 		$json_ws = json_decode($result);
 		
 		$display.='<select size="35" style="width:380px" data-placeholder="Seleccione por rut o nombre"  class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
-
-                foreach ($json_ws as $json){
+                
+		foreach ($json_ws as $json){
 			if($dato){
-        	               	$display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->dias_asignados.'-'.$json->medias_jornadas_asignadas.'-'.$json->dias_tomados.'-'.$json->dias_pendientes.'-'.$json->medias_jornadas_pendientes. (isset($json->costCenter)?'-'. $json->costCenter :'').'-'. (isset($json->service)? '-'.$json->service : '')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->dias_asignados.'-'.$json->medias_jornadas_asignadas.'-'.$json->dias_tomados.'-'.$json->dias_pendientes.'-'.$json->medias_jornadas_pendientes. (isset($json->costCenter)?'-'.$json->costCenter : '') .  (isset($json->service)?'-'.$json->service : '')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+        	               	$display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays. (isset($json->costCenter)?'-'. $json->costCenter :'').'-'. (isset($json->service)? '-'.$json->service : '')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays. (isset($json->costCenter)?'-'.$json->costCenter : '') .  (isset($json->service)?'-'.$json->service : '')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                        	}else{
-                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location . '-'.$json->dias_asignados.'-'.$json->medias_jornadas_asignadas.'-'.$json->dias_tomados.'-'.$json->dias_pendientes.'-'.$json->medias_jornadas_pendientes.(isset($json->costCenter)?'-'. $json->costCenter :'') . (isset($json->service)? '-'.$json->service : ''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location. '-'.$json->dias_asignados.'-'.$json->medias_jornadas_asignadas.'-'.$json->dias_tomados.'-'.$json->dias_pendientes.'-'.$json->medias_jornadas_pendientes.(isset($json->costCenter)?'-'. $json->costCenter :'')  . (isset($json->service)?'-'.$json->service : '') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location . '-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays.(isset($json->costCenter)?'-'. $json->costCenter :'') . (isset($json->service)? '-'.$json->service : ''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location. '-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays.(isset($json->costCenter)?'-'. $json->costCenter :'')  . (isset($json->service)?'-'.$json->service : '') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                        	}                	
 		}
         }else{
