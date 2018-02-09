@@ -149,15 +149,15 @@
             </ul>
         </div>
 
-        <?php if ($proceso->Cuenta->HsmConfiguraciones->count()): ?>
-            <label>Firma Electronica Avanzada (HSM)</label>
+        <?php//if ($proceso->Cuenta->HsmConfiguraciones->count()): ?>
+       <!--     <label>Firma Electronica Avanzada (HSM)</label>
             <select name="hsm_configuracion_id">
                 <option value="">No firmar con HSM</option>
-                <?php foreach ($proceso->Cuenta->HsmConfiguraciones as $h): ?>
-                    <option value="<?= $h->id ?>" <?= $edit && $documento->hsm_configuracion_id == $h->id ? 'selected' : '' ?>>Firmar con <?= $h->nombre ?></option>
-                <?php endforeach ?>
+                <?php //foreach ($proceso->Cuenta->HsmConfiguraciones as $h): ?>
+                    <option value="<?//= $h->id ?>" <?//= $edit && $documento->hsm_configuracion_id == $h->id ? 'selected' : '' ?>>Firmar con <?//= $h->nombre ?></option>
+                <?php// endforeach ?>
             </select>
-        <?php endif ?>
+     -->   <?php// endif ?>
 
         <div class="form-actions">
             <a class="btn" href="<?= site_url('backend/documentos/listar/' . $proceso->id) ?>">Cancelar</a>
