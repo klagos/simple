@@ -12,7 +12,8 @@
         <label>Tipo de acción</label>
         <select name="tipo">
             <option value="enviar_correo">Enviar correo</option>
-            <option value="webservice">Consultar Webservice</option>
+            <option value="enviar_admin_days">Enviar Admin Days</option>
+	    <option value="webservice">Consultar Webservice</option>
             <option value="variable">Generar Variable</option>
 	    <option value="excel_licencia">Excel Licencia</option>
 	    <option value="guardar_finiquito">Guardar Finiquito</option>
