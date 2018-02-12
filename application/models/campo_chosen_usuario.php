@@ -34,9 +34,9 @@ class CampoChosenUsuario extends Campo {
                 
 		foreach ($json_ws as $json){
 			if($dato){
-        	               	$display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays. (isset($json->costCenter)?'-'. $json->costCenter :'').'-'. (isset($json->service)? '-'.$json->service : '')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays. (isset($json->costCenter)?'-'.$json->costCenter : '') .  (isset($json->service)?'-'.$json->service : '')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+        	               	$display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                        	}else{
-                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location . '-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays.(isset($json->costCenter)?'-'. $json->costCenter :'') . (isset($json->service)? '-'.$json->service : ''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location. '-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays.(isset($json->costCenter)?'-'. $json->costCenter :'')  . (isset($json->service)?'-'.$json->service : '') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                        	}                	
 		}
         }else{
@@ -53,12 +53,14 @@ class CampoChosenUsuario extends Campo {
 	}
         $display.='</select> <input name"'. $this->nombre.'"id="'.$this->nombre.'" type=hidden value""/>';
 	
-
+	$display .= '';
 	if($this->ayuda)
             $display.='<span class="help-block">'.$this->ayuda.'</span>';
         $display.='</div>';
-
-
+	$display .= '<script>
+		 $("#'.$this->id.'").chosen({ search_contains: true});
+		   </script>';
+	
         return $display;
     }
 
