@@ -34,10 +34,10 @@ class CampoChosenAdd extends Campo {
                 $display.='<option value="null"> </option>';
 
                 foreach ($json_ws as $json){
-                	 if($dato){
-                                $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHaldDays. (isset($json->costCenter)?'-'. $json->costCenter :'').'-'. (isset($json->service)? '-'.$json->service : '')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.'-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays. (isset($json->costCenter)?'-'.$json->costCenter : '') .  (isset($json->service)?'-'.$json->service : '')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+                        if($dato){
+                                $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                         }else{
-                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location . '-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays.(isset($json->costCenter)?'-'. $json->costCenter :'') . (isset($json->service)? '-'.$json->service : ''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location. '-'.$json->days.'-'.$json->halfDay.'-'.$json->takenDays.'-'.$json->pendingDays.'-'.$json->pendingHalfDays.(isset($json->costCenter)?'-'. $json->costCenter :'')  . (isset($json->service)?'-'.$json->service : '') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                         }
 		}
         }else{
@@ -95,8 +95,8 @@ class CampoChosenAdd extends Campo {
 		function Save(){
 		var url = "http://private-120a8-apisimpleist.apiary-mock.com/users";
 		var rut = document.getElementById("rut").value;
-		var name = document.getElementById("name").value;
-		var lastName = document.getElementById("lastName").value;
+		var name = document.getElementById("name").value.toUpperCase();
+		var lastName = document.getElementById("lastName").value.toUpperCase();
 		fetch(url,{
 			method: "post",
 			headers: {
@@ -108,7 +108,7 @@ class CampoChosenAdd extends Campo {
 		//agrega la nueva opción al chosen y lo actualiza
 		var opt = document.createElement("option");
 		opt.text = name.split(" ")[0]+" "+lastName+" - "+rut;
-		opt.setAttribute("value",lastName+"/"+name+"-"+rut);;
+		opt.setAttribute("value",lastName+"/"+name+"-"+rut);
 		document.getElementById("'.$this->id.'").appendChild(opt); 
 	
 		$("#'.$this->id.'").val(lastName+"/"+name+"-"+rut).change();
