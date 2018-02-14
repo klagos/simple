@@ -11,17 +11,10 @@ class Licencia {
     public $tareas_completadas; 
     public $etapa_id; //id etapa pendiente
     public $estado_licencia; 
+    public $etapas_tramites;
    
-    public function __construct(){
-	$this->id = 0;
-        $this->rut_trabajador_subsidio = "";
-	$this->numero_licencia = 0;
-	$this->fechainicio_licencia = "";
-	$this->fecha_termino_licencia = "";
-	$this->t_pendiente = 0;
-	$this->tareas_completadas = 0;
-	$this->etapa_id = 0;
-	$this->estado_licencia;
+    public function __construct($id){
+	$this->id = $id;
     }
 	
     public function getEtapasTramites() {
@@ -31,6 +24,6 @@ class Licencia {
                         ->andWhere('e.pendiente=0')
                         ->execute();
     }
-	
+
 }
 
