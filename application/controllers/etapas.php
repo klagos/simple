@@ -61,7 +61,7 @@ class Etapas extends MY_Controller {
 		if (!$rowetapas){
             		$rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, $inicio, $limite);
        			//guardar en cache solo los tramites de la primera paginacion
-			if (!$inicio) 
+			if (!$inicio); 
 	//			apcu_add('rowetapas',$rowetapas,1800);
 		}
 	}
