@@ -52,7 +52,7 @@ class EtapaTable extends Doctrine_Table {
     }
     
     //busca las etapas donde esta pendiente una accion de $usuario_id
-    public function findPendientes($usuario_id,$cuenta='localhost',$orderby='updated_at',$direction='desc',$matches="0",$buscar="0"){        
+    public function findPendientes($usuario_id,$cuenta='localhost',$orderby='updated_at',$direction='desc',$matches="0",$buscar="0", $inicio=NULL, $limite=NULL){        
         $query=Doctrine_Query::create()
                 ->from('Etapa e, e.Tarea tar, e.Usuario u, e.Tramite t, t.Etapas hermanas, t.Proceso p, p.Cuenta c')
                 ->select('e.*,COUNT(hermanas.id) as netapas, p.nombre as proceso_nombre, tar.nombre as tarea_nombre')
@@ -69,7 +69,9 @@ class EtapaTable extends Doctrine_Table {
 
         if($cuenta!='localhost')
             $query->andWhere('c.nombre = ?',$cuenta->nombre);
-        
+	
+	if($inicio) $query->offset($inicio);
+	if($limite) $query->limit($limite);        
         return $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
     }
     
