@@ -4,10 +4,13 @@
 <br><br>
 
 <?php
+		require_once(FCPATH."procesos.php");
 		$json_ws = apcu_fetch('json_decoded'); 
 		if (!$json_ws){	
 			//Obtener data de usuarios
-			$url = "http://nexoya.cl:8080/api/users/list/small/admindays?history=false";
+			ChromePhp::log("url: ",urlapi);
+			$url = urlapi . "users/list/small/admindays";
+//			$url = "http://nexoya.cl:8080/apiTest/users/list/small/admindays";
 			$ch = curl_init($url);
 	                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -19,7 +22,6 @@
 	                curl_close($ch);
 	
 	                $json_ws = json_decode($result);
-			
 			apcu_add('json_decoded',$json_ws,60);
 		}
 ?>
@@ -173,6 +175,7 @@ document.getElementById(idCampoRutUser).onchange = function(){
 		document.getElementById("iniciarSolicitud").style.display = "inline";
 	//obtener historial
 	var json_text =  valorSelected[9];
+	if (json_text){
 	var json = JSON.parse(json_text);
 
 	//mostrar historial si existe más de un valor, sino se oculta
@@ -201,10 +204,15 @@ document.getElementById(idCampoRutUser).onchange = function(){
 				 type = "Media jornada PM";
 		document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td></tr>";
 	}
+	}
 }
+
 $(".historial").slideToggle(0);
 //mostrar/ocultar historial
 function mostrarHistorial() {
+/*	var url = "http://private-120a8-apisimpleist.apiary-mock.com/users/rut/admindayhistory";
+	$.get(url, function(data, status){
+        });*/
         $(".historial").slideToggle('slow', callbackHistorial);
         return false;
     }
