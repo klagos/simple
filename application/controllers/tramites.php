@@ -27,10 +27,15 @@ class Tramites extends MY_Controller {
 
         $query = $this->input->post('query');
         $matches="";
-        $rowtramites="";
+        $rowtramites=[];
         $contador="0";
         $resultotal="false";
         $perpage=50;
+
+	//lista de objetos historial
+	$objHistorial = array();
+
+	$descarga_masiva = Cuenta::cuentaSegunDominio()->descarga_masiva;
 
         if ($query) { 
             $this->load->library('sphinxclient');
@@ -57,8 +62,26 @@ class Tramites extends MY_Controller {
                 $rowtramites= Doctrine::getTable('Tramite')->findParticipados(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(), $perpage,$offset,$matches,$query);    
         }else{
                 $rowtramites= Doctrine::getTable('Tramite')->findParticipados(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(), $perpage, $offset,'0',$query);
-                $contador= Doctrine::getTable('Tramite')->findParticipadosALL(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
+                $contador= count(Doctrine::getTable('Tramite')->findParticipadosALL(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio()));
         }
+
+	//crear objetos historial	
+	foreach ($rowtramites as $tr){
+		$historial = new Historial($tr['id']);
+        	$historial->etapas = $tr['Etapas'];
+        	$historial->pendiente = $tr['pendiente'];
+        	$historial->proceso_id = $tr['proceso_id'];
+		$historial->proceso_nombre = Doctrine::getTable('Proceso')->find($tr['proceso_id'])->nombre;
+		$historial->updated_at = $tr['updated_at'];
+		$historial->datoSeg = $historial->getValorDatoSeguimiento();
+		$historial->etapas_participadas = $historial->getEtapasParticipadas(UsuarioSesion::usuario()->id);
+		$historial->tarea_nombres_part = $historial->getTareaNombres(UsuarioSesion::usuario()->id);
+		$historial->tarea_nombres_act = $historial->getTareaNombres();
+		if(Doctrine::getTable('File')->findByTramiteId($historial->id)->count() > 0)
+			$historial->file = true;
+		
+		$objHistorial[] = $historial; 
+	}
         
         $config['base_url'] = site_url('tramites/participados');
         $config['total_rows'] = $contador;  
@@ -85,7 +108,8 @@ class Tramites extends MY_Controller {
         $config['num_tag_close'] = '</li>';      
 
         $this->pagination->initialize($config);
-        $data['tramites']=$rowtramites;
+        $data['tramites'] = $objHistorial;
+	$data['descarga_masiva'] = $descarga_masiva;
         $data['query'] = $query;
         $data['sidebar']='participados';
         $data['content'] = 'tramites/participados';
