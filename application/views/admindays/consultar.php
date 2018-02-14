@@ -4,19 +4,24 @@
 <br><br>
 
 <?php
-		//Obtener data de usuarios
-		$url = "http://nexoya.cl:8080/apiSimple/users/list/small/admindays?history=true";
-                $ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        "Content-Type: application/json"
-                    ));
-                $result=curl_exec($ch);
-                curl_close($ch);
-
-                $json_ws = json_decode($result);
+		$json_ws = apcu_fetch('json_decoded'); 
+		if (!$json_ws){	
+			//Obtener data de usuarios
+			$url = "http://nexoya.cl:8080/api/users/list/small/admindays?history=false";
+			$ch = curl_init($url);
+	                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	                curl_setopt($ch, CURLOPT_URL,$url);
+	                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+	                        "Content-Type: application/json"
+	                    ));
+	                $result=curl_exec($ch);
+	                curl_close($ch);
+	
+	                $json_ws = json_decode($result);
+			
+			apcu_add('json_decoded',$json_ws,60);
+		}
 ?>
 </h2>
 
