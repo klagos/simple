@@ -36,7 +36,7 @@ class AccionEnviarAdminDays extends Accion {
         $json.= '"type": '.(isset($type) ? $type : '0').'}';
 	
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://nexoya.cl:8080/apiSimple/users/".$rut."/admindayrequest");
+        curl_setopt($ch, CURLOPT_URL, "http://nexoya.cl:8080/api/users/".$rut."/admindayrequest");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
