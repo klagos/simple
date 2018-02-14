@@ -11,7 +11,7 @@ class CampoTextRut extends Campo {
             $valor_default=json_decode($this->valor_default);
         }
 
-	$url = "http://nexoya.cl:8080/apiSimple/users/list/small";//"http://private-anon-6dbb3df949-apisimple1.apiary-mock.com/users/list/small";
+	$url = "http://nexoya.cl:8080/api/users/list/small";//"http://private-anon-6dbb3df949-apisimple1.apiary-mock.com/users/list/small";
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
