@@ -5,7 +5,7 @@
 
 <?php
 		require_once(FCPATH."procesos.php");
-		$json_ws = apcu_fetch('json_decoded'); 
+		$json_ws = false;//apcu_fetch('json_decoded'); 
 		if (!$json_ws){	
 			//Obtener data de usuarios
 			ChromePhp::log("url: ",urlapi);
@@ -22,7 +22,7 @@
 	                curl_close($ch);
 	
 	                $json_ws = json_decode($result);
-			apcu_add('json_decoded',$json_ws,60);
+			//apcu_add('json_decoded',$json_ws,60);
 		}
 ?>
 </h2>
