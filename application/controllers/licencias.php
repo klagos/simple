@@ -65,14 +65,22 @@ class Licencias extends MY_Controller {
 		$this->load->library('pagination');
         	$this->load->helper('form');
         	$this->load->helper('url');
+		
+		//obtener contador del cache
+		$contador = apcu_fetch('contador_tram_busc');
 
-		$contador    = count(Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,null, null));
+		//si no esta en cache
+		if (!$contador){
+			$contador = count(Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,null, null));
+			//se agrega la variable en el cache
+			apcu_add('contador_tram_busc',$contador,1800);
+		}
 		if($contador>0)
 			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,$inicio, $limite);	
 		$objlicencias = array();
 		foreach ($rowtramites as $tr){
 			if ($tr["Etapas"][0]["DatosSeguimiento"]){
-				$licencia = new Licencia(); //se crea objeto licencia
+				$licencia = new Licencia($tr['id']); //se crea objeto licencia
 				$estado = 'Ingresada'; //estado por defecto
 
 				if (isset($tr["Etapas"][0]["DatosSeguimiento"]))
@@ -119,12 +127,12 @@ class Licencias extends MY_Controller {
         	                        else
         	                                $tareas_completadas ++; //analogo a getTareasCompletadas, metodo de clase tramite
         	                }
-				$licencia->id = $tr["id"];
 				$licencia->pendiente = (int) $tr["pendiente"];
 				$licencia->etapa_id = implode(', ', $etapas_array);
 				$licencia->tareas_completadas = $tareas_completadas;
 				$licencia->estado_licencia = $estado;
-		
+				$licencia->etapas_tramites = $licencia->getEtapasTramites();		
+	
 				$objlicencias[] = $licencia;
 			}
 		}
