@@ -9,15 +9,27 @@ class Etapas extends MY_Controller {
         require_once(APPPATH.'controllers/agenda.php'); //include Agenda controller
     }
 
-    public function inbox() {
+    public function inbox($inicio = 0) {
         $buscar = $this->input->get('buscar');
         $orderby=$this->input->get('orderby')?$this->input->get('orderby'):'updated_at';
         $direction=$this->input->get('direction')?$this->input->get('direction'):'desc';
                         
         $matches="";
-        $rowetapas="";
         $resultotal="";
-        
+
+	$descarga_masiva = Cuenta::cuentaSegunDominio()->descarga_masiva;
+	
+	$rowetapas=[];
+	//libreria para paginacion
+	$this->load->library('pagination');
+	//limite por pagina
+	$limite = 30;
+	//numero de tramites pendientes
+	$contador = 0;
+
+	//lista de objetos inbox
+	$objInbox = [];
+
         if ($buscar) { 
             $this->load->library('sphinxclient');
             $this->sphinxclient->setServer ( $this->config->item ( 'sphinx_host' ), $this->config->item ( 'sphinx_port' ) );
@@ -32,18 +44,83 @@ class Etapas extends MY_Controller {
 
         if($resultotal=="true"){
             $matches = array_keys($result['matches']); 
-            $rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, $matches, $buscar);
+            $rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, $matches, $buscar, $inicio, $limite);
         }else{
-            $rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar);
-        }
-        
-        $data['etapas'] =$rowetapas;
+	    //se obtiene variable del cache
+	    $contador = apcu_fetch('contador_tram_pend');
+	    //si no esta en el cache	
+	    if (!$contador){
+	    	$contador=count(Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, NULL, NULL));
+	    	//se agrega variable al cache
+		apcu_add('contador_tram_pend',$contador,1800);
+	    }
+	    if ($contador > 0)
+		//obtener del cache solo los tramites de la primera paginacion
+		if (!$inicio) 
+			$rowetapas = apcu_fetch('rowetapas');
+		if (!$rowetapas){
+            		$rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, $inicio, $limite);
+       			//guardar en cache solo los tramites de la primera paginacion
+			if (!$inicio) 
+				apcu_add('rowetapas',$rowetapas,1800);
+		}
+	}
+	//crear objetos inbox
+	foreach ($rowetapas as $e){
+		$inbox = new Inbox($e['id']);
+    		$inbox->tarea_id = $e['tarea_id'];
+		$inbox->tarea_nombre = $inbox->getTareaNombre($e['tarea_id']);
+    		$inbox->tramite_id = $e['tramite_id'];
+    		$inbox->proceso_nombre = $e['proceso_nombre'];
+    		$inbox->updated_at = $e['updated_at'];
+     		$inbox->vencimiento_at = $e['vencimiento_at'];
+		$inbox->netapas = $e['netapas'];
+		$inbox->trDatoSeg = $inbox->getValorDatoSeguimiento($e['tramite_id']);
+		if(Doctrine::getTable('File')->findByTramiteId($e['tramite_id'])->count() > 0)
+                      $inbox->file = true;
+		$inbox->tareaPreVis = $inbox->getPrevisualizacion(); //tiene que llamarse a la funcion luego de definir tarea_id
+		
+		$objInbox[] = $inbox;
+	}
+
+	$config['base_url'] = site_url('etapas/inbox');
+        $config['total_rows'] = $contador;
+	$config['per_page']   = $limite;
+	$config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
+	if (count($_GET) > 0) $config['suffix'] = '?' . http_build_query($_GET, '', "&");
+
+        $config['full_tag_close'] = '</ul></div>';
+        $config['page_query_string']=false;
+        $config['query_string_segment']='offset';
+        $config['first_link'] = 'Primero';
+        $config['first_tag_open'] = '<li>';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = 'Último';
+        $config['last_tag_open'] = '<li>';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '»';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '«';
+        $config['prev_tag_open'] = '<li>';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="#">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+
+	$this->pagination->initialize($config);
+
+        $data['etapas'] =$objInbox;
         $data['buscar']= $buscar;
         $data['orderby']=$orderby;
         $data['direction']=$direction;
+	$data['descarga_masiva']=$descarga_masiva;
         $data['sidebar'] = 'inbox';
         $data['content'] = 'etapas/inbox';
         $data['title'] = 'Bandeja de Entrada';
+
+	$data['links'] = $this->pagination->create_links();
         $this->load->view('template', $data);
     }
     
@@ -212,13 +289,15 @@ class Etapas extends MY_Controller {
         $modo = $paso->modo;
 
         $respuesta = new stdClass();
-
-        if ($modo == 'edicion') {
+        
+	if ($modo == 'edicion') {
             $validar_formulario = FALSE;
             foreach ($formulario->Campos as $c) {
+	        
                 // Validamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
                 if ($c->isEditableWithCurrentPOST($etapa_id)) {
-                    $c->formValidate($etapa->id);
+                    
+		    $c->formValidate($etapa->id);
                     $validar_formulario = TRUE;
                 }
                 if ($c->tipo =='recaptcha') {
@@ -231,15 +310,13 @@ class Etapas extends MY_Controller {
                 // Almacenamos los campos
                 foreach ($formulario->Campos as $c) {
                     // Almacenamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
-
-                    if ($c->isEditableWithCurrentPOST($etapa_id)) {
+		   if ($c->isEditableWithCurrentPOST($etapa_id)) {
                         $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($c->nombre, $etapa->id);
                         if (!$dato)
                             $dato = new DatoSeguimiento();
                         $dato->nombre = $c->nombre;
                         $dato->valor = $this->input->post($c->nombre)=== false?'' :  $this->input->post($c->nombre);
-
-                        if (!is_object($dato->valor) && !is_array($dato->valor)) {
+			if (!is_object($dato->valor) && !is_array($dato->valor)) {
                             if (preg_match('/^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/', $dato->valor)) {
                                 $dato->valor=preg_replace("/^(\d{4})[\/\-](\d{2})[\/\-](\d{2})/i", "$3-$2-$1", $dato->valor);
                             }
@@ -247,6 +324,7 @@ class Etapas extends MY_Controller {
 
                         $dato->etapa_id = $etapa->id;
                         $dato->save();
+			
                     }
                 }
                 $etapa->save();
