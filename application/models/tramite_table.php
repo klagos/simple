@@ -22,7 +22,7 @@ class TramiteTable extends Doctrine_Table {
         if($cuenta!='localhost')
             $query->andWhere('c.nombre = ?',$cuenta->nombre);        
 
-        return $query->execute();
+        return $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
     }
    
     public function findParticipadosALL($usuario_id, $cuenta='localhost'){        
@@ -34,7 +34,7 @@ class TramiteTable extends Doctrine_Table {
         
         if($cuenta!='localhost')
             $query->andWhere('c.nombre = ?',$cuenta->nombre);        
-        return $query->execute();
+        return $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
     }
     
     public function findParticipadosMatched($usuario_id, $cuenta='localhost', $datos, $buscar){
