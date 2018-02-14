@@ -51,7 +51,7 @@
 	           <?php endif ?>
 	            </td>
                     <td class="actions">
-                        <?php $etapas = $t->getEtapasTramites() ?>
+                        <?php $etapas = $t->etapas_tramites ?>
                         <?php if (count($etapas) == 3e4354) : ?>
                             <a href="<?= site_url('etapas/ver_sinpermiso/' . $etapas[0]->id) ?>" class="btn btn-info">Ver historial</a>
 			
