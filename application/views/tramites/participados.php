@@ -68,20 +68,17 @@ function descargarSeleccionados() {
             </tr>
         </thead>
         <tbody>
-            <?php $registros=false; ?>
+            <?php $registros=false;?>
             <?php foreach ($tramites as $t): ?>
-
+		
                 <?php
-                      
-                      $file = false;
-                      if(Doctrine::getTable('File')->findByTramiteId($t->id)->count() > 0){
-                          $file = true;
+                      $file = $t->file;
+		      if ($file)
                           $registros=true;
-                      }
                 ?>
 
                 <tr>
-                    <?php if(Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
+                    <?php if($descarga_masiva): ?>
                       <?php if($file): ?>
                       <td><div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]" value="<?=$t->id?>"></label></div></td>
                       <?php else: ?>
@@ -94,39 +91,46 @@ function descargarSeleccionados() {
                     <td class="name">
                         <?php 
                             $tramite_nro ='';
-                            foreach ($t->getValorDatoSeguimiento() as $tra_nro){
+                            foreach ($t->datoSeg as $tra_nro){
                                if($tra_nro->nombre == 'tramite_ref'){
                                     $tramite_nro = $tra_nro->valor;
                                 }                              
                             }                         
-                            echo $tramite_nro != '' ? $tramite_nro : $t->Proceso->nombre;
+                            echo $tramite_nro != '' ? $tramite_nro : $t->proceso_nombre;
                         ?>
                     </td>
                     <td class="name">  
                         <?php 
                             $tramite_descripcion ='';
-                            foreach ($t->getValorDatoSeguimiento() as $tra){
+                            foreach ($t->datoSeg as $tra){
                                 if($tra->nombre == 'tramite_descripcion'){
                                     $tramite_descripcion = $tra->valor;
                                 }  
                             }
-                            echo $tramite_descripcion != '' ? $tramite_descripcion : $t->Proceso->nombre;
+                            echo $tramite_descripcion != '' ? $tramite_descripcion : $t->proceso_nombre;
                         ?>
                     </td>
                     <td>
                         <?php
-                        $etapas_array = array();
-                        foreach ($t->getEtapasActuales() as $e)
-                            $etapas_array[] = $e->Tarea->nombre;
+			$etapas_array = array();
+                        foreach ($t->tarea_nombres_act as $n)
+                            $etapas_array[] = $n;
                         echo implode(', ', $etapas_array);
                         ?>
                     </td>
                     <td class="time"><?= strftime('%d.%b.%Y', mysql_to_unix($t->updated_at)) ?><br /><?= strftime('%H:%M:%S', mysql_to_unix($t->updated_at)) ?></td>
                     <td><?= $t->pendiente ? 'Pendiente' : 'Completado' ?></td>
                     <td class="actions">
-                        <?php $etapas = $t->getEtapasParticipadas(UsuarioSesion::usuario()->id) ?>
+                        <?php $etapas=$t->etapas_participadas; $tareas = $t->tarea_nombres_part;?>
+			<?php 
+			/*$etapas = array();
+			foreach ($t->etapas as $e){
+                                if ($e['pendiente'] == 0)
+                                        $etapas[] = $e;
+                        }*/
+			?>
                         <?php if (count($etapas) == 3e4354) : ?>
-                            <a href="<?= site_url('etapas/ver/' . $etapas[0]->id) ?>" class="btn btn-primary">Ver historial</a>
+                            <a href="<?= site_url('etapas/ver/' . $etapas[0]['id']) ?>" class="btn btn-primary">Ver historial</a>
                         <?php else: ?>
                             <div class="btn-group">
                                 <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
@@ -134,13 +138,13 @@ function descargarSeleccionados() {
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <?php foreach ($etapas as $e): ?>
-                                        <li><a href="<?= site_url('etapas/ver/' . $e->id) ?>"><?= $e->Tarea->nombre ?></a></li>
-                                    <?php endforeach ?>
+                                    <?php for($i = 0;$i < count($etapas); $i++) { ?>
+                                        <li><a href="<?= site_url('etapas/ver/' . $etapas[$i]['id']) ?>"><?=$tareas[$i] ?></a></li>
+                                    <?php } ?>
                                 </ul>
                             </div>
                         <?php endif ?>
-                        <?php if(Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
+                        <?php if($descarga_masiva): ?>
                           <?php if($file): ?>
                           <a href="#" onclick="return descargarDocumentos(<?=$t->id?>);" class="btn btn-success"><i class="icon-download icon-white"></i> Descargar</a>
                           <?php endif; ?>
@@ -152,7 +156,7 @@ function descargarSeleccionados() {
         </tbody>
     </table>
 
-    <?php if(Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
+    <?php if($descarga_masiva): ?>
       <?php if($registros): ?>
       <div class="pull-right">
       <div class="checkbox">
