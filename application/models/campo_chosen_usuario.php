@@ -31,7 +31,7 @@ class CampoChosenUsuario extends Campo {
 		
 		$display.='<select size="35" style="width:380px" data-placeholder="Seleccione por rut o nombre"  class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
-                
+                if ($json_ws)
 		foreach ($json_ws as $json){
 			if($dato){
         	               	$display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
