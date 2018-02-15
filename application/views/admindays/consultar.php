@@ -3,35 +3,13 @@
 
 <br><br>
 
-<?php
-		require_once(FCPATH."procesos.php");
-		$json_ws = false;//apcu_fetch('json_decoded'); 
-		if (!$json_ws){	
-			//Obtener data de usuarios
-			ChromePhp::log("url: ",urlapi);
-			$url = urlapi . "users/list/small/admindays";
-//			$url = "http://nexoya.cl:8080/apiTest/users/list/small/admindays";
-			$ch = curl_init($url);
-	                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	                curl_setopt($ch, CURLOPT_URL,$url);
-	                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-	                        "Content-Type: application/json"
-	                    ));
-	                $result=curl_exec($ch);
-	                curl_close($ch);
-	
-	                $json_ws = json_decode($result);
-			//apcu_add('json_decoded',$json_ws,60);
-		}
-?>
 </h2>
 
 	<h4>Trabajador a consultar</h4>  <br> <select size="35" style="width:380px" data-placeholder="Seleccione por rut o nombre"  class="chosen" id="consulta_admin_days">
                 
 		<option value="null"> </option>
 	<?php
-                foreach ($json_ws as $json){
+                foreach ($json_admin_days as $json){
         ?>                
 <option value = '<?php echo $json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'').(isset($json->adminDayRequest)?'-'.json_encode($json->adminDayRequest):'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
         <?php                }   ?>
