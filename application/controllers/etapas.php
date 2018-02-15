@@ -47,22 +47,22 @@ class Etapas extends MY_Controller {
             $rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, $matches, $buscar, $inicio, $limite);
         }else{
 	    //se obtiene variable del cache
-	    //$contador = apcu_fetch('contador_tram_pend');
+	    $contador = apcu_fetch('contador_tram_pend'.UsuarioSesion::usuario()->id);
 	    //si no esta en el cache	
 	    if (!$contador){
 	    	$contador=count(Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, NULL, NULL));
-	    	//se agrega variable al cache
-	//	apcu_add('contador_tram_pend',$contador,1800);
+	    	//se agrega variable al cache, como es propia de cada usuario se asocia con el id del usuario
+		apcu_add('contador_tram_pend'.UsuarioSesion::usuario()->id,$contador,1800);
 	    }
 	    if ($contador > 0)
 		//obtener del cache solo los tramites de la primera paginacion
 		if (!$inicio) 
-	//		$rowetapas = apcu_fetch('rowetapas');
+			$rowetapas = apcu_fetch('rowetapas'.UsuarioSesion::usuario()->id);
 		if (!$rowetapas){
             		$rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, $inicio, $limite);
-       			//guardar en cache solo los tramites de la primera paginacion
-			if (!$inicio); 
-	//			apcu_add('rowetapas',$rowetapas,1800);
+       			//guardar en cache solo los tramites de la primera paginacion, como es propio de cada usuairo se asocia con el id del usuario
+			if (!$inicio);
+				apcu_add('rowetapas'.UsuarioSesion::usuario()->id,$rowetapas,1800);
 		}
 	}
 	//crear objetos inbox
