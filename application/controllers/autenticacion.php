@@ -365,6 +365,10 @@ class Autenticacion extends MY_Controller {
     }
 
     function logout() {
+	//eliminar del cache variables propias del usuario
+	apcu_delete('rowetapas'.UsuarioSesion::usuario()->id);
+	apcu_delete('contador_tram_pend'.UsuarioSesion::usuario()->id);
+
         UsuarioSesion::logout();
         redirect('');
     }
