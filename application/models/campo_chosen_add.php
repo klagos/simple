@@ -30,18 +30,18 @@ class CampoChosenAdd extends Campo {
 
 		$json_ws = json_decode($result);
 
-                $display.='<select size="35" style="width:270px" data-placeholder="Seleccione por rut o nombre"  class="chosen" id="'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
+                $display.='<select size="35" style="width:380px" data-placeholder="Seleccione por rut o nombre"  class="chosen" id="'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
 
                 foreach ($json_ws as $json){
-                        if($dato){
-                                $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+			if($dato){
+                                $display.='<option value="' .$json->lastName."/".$json->name.'_'.$json->rut.'_'.$json->location .(isset($json->day)?'_'.$json->day:'').(isset($json->halfDay)?'_'.$json->halfDay:'').(isset($json->takenDays)?'_'.$json->takenDays:'').(isset($json->pendingDays)?'_'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'_'.$json->pendingHalfDays:''). (isset($json->costCenter)?'_'. $json->costCenter :''). (isset($json->service)? '_'.$json->service : '').(isset($json->email)?'_'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'_'.$json->rut.'_'.$json->location.(isset($json->day)?'_'.$json->day:'').(isset($json->halfDay)?'_'.$json->halfDay:'').(isset($json->takenDays)?'_'.$json->takenDays:'').(isset($json->pendingDays)?'_'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'_'.$json->pendingHalfDays:''). (isset($json->costCenter)?'_'. $json->costCenter :''). (isset($json->service)? '_'.$json->service : '').(isset($json->email)?'_'.$json->email:'')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                         }else{
-                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+                                $display.='<option value="' .$json->lastName."/".$json->name.'_'.$json->rut.'_'.$json->location .(isset($json->day)?'_'.$json->day:'').(isset($json->halfDay)?'_'.$json->halfDay:'').(isset($json->takenDays)?'_'.$json->takenDays:'').(isset($json->pendingDays)?'_'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'_'.$json->pendingHalfDays:''). (isset($json->costCenter)?'_'. $json->costCenter :''). (isset($json->service)? '_'.$json->service : '').(isset($json->email)?'_'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'_'.$json->rut.'_'.$json->location.(isset($json->day)?'_'.$json->day:'').(isset($json->halfDay)?'_'.$json->halfDay:'').(isset($json->takenDays)?'_'.$json->takenDays:'').(isset($json->pendingDays)?'_'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'_'.$json->pendingHalfDays:''). (isset($json->costCenter)?'_'. $json->costCenter :''). (isset($json->service)? '_'.$json->service : '').(isset($json->email)?'_'.$json->email:'')  == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                         }
 		}
         }else{
-                $display.='<select size="35" style="width:270px" data-placeholder="Selecciona una opción" class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
+                $display.='<select size="35" style="width:380px" data-placeholder="Selecciona una opción" class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
 
                         if($this->datos) foreach ($this->datos as $d) {
@@ -108,10 +108,10 @@ class CampoChosenAdd extends Campo {
 		//agrega la nueva opción al chosen y lo actualiza
 		var opt = document.createElement("option");
 		opt.text = name.split(" ")[0]+" "+lastName+" - "+rut;
-		opt.setAttribute("value",lastName+"/"+name+"-"+rut);
+		opt.setAttribute("value",lastName+"/"+name+"_"+rut);
 		document.getElementById("'.$this->id.'").appendChild(opt); 
 	
-		$("#'.$this->id.'").val(lastName+"/"+name+"-"+rut).change();
+		$("#'.$this->id.'").val(lastName+"/"+name+"_"+rut).change();
 		$("#'.$this->id.'").data("chosen").default_text = name.split(" ")[0]+" "+lastName+" - "+rut;	
 		$("#'.$this->id.'").trigger("liszt:updated"); //se actualiza chosen
 		//limpia los datos del modal	
