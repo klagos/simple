@@ -52,7 +52,7 @@ class Etapas extends MY_Controller {
 	    if (!$contador){
 	    	$contador=count(Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, NULL, NULL));
 	    	//se agrega variable al cache, como es propia de cada usuario se asocia con el id del usuario
-		apcu_add('contador_tram_pend'.UsuarioSesion::usuario()->id,$contador,1800);
+		apcu_add('contador_tram_pend'.UsuarioSesion::usuario()->id,$contador,300);
 	    }
 	    if ($contador > 0)
 		//obtener del cache solo los tramites de la primera paginacion
@@ -62,7 +62,7 @@ class Etapas extends MY_Controller {
             		$rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, $inicio, $limite);
        			//guardar en cache solo los tramites de la primera paginacion, como es propio de cada usuairo se asocia con el id del usuario
 			if (!$inicio);
-				apcu_add('rowetapas'.UsuarioSesion::usuario()->id,$rowetapas,1800);
+				apcu_add('rowetapas'.UsuarioSesion::usuario()->id,$rowetapas,300);
 		}
 	}
 	//crear objetos inbox
