@@ -73,7 +73,7 @@ class Licencias extends MY_Controller {
 		if (!$contador){
 			$contador = count(Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,null, null));
 			//se agrega la variable en el cache
-			apcu_add('contador_tram_busc',$contador,1800);
+			apcu_add('contador_tram_busc',$contador,900);
 		}
 		if($contador>0)
 			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,$inicio, $limite);	
