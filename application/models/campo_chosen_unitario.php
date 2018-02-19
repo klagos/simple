@@ -14,24 +14,6 @@ class CampoChosenUnitario extends Campo {
 	$display = '<label class="control-label" for="'.$this->id.'">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
   
 	$display.= '<div class="controls">';
-        
-	$display.='<script>function setMaximumSelected(amount,element) {
-			var itemsSelected = [];
-			for (var i=0;i<element.options.length;i++) {
-				if (element.options[i].selected) itemsSelected[itemsSelected.length]=i;
-			}
-			if (itemsSelected.length>3) {
-				itemsSelected = element.itemsSelected.split(",");
-				for (i=0;i<element.options.length;i++) {
-					element.options[i].selected = false;
-				}
-				for (i=0;i<itemsSelected.length;i++) {
-					element.options[itemsSelected[i]].selected = true;
-				}			
-			} else {
-				element.itemsSelected=itemsSelected.toString();
-			}
-		}</script>';
 	
 	if ($this->extra->ws and !$this->datos){
 
@@ -66,7 +48,7 @@ class CampoChosenUnitario extends Campo {
 		$json_ws = json_decode($json_ws);
 		
 		//SELECT
-		$display.='<select size="35" style="width:270px" data-placeholder='.$placeholder.'  class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
+		$display.='<select size="35" style="width:380px" data-placeholder='.$placeholder.'  class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
 
                 foreach ($json_ws as $json){
@@ -77,7 +59,7 @@ class CampoChosenUnitario extends Campo {
                        	}                	
 		}
         }else{
-		$display.='<select size="35" style="width:270px" data-placeholder="Selecciona una opción" class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
+		$display.='<select size="35" style="width:380px" data-placeholder="Selecciona una opción" class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
 
                         if($this->datos) foreach ($this->datos as $d) {
