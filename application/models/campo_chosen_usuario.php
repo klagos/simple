@@ -10,37 +10,43 @@ class CampoChosenUsuario extends Campo {
         }else{
             $valor_default=json_decode($this->valor_default);
         }
-	
 	$display = '<label class="control-label" for="'.$this->id.'">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
   
 	$display.= '<div class="controls">';
        	
 	if ($this->extra->ws and !$this->datos){
-		$url = $this->extra->ws;
-        	$ch = curl_init($url);
-        	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        	curl_setopt($ch, CURLOPT_URL,$url);
-        	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        	        "Content-Type: application/json"
-        	    ));
-        	$result=curl_exec($ch);
-       		curl_close($ch);
-				
-		$json_ws = json_decode($result);
-		
-		$display.='<select size="35" style="width:380px" data-placeholder="Seleccione por rut o nombre"  class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
+		if (isset($this->extra->cache) and isset($this->extra->timeLiveCache)) 
+			$json_ws = apcu_fetch('json_list_users');
+		else
+			$json_ws = false;
+        	if (!$json_ws){
+			$url = $this->extra->ws;
+	        	$ch = curl_init($url);
+	        	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	        	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	        	curl_setopt($ch, CURLOPT_URL,$url);
+	        	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+	        	        "Content-Type: application/json"
+	        	    ));
+	        	$result=curl_exec($ch);
+	       		curl_close($ch);
+			$json_ws = json_decode($result);
+			if (isset($this->extra->cache) and isset($this->extra->timeLiveCache))
+				apcu_add('json_list_users',$json_ws,60*$this->extra->timeLiveCache);
+		}
+
+		$display.='<select size="35" style="width:380px" data-placeholder="Selecciona por rut o nombre"  class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'disabled' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
                 if ($json_ws)
 		foreach ($json_ws as $json){
 			if($dato){
-        	               	$display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+        	               	$display.='<option value="' .$json->lastName."/".$json->name.'_'.$json->rut.'_'.$json->location .(isset($json->day)?'_'.$json->day:'').(isset($json->halfDay)?'_'.$json->halfDay:'').(isset($json->takenDays)?'_'.$json->takenDays:'').(isset($json->pendingDays)?'_'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'_'.$json->pendingHalfDays:''). (isset($json->costCenter)?'_'. $json->costCenter :''). (isset($json->service)? '_'.$json->service : '').(isset($json->email)?'_'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'_'.$json->rut.'_'.$json->location.(isset($json->day)?'_'.$json->day:'').(isset($json->halfDay)?'_'.$json->halfDay:'').(isset($json->takenDays)?'_'.$json->takenDays:'').(isset($json->pendingDays)?'_'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'_'.$json->pendingHalfDays:''). (isset($json->costCenter)?'_'. $json->costCenter :''). (isset($json->service)? '_'.$json->service : '').(isset($json->email)?'_'.$json->email:'')  == $dato->valor ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                        	}else{
-                        $display.='<option value="' .$json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:''). '"'.($json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location.(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'') == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
+				$display.='<option value="' .$json->lastName."/".$json->name.'_'.$json->rut.'_'.$json->location .(isset($json->day)?'_'.$json->day:'').(isset($json->halfDay)?'_'.$json->halfDay:'').(isset($json->takenDays)?'_'.$json->takenDays:'').(isset($json->pendingDays)?'_'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'_'.$json->pendingHalfDays:''). (isset($json->costCenter)?'_'. $json->costCenter :''). (isset($json->service)? '_'.$json->service : '').(isset($json->email)?'_'.$json->email:'')  .'"'.($json->lastName."/".$json->name.'_'.$json->rut.'_'.$json->location.(isset($json->day)?'_'.$json->day:'').(isset($json->halfDay)?'_'.$json->halfDay:'').(isset($json->takenDays)?'_'.$json->takenDays:'').(isset($json->pendingDays)?'_'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'_'.$json->pendingHalfDays:''). (isset($json->costCenter)?'_'. $json->costCenter :''). (isset($json->service)? '_'.$json->service : '').(isset($json->email)?'_'.$json->email:'')  == $valor_default ? 'selected' : ' ') .'>'.explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut.'</option>';
                        	}                	
 		}
         }else{
-		$display.='<select size="35" style="width:270px" data-placeholder="Selecciona por rut o nombre" class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
+		$display.='<select size="35" style="width:380px" data-placeholder="Selecciona por rut o nombre" class="chosen" id= "'.$this->id.'"  name="'.$this->nombre.'" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="'.$modo.'" >';
                 $display.='<option value="null"> </option>';
 
                         if($this->datos) foreach ($this->datos as $d) {
@@ -87,7 +93,21 @@ class CampoChosenUsuario extends Campo {
 }
                 </pre>
                 </div>';
-
+	$html.='<label id="cache" class="checkbox"><input type="checkbox" name="extra[cache]" value="1" '.(isset($this->extra->cache)?"checked":"").' /> Leer del caché</label>';
+	
+	$html .= '<script> $("#cache :checkbox").change(function() {
+			        if (!$(this).attr("checked")){
+					document.getElementById("label_time").style.display = "none";
+					document.getElementById("input_time").style.display = "none";
+				} else {
+					document.getElementById("label_time").style.display = "block";
+                                        document.getElementById("input_time").style.display = "block";
+				}
+			   });  
+		</script>
+		
+		<label id = "label_time">Tiempo (en minutos) que permanecerán los datos cargados del ws en cache </label>';
+	$html.='<input id="input_time" type="text" name="extra[timeLiveCache]" placeholder="Tiempo en minutos" value="'.(isset($this->extra->timeLiveCache)?$this->extra->timeLiveCache:null).'" />';
         return $html;
     }
     
