@@ -11,11 +11,11 @@ class Admindays extends MY_Controller {
 
 public function consultar(){
                 
-	$json_ws = apcu_fetch('json_admin_days');
+	$json_ws = apcu_fetch('json_list_users');
         if (!$json_ws){
                 //Obtener data de usuarios
                 $url = urlapi . "users/list/small/admindays";
-                $ch = curl_init($url);
+	        $ch = curl_init($url);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_URL,$url);
@@ -26,10 +26,10 @@ public function consultar(){
                 curl_close($ch);
 
                 $json_ws = json_decode($result);
-                apcu_add('json_admin_days',$json_ws,60);
+                apcu_add('json_list_users',$json_ws,60);
         }
 	
-	$data['json_admin_days'] = $json_ws;
+	$data['json_list_users'] = $json_ws;
 	$data['procesos']=Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),'nombre','asc');
         $data['sidebar']='consultar_admin_days';
         $data['content'] = 'admindays/consultar';
