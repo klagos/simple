@@ -89,6 +89,7 @@
                                 $nparticipados=count(Doctrine::getTable('Tramite')->findParticipadosALL(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio()));
 				$revisarLicencia=Doctrine::getTable('Proceso')->canRevisarLicencia(UsuarioSesion::usuario()->id);
 				$descargarDocumentosEstudio=Doctrine::getTable('Proceso')->canDesargarDocEstudio(UsuarioSesion::usuario()->id);
+				$descargarAvanceEstudio=Doctrine::getTable('Proceso')->canDescargarAvanceEstudio(UsuarioSesion::usuario()->id);
 				$revisarDiasAdmin=Doctrine::getTable('Proceso')->canRevisarDiasAdmin(UsuarioSesion::usuario()->id);
                                 ?>
                                 <li class="<?= isset($sidebar) && $sidebar == 'inbox' ? 'active' : '' ?>"><a href="<?= site_url('etapas/inbox') ?>">Bandeja de Entrada (<?= $npendientes ?>)</a></li>
@@ -97,7 +98,8 @@
                              <?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia' ? 'active' : '' ?>"><a href="<?= site_url('licencias/buscador') ?>">Buscar Licencias</a></li><?php endif ?>
 			     <?php if($revisarDiasAdmin): ?><li class="<?= isset($sidebar) && $sidebar == 'consultar_admin_days' ? 'active' : '' ?>"><a href="<?= site_url('admindays/consultar') ?>">Consulta Días Administrativos</a></li><?php endif ?>
 			     <?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_pago' ? 'active' : '' ?>"><a href="<?= site_url('licencias/pago') ?>">Pago Licencias</a></li><?php endif ?>
-			     <?php if($descargarDocumentosEstudio): ?><li class="<?= isset($sidebar) && $sidebar == 'documentos_estudio' ? 'active' : '' ?>"><a href="<?= site_url('tramites/docestudio') ?>">Documentos Estudios</a></li><?php endif ?>
+			     <?php if($descargarDocumentosEstudio): ?><li class="<?= isset($sidebar) && $sidebar == 'documentos_estudio' ? 'active' : '' ?>"><a href="<?= site_url('estudios/descargardoc') ?>">Documentación Protocolo</a></li><?php endif ?>
+			    <?php if($descargarAvanceEstudio): ?><li class="<?= isset($sidebar) && $sidebar == 'avance_estudio' ? 'active' : '' ?>"><a href="<?= site_url('estudios/avance') ?>">Avance Protocolo </a></li><?php endif ?>
 			    <?php endif; ?>
                         </ul>
                     </div>
