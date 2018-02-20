@@ -69,7 +69,6 @@ class Estudios extends MY_Controller {
 			$columns[$val] = $i;
 		}
 
-		ChromePhp::log($columns);
 
 		//rellenando plantilla con No enviado's
                 for ($excel_row = 2; $excel_row < 33; $excel_row++){
@@ -90,7 +89,6 @@ class Estudios extends MY_Controller {
                         	}
 
                         	if($comite){
-					ChromePhp::log($comite, $list_ids_procesos[$idx_column]);
                                 	$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($idx_column+1, $columns[$comite], "Enviado");
                         	}
 			}
