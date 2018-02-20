@@ -14,9 +14,16 @@ require_once(FCPATH."procesos.php");
 		<option value="null"> </option>
 	<?php
                 foreach ($json_list_users as $json){
+			//seleccionar trabajador cuando se vuelve a consulta luego de pedir un dia admin
+			if ($json->rut == explode("=",$_SERVER['REQUEST_URI'])[1]){ 
         ?>                
+<option selected value = '<?php echo $json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'-'.json_encode($json->adminDayRequest):''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
+        <?php   	} else {	?>
 <option value = '<?php echo $json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .(isset($json->day)?'-'.$json->day:'').(isset($json->halfDay)?'-'.$json->halfDay:'').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'-'.json_encode($json->adminDayRequest):''). (isset($json->costCenter)?'-'. $json->costCenter :''). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
-        <?php                }   ?>
+
+	<?php		}             
+		}  
+	 ?>
         </select>
 
 <br>
@@ -135,8 +142,18 @@ document.getElementById("link_historial").style.display = "none";
 //ocultar boton para iniciar solicitud de dias administrativos
 document.getElementById("iniciarSolicitud").style.display = "none";
 
+//rellenar campos con el trabajador seleccionado
+//cuando se vuelve a consulta luego de pedir un dia admin
+if (document.getElementById(idCampoRutUser).value) {
+	cargarDatos();
+}
 //si se elige un valor, llama a la funcion
 document.getElementById(idCampoRutUser).onchange = function(){
+	cargarDatos();
+	}
+
+//funcion para rellenar campos con un trabajador seleccionado
+function cargarDatos(){
 	//se rellenan los campos con el valor elegido
 	var valorSelected =  document.getElementById(idCampoRutUser).value.split("-");
 	document.getElementById(idCampoRut).value =  valorSelected[1].concat("-".concat(valorSelected[2]));
@@ -144,9 +161,6 @@ document.getElementById(idCampoRutUser).onchange = function(){
 	document.getElementById(idCampoLocation).value =  valorSelected[3].toUpperCase();
 	document.getElementById(idCampoDiasAsig).value =  valorSelected[4];
 	document.getElementById(idCampoMedJor).value =  valorSelected[5];
-	//document.getElementById(idCampoDiasTom).value =  valorSelected[6];
-	//document.getElementById(idCampoDiasDis).value =  valorSelected[7];
-	//document.getElementById(idCampoMedJorDis).value =  valorSelected[8];
 
 	var json = '';
 
@@ -178,10 +192,25 @@ document.getElementById(idCampoRutUser).onchange = function(){
 	        	         document.getElementById("link_historial").style.display = "none";
 	        	         document.getElementById("rows").innerHTML = '';
 	        	}
-			//se rellena la tabla del historial
+
+			//lista auxiliar para ordenar los dias
+			var days = [];
+			
        			for (var i=0; i < json.history.length; i ++){
 
                 		var date = new Date(json.history[i].date);
+				var day = date.getDate();
+
+				days.push(date);
+			}
+			//ordenar los dias por la mas reciente
+			days = days.sort(function(a,b){return a<b});
+
+			//rellenar tabla historial con fechas ordenadas
+			for (var i=0; i < json.history.length; i ++){
+
+				var date = days[i];
+		
 				var day = date.getDate();
 		                if (day < 10) day = "0" + day;
 
