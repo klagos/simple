@@ -50,32 +50,35 @@ class Estudios extends MY_Controller {
 		
 		$n_comite=30;
 		$n_procesos=8;
+		$num_rows=34;
+		$num_columns = 8;
 		
 		$id_proceso_1 = proceso_acta_de_reunion_id;
 		$id_proceso_2 = proceso_carta_gantt_id;
 		$id_proceso_3 = proceso_acta_de_constitucion_id;	
 		$id_proceso_4 = proceso_registro_difusion_id;
+		$id_proceso_5 = proceso_registro_entrega_id;
+                $id_proceso_6 = proceso_reg_difusion_resultados_id;
+                $id_proceso_7 = proceso_informe_resultados;
+                $id_proceso_8 = proceso_informe_proceso;
 
 		//arreglo ordenado segun numero de columna de los procesos en el excel
-		$list_ids_procesos = array($id_proceso_3,$id_proceso_2,$id_proceso_1,$id_proceso_4);
+		$list_ids_procesos = array($id_proceso_3,$id_proceso_2,$id_proceso_1,$id_proceso_4,$id_proceso_5,$id_proceso_6,$id_proceso_7,$id_proceso_8);
 
 		$sheet = $objPHPExcel->getSheet(0);
 
 		//diccionario donde keys son el nombre de las columnas y values el numero de columna	
 		$columns = [];
-		for ($i = 2; $i < 33; $i ++){
+		for ($i = 2; $i < $num_rows + 1; $i ++){
 			$cell = $sheet->getCellByColumnAndRow(0, $i);
                 	$val  = trim($cell->getValue());
 			$columns[$val] = $i;
 		}
 
-
 		//rellenando plantilla con No enviado's
-                for ($excel_row = 2; $excel_row < 33; $excel_row++){
-                        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, "No enviado");
-                        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, "No enviado");
-                        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, "No enviado");
-                        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row,"No enviado");
+                for ($excel_row = 2; $excel_row < $num_rows + 1; $excel_row++){
+			for ($excel_column = 1; $excel_column < $num_columns + 1; $excel_column ++) 
+                        	$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($excel_column, $excel_row, "No enviado");
                 }	
 
 		for ($idx_column = 0; $idx_column < count($list_ids_procesos); $idx_column++ ){	
@@ -113,11 +116,10 @@ class Estudios extends MY_Controller {
 
         	$idProcesoDocumentacion =proceso_estudio_documentacion_id;
         	$canDescargarDocEstudio=Doctrine::getTable('Proceso')->canDesargarDocEstudio(UsuarioSesion::usuario()->id);
-        	if($canDescargarDocEstudio){
+		if($canDescargarDocEstudio){
                 	$tramiteDoc     = Doctrine::getTable('Tramite')->getDocumentosProcesoEstudios($idProcesoDocumentacion);
                 	$rowEtapas      = $tramiteDoc[0]->getEtapasTramites();
                 	$sizeEtapas     = count($rowEtapas);
-	
 			//Nombre de los documentos dentro del formulario
 			$url_formato_acta = null;
 			$url_instructivo  = null;
@@ -128,14 +130,12 @@ class Estudios extends MY_Controller {
 			$url_registro_sensibilizacion=null;
 			$url_registro_difusion=null;
 			$url_carta_gantt=null;		
-
 			$pos_formato = 0;
 			for ($i = $sizeEtapas-1  ; $i >=0 ; $i--) {
 				$etapa 	  = $rowEtapas[$i];
     				$paso = $etapa->getPasoEjecutable(0);
 				foreach ($paso->Formulario->Campos as $c){
 					$string = $c->displayConDatoSeguimiento($etapa->id, 'visualizacion');
-				
 					//Formato de acta
 					if ((strpos($string, 'formato_acta') !== false)  && !$url_formato_acta ) {
 						$s = "";
