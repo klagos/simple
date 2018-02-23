@@ -14,7 +14,7 @@ class AccionExcelLicencia extends Accion {
     public function displayForm() {	
 	$display='<label>Archivo(para más de un archivo separar por comas) </label>';
         $display.='<input type="text" name="extra[adjunto]" value="' . (isset($this->extra->adjunto) ? $this->extra->adjunto : '') . '"/>';
-        return $display;
+	return $display;
     }
 
     public function validateForm() {
@@ -79,7 +79,14 @@ class AccionExcelLicencia extends Accion {
 
 		//Datos del proceso a insertar	
 		$idProceso = proceso_subsidio_id;
-				
+
+		//contadores
+		$contLicenciasAgregadas = 0;
+		$contLicenciasNoAgregadas = 0;	
+
+		//array con numero de licencias que ya existian
+		$array_lic_rech = array();
+
 		//Read values
 		log_message('info',"Read values");
 		for ($row = 2; $row <= $highestRow; ++ $row){			
@@ -89,6 +96,7 @@ class AccionExcelLicencia extends Accion {
 			if($val!=null){
 			/*Reviso si la licencia no fue agregada con anterioridad*/
 				if(!$this->verifyLicencia($val,$idProceso)){
+					$contLicenciasAgregadas++;
 					//TRAMITE
                                 	$tramite=new Tramite();
                                 	$tramite->iniciar($idProceso);
@@ -346,10 +354,35 @@ class AccionExcelLicencia extends Accion {
 				}
 				else{
 					log_message('info',"Licencia agregada anteriormente");
+					$contLicenciasNoAgregadas++;
+
+					//guardar num de licencia 
+					$array_lic_rech[] = $val;
 				}		
 			}
 		}		
 
+	}
+	
+	//guardar cantidad de licencias agregadas
+	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("licencias_agregadas", $etapa->id);
+   	if ($dato) {
+		$dato->valor = $contLicenciasAgregadas; 
+		$dato->save();
+	}
+
+	//guardar cantidad de licencias no agregadas
+	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("licencias_rechazadas", $etapa->id);
+        if ($dato) {
+		$dato->valor = $contLicenciasNoAgregadas; 
+		$dato->save();
+	}
+
+	//guardar array de los numeros de licencias rechazadas
+	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("array_licencias_rechazadas", $etapa->id);
+	if ($dato){
+		$dato->valor =  $array_lic_rech;
+		$dato->save();
 	}	
     } 
 
