@@ -24,6 +24,16 @@ class Estudios extends MY_Controller {
 		
 	}
 	
+
+	//Funcion que genera la vista para enviar documentos estudio
+ 	public function enviardoc() {
+ 
+         $data['procesos']=Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),'nombre','asc');
+         $data['sidebar']='enviar_doc_estudio';
+         $data['content'] = 'estudios/enviar_doc_estudio';
+         $data['title'] = 'Enviar documentos estudio';
+         $this->load->view('template', $data);
+     }	
 	   //Funcion que genera la vista para descargar el documento de avance
         public function generar(){
                 //Verificamos que el usuario ya se haya logeado 
