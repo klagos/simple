@@ -1,4 +1,6 @@
 <?php
+require_once(FCPATH."procesos.php");
+
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -46,24 +48,9 @@ class Etapas extends MY_Controller {
             $matches = array_keys($result['matches']); 
             $rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, $matches, $buscar, $inicio, $limite);
         }else{
-	    //se obtiene variable del cache
-	    $contador = apcu_fetch('contador_tram_pend'.UsuarioSesion::usuario()->id);
-	    //si no esta en el cache	
-	    if (!$contador){
-	    	$contador=count(Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, NULL, NULL));
-	    	//se agrega variable al cache, como es propia de cada usuario se asocia con el id del usuario
-		apcu_add('contador_tram_pend'.UsuarioSesion::usuario()->id,$contador,300);
-	    }
+	    $contador=count(Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, NULL, NULL));
 	    if ($contador > 0)
-		//obtener del cache solo los tramites de la primera paginacion
-		if (!$inicio) 
-			$rowetapas = apcu_fetch('rowetapas'.UsuarioSesion::usuario()->id);
-		if (!$rowetapas){
-            		$rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, $inicio, $limite);
-       			//guardar en cache solo los tramites de la primera paginacion, como es propio de cada usuairo se asocia con el id del usuario
-			if (!$inicio);
-				apcu_add('rowetapas'.UsuarioSesion::usuario()->id,$rowetapas,300);
-		}
+            	$rowetapas=Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),$orderby,$direction, "0", $buscar, $inicio, $limite);
 	}
 	//crear objetos inbox
 	foreach ($rowetapas as $e){
@@ -235,13 +222,15 @@ class Etapas extends MY_Controller {
             redirect('etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables())-1));
         }else{
             $etapa->iniciarPaso($paso);
-
-            $data['secuencia'] = $secuencia;
+	    //diccionario para mapear el id del proceso con su nombre del sidebar		
+	    $dic = array(proceso_dias_admin_id=>"iniciar_admin_days",proceso_carga_masiva_id=>"carga_masiva",proceso_subsidio_id=>"agregar_licencia",proceso_estudio_documentacion_id=>"documentacion_estudio",proceso_carta_gantt_id=>"carta_gantt",proceso_acta_de_constitucion_id=>"acta_constitucion",proceso_acta_de_reunion_id=>"acta_reunion",proceso_registro_difusion_id,"registro_difusion");
+            
+	    $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
             $data['paso'] = $paso;
             $data['qs'] = $this->input->server('QUERY_STRING');
-
-            $data['sidebar'] = UsuarioSesion::usuario()->registrado ? 'inbox' : 'disponibles';
+	    $sidebar = $dic[$etapa->Tramite->proceso_id];
+            $data['sidebar'] = UsuarioSesion::usuario()->registrado ? $sidebar : 'disponibles';
             $data['content'] = 'etapas/ejecutar';
             $data['title'] = $etapa->Tarea->nombre;
             $template = $this->input->get('iframe') ? 'template_iframe' : 'template';
