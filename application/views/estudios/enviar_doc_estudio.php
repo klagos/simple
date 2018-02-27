@@ -1,4 +1,4 @@
-<h2>Solicitud de Documentos</h2>
+<h2>Documentos de Estudio</h2>
 
 <?php if (count($procesos) > 0): ?>
 
