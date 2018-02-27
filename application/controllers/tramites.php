@@ -134,6 +134,7 @@ class Tramites extends MY_Controller {
         $this->load->view('template', $data);
     }
 
+    //Funcion que genera la vista para enviar documentos estudio
     public function enviardoc() {
 
         $data['procesos']=Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),'nombre','asc');
