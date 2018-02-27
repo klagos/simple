@@ -147,12 +147,14 @@
         </div>
 
 <script>
+//funcion para desplegar menus
 function Slide(ids, speed = "fast") {
 	for (var i=0; i < ids.length; i++)
         	$("#"+ids[i]).slideToggle(speed);
         return false;
 }
 
+//funcion que se usara para alinear los iconos. Calcula ordenes de magnitud de un numero positivo o 0
 function magnitude_order(n){
 	if (n == 0) //logaritmo indefinido
 		return 1;
@@ -167,8 +169,10 @@ var diff = magnitude_order(npendientes)-magnitude_order(nparticipados);
 
 var cont_menu = "<?php echo $cont_menu?>";
 
+//inicialmente, mi perfil no estará desplegado
 Slide(["Perfil1","Perfil2","Perfil3"],0);
 
+//alinear íconos de bandeja de entrada con historial (sin que la cantidad de dígitos de los números corran la alineación)
 if (diff < 0){
 	document.getElementById("span-inbox").style = "font-size:13px;top:3px;left:" + (5 + -7.5*diff) + "px";
 	if (document.getElementById("span-sin_asignar") != null) 
@@ -179,10 +183,12 @@ if (diff < 0){
 		document.getElementById("span-sin_asignar").style = "font-size:13px;top:3px;left:" + (60 + 7.5*diff - 7.5*(magnitude_order(nsinasignar)-1)) + "px";
 }
 
+//si hay más de 3 menús, ninguno estará desplegado
 if (cont_menu > 3)
 	Slide(["Licencia1","Licencia2","Licencia3","Licencia4","DiasAdmin1","DiasAdmin2","Estudio1","Estudio2","Doc1"],0);
 
 </script>
+
         <footer>
             <div class="area1">
                 <div class="container">
