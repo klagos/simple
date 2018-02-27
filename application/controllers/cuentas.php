@@ -18,7 +18,7 @@ class Cuentas extends MY_Controller {
     public function editar() {
         $data['usuario']=UsuarioSesion::usuario();
         $data['redirect']=$this->session->flashdata('redirect');
-        
+       	$data['sidebar']='mi_cuenta'; 
         $data['content'] = 'cuenta/editar';
         $data['title'] = 'Edita tu información';
         $this->load->view('template', $data);
@@ -60,6 +60,7 @@ class Cuentas extends MY_Controller {
     public function editar_password() {
         $data['usuario']=UsuarioSesion::usuario();
         $data['redirect']=$this->input->server('HTTP_REFERER');
+	$data['sidebar']='editar_pass';
         $data['content'] = 'cuenta/editar_password';
         $data['title'] = 'Edita tu información';
         $this->load->view('template', $data);
