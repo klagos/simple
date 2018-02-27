@@ -178,11 +178,13 @@ Slide(["Perfil1","Perfil2","Perfil3"],0);
 
 //alinear íconos de bandeja de entrada con historial (sin que la cantidad de dígitos de los números corran la alineación)
 if (diff < 0){
-	document.getElementById("span-inbox").style = "font-size:13px;top:3px;left:" + (5 + -7.5*diff) + "px";
+	if (document.getElementById("span-inbox") != null)
+		document.getElementById("span-inbox").style = "font-size:13px;top:3px;left:" + (5 + -7.5*diff) + "px";
 	if (document.getElementById("span-sin_asignar") != null) 
 		document.getElementById("span-sin_asignar").style = "font-size:13px;top:3px;left:" + (60 + -7.5*diff - 7.5*(magnitude_order(nsinasignar)-1)) + "px";
 } else {
-	document.getElementById("span-historial").style = "font-size:13px;top:3px;left:" + (1 + 7.5*diff) + "px";
+	if (document.getElementById("span-historial") != null)
+		document.getElementById("span-historial").style = "font-size:13px;top:3px;left:" + (1 + 7.5*diff) + "px";
 	if (document.getElementById("span-sin_asignar") != null)
 		document.getElementById("span-sin_asignar").style = "font-size:13px;top:3px;left:" + (60 + 7.5*diff - 7.5*(magnitude_order(nsinasignar)-1)) + "px";
 }

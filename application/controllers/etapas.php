@@ -222,14 +222,20 @@ class Etapas extends MY_Controller {
             redirect('etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables())-1));
         }else{
             $etapa->iniciarPaso($paso);
-	    //diccionario para mapear el id del proceso con su nombre del sidebar		
-	    $dic = array(proceso_dias_admin_id=>"iniciar_admin_days",proceso_carga_masiva_id=>"carga_masiva",proceso_subsidio_id=>"agregar_licencia",proceso_estudio_documentacion_id=>"documentacion_estudio",proceso_carta_gantt_id=>"carta_gantt",proceso_acta_de_constitucion_id=>"acta_constitucion",proceso_acta_de_reunion_id=>"acta_reunion",proceso_registro_difusion_id,"registro_difusion");
+	    //diccionario para mapear el id del proceso con su nombre del sidebar	
+	    $keys_dic = explode('-',keys_dic_procesos_sol_doc);
+            $values_dic = explode('-',values_dic_procesos_sol_doc);	
+	    $sidebar = '';
+
+	    for ($i = 0; $i < count($keys_dic); $i++){
+	    	if ($keys_dic[$i] == $etapa->Tramite->proceso_id)
+			$sidebar = $values_dic[$i];
+	    }
             
 	    $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
             $data['paso'] = $paso;
             $data['qs'] = $this->input->server('QUERY_STRING');
-	    $sidebar = $dic[$etapa->Tramite->proceso_id];
             $data['sidebar'] = UsuarioSesion::usuario()->registrado ? $sidebar : 'disponibles';
             $data['content'] = 'etapas/ejecutar';
             $data['title'] = $etapa->Tarea->nombre;
