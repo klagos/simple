@@ -156,5 +156,5 @@ function descargarSeleccionados() {
 <?php endif; ?>
  <p><?= $links ?></p>
 <?php else: ?>
-<p>No hay trámites pendientes en su bandeja de entrada.</p>
+<p>No hay procesos pendientes en su bandeja de entrada.</p>
 <?php endif; ?>

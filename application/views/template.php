@@ -84,9 +84,13 @@
     <div class="container">
 	<div class="row">
 	    <div class="span3">
-		    <?php if (UsuarioSesion::usuario()->registrado): ?>
-			<?php
+		    <?php 
+			$npendientes=0;
+			$nsinasignar=0;
+			$nparticipados=0;
 			$cont_menu=0;
+			if (UsuarioSesion::usuario()->registrado): ?>
+			<?php
 			$npendientes=count(Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio()));
 			$nsinasignar=Doctrine::getTable('Etapa')->findSinAsignar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
 			$nparticipados=count(Doctrine::getTable('Tramite')->findParticipadosALL(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio()));
