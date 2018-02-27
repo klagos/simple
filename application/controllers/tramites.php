@@ -134,6 +134,15 @@ class Tramites extends MY_Controller {
         $this->load->view('template', $data);
     }
 
+    public function enviardoc() {
+
+        $data['procesos']=Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),'nombre','asc');
+        $data['sidebar']='enviar_doc';
+        $data['content'] = 'tramites/enviar_doc';
+        $data['title'] = 'Enviar documentos';
+        $this->load->view('template', $data);
+    }
+
     public function iniciar($proceso_id, $rut = NULL) {
         $proceso=Doctrine::getTable('Proceso')->find($proceso_id);
         //echo UsuarioSesion::usuario()->id;
