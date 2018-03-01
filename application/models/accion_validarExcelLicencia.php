@@ -15,6 +15,7 @@ class AccionValidarExcelLicencia extends Accion {
 	$display='<label>Archivo(para más de un archivo separar por comas) </label>';
         $display.='<input type="text" name="extra[adjunto]" value="' . (isset($this->extra->adjunto) ? $this->extra->adjunto : '') . '"/>';
 	$display.='<label>(Para capturar la validación, debe crear una variable llamada is_excel_valid que se ejecute antes de la acción)</label>';
+	$display.='<label>(Para capturar el mensaje de error, debe crear una variable llamada error_message que se ejecute antes de la acción)</label>';
 	return $display;
     }
 

@@ -14,6 +14,16 @@ class AccionEditarLicencia extends Accion {
     public function displayForm() {	
 	$display='<label>Archivo(para más de un archivo separar por comas) </label>';
         $display.='<input type="text" name="extra[adjunto]" value="' . (isset($this->extra->adjunto) ? $this->extra->adjunto : '') . '"/>';
+	$display.='<div class="help-block">
+                Puede capturar diversos datos en variables <a href="#" onclick="$(this).siblings(\'pre\').show()">Ver ayuda</a><br />
+                <pre style="display:none">
+                Para capturar la cantidad de licencias editadas, debe crear una variable llamada licencias_editadas que se ejecute antes de la acción.
+		Para capturar la cantidad de licencias que no cambiaron, debe crear una variable llamada licencias_no_editadas que se ejecute antes de la acción.
+		Para capturar la cantidad de licencias que no se encontraban en el sistema, debe crear una variable llamada licencias_no_existentes que se ejecute antes de la acción.
+		Para capturar los números de las licencias que no se encontraban en el sistema, debe crear una variable llamada array_licencias_no_existentes que se ejecute antes de la acción.
+		Para capturar los campos a reemplazar, debe crear una variable llamada replace que sea una concatenación de 1s y 0s que representen si se capturó el campo o no.
+		</pre>
+                </div>';
 	return $display;
     }
 
@@ -238,14 +248,14 @@ class AccionEditarLicencia extends Accion {
         }
 
 	//guardar cantidad de licencias que no estan en el sistema
-	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("licencias_existentes", $etapa->id);
+	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("licencias_no_existentes", $etapa->id);
         if ($dato) {
 		$dato->valor = $contLicenciasNoExistentes; 
 		$dato->save();
 	}
 
 	//guardar array de los numeros de licencias que no estan en el sistema
-	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("array_licencias_existentes", $etapa->id);
+	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("array_licencias_no_existentes", $etapa->id);
 	if ($dato){
 		$dato->valor =  $array_lic_rech;
 		$dato->save();

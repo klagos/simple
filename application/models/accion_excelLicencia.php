@@ -14,6 +14,14 @@ class AccionExcelLicencia extends Accion {
     public function displayForm() {	
 	$display='<label>Archivo(para más de un archivo separar por comas) </label>';
         $display.='<input type="text" name="extra[adjunto]" value="' . (isset($this->extra->adjunto) ? $this->extra->adjunto : '') . '"/>';
+	$display.='<div class="help-block">
+                Puede capturar diversos datos en variables <a href="#" onclick="$(this).siblings(\'pre\').show()">Ver ayuda</a><br />
+                <pre style="display:none">
+                Para capturar la cantidad de licencias agregadas, debe crear una variable llamada licencias_agregadas que se ejecute antes de la acción.
+                Para capturar la cantidad de licencias que no se agregaron, debe crear una variable llamada licencias_rechazadas que se ejecute antes de la acción.
+                Para capturar los números de las licencias que no se agregaron, debe crear una variable llamada array_licencias_rechazadas que se ejecute antes de la acción.
+                </pre>
+                </div>';
 	return $display;
     }
 
