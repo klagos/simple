@@ -101,7 +101,8 @@ class Licencias extends MY_Controller {
 
 				//obtener estado de licencia
 				$estado="";
-				for ($i = count($tr["Etapas"]); $i > 0; $i--){
+				ChromePhp::log($tr);
+				for ($i = count($tr["Etapas"]) - 1; $i >= 0; $i--){
 					if (isset($tr["Etapas"][$i]["DatosSeguimiento"]))
                         	        	foreach($tr["Etapas"][$i]["DatosSeguimiento"] as $d){
 							if ($d["nombre"] == "retorno_continuidad"){
@@ -133,7 +134,7 @@ class Licencias extends MY_Controller {
                                                         	        break 2;
                                                         	}
 							}
-						 	if ($d["nombre"] == "ingreso_continuidad"){
+						 	if ($d["nombre"] == "ingreso_continuidad"){	
                                                         	if ($d["valor"] == '"avanzar"'){
                                                         	        $estado = 'Ingresada';
                                                         	        break 2;
