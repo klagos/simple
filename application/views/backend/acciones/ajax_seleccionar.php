@@ -16,6 +16,7 @@
 	    <option value="webservice">Consultar Webservice</option>
             <option value="variable">Generar Variable</option>
 	    <option value="excel_licencia">Excel Licencia</option>
+	    <option value="validar_excel_licencia">Validar Excel Licencia</option>
 	    <option value="editar_licencia">Editar Licencia</option>
 	    <option value="guardar_finiquito">Guardar Finiquito</option>
             <option value="guardar_licencia">Guardar Licencia</option>

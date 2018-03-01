@@ -22,7 +22,7 @@ class AccionEditarLicencia extends Accion {
         $CI->form_validation->set_rules('extra[adjunto]', 'adjunto', 'required');
     }
 
-    public function ejecutar(Etapa $etapa){	
+    public function ejecutar(Etapa $etapa){
 	$regla=new Regla($this->extra->adjunto);
         $filename=$regla->getExpresionParaOutput($etapa->id);
         $file=Doctrine_Query::create()
@@ -70,6 +70,7 @@ class AccionEditarLicencia extends Accion {
 		//contadores
 		$contLicenciasEditadas = 0;
 		$contLicenciasNoExistentes = 0;	
+		$contLicenciasNoEditadas = 0;
 
 		//array con numero de licencias que ya existian
 		$array_lic_rech = array();
@@ -213,7 +214,8 @@ class AccionEditarLicencia extends Accion {
 							$contLicenciasEditadas++;
 
 							$tramite = Doctrine::getTable('Tramite')->findLicencias($numLicencia,NULL,NULL,NULL, $proceso_id, NULL, NULL);
-						}
+						} else 
+							$contLicenciasNoEditadas++;
 					}
 				}		
 			}
@@ -221,21 +223,28 @@ class AccionEditarLicencia extends Accion {
 
 	}
 	
-	//guardar cantidad de licencias agregadas
+	//guardar cantidad de licencias editadas
 	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("licencias_editadas", $etapa->id);
    	if ($dato) {
 		$dato->valor = $contLicenciasEditadas; 
 		$dato->save();
 	}
 
-	//guardar cantidad de licencias no agregadas
+	//guardar cantidad de licencias que no se editaron
+        $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("licencias_no_editadas", $etapa->id);
+        if ($dato) {
+                $dato->valor = $contLicenciasNoEditadas;
+                $dato->save();
+        }
+
+	//guardar cantidad de licencias que no estan en el sistema
 	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("licencias_existentes", $etapa->id);
         if ($dato) {
 		$dato->valor = $contLicenciasNoExistentes; 
 		$dato->save();
 	}
 
-	//guardar array de los numeros de licencias rechazadas
+	//guardar array de los numeros de licencias que no estan en el sistema
 	$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("array_licencias_existentes", $etapa->id);
 	if ($dato){
 		$dato->valor =  $array_lic_rech;

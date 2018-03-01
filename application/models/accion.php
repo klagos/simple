@@ -14,6 +14,7 @@ class Accion extends Doctrine_Record {
                 'AccionEnviarCorreo'  => array('tipo' => 'enviar_correo'),
                 'AccionEnviarAdminDays'  => array('tipo' => 'enviar_admin_days'),
 		'AccionExcelLicencia'  => array('tipo' => 'excel_licencia'),
+		'AccionValidarExcelLicencia'  => array('tipo' => 'validar_excel_licencia'),
 		'AccionEditarLicencia'  => array('tipo' => 'editar_licencia'),
 		'AccionWebservice'  => array('tipo' => 'webservice'),
                 'AccionVariable'  => array('tipo' => 'variable'),
