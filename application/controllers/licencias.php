@@ -101,7 +101,6 @@ class Licencias extends MY_Controller {
 
 				//obtener estado de licencia
 				$estado="";
-				ChromePhp::log($tr);
 				for ($i = count($tr["Etapas"]) - 1; $i >= 0; $i--){
 					if (isset($tr["Etapas"][$i]["DatosSeguimiento"]))
                         	        	foreach($tr["Etapas"][$i]["DatosSeguimiento"] as $d){
