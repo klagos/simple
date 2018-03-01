@@ -98,26 +98,54 @@ class Licencias extends MY_Controller {
                         	                if ($d["nombre"] == "fecha_termino_licencia")
                         	                        $licencia->fecha_termino_licencia = substr($d["valor"],1,-1);
                         	        }
-				if (isset($tr["Etapas"][1]["DatosSeguimiento"]))
-                        	        foreach($tr["Etapas"][1]["DatosSeguimiento"] as $d){
-						if ($d["nombre"] == "fecha_pago_subsidio")
-							if ($d["valor"]){
-								$estado = 'Pagada';
-								break;
+
+				//obtener estado de licencia
+				$estado="";
+				for ($i = count($tr["Etapas"]); $i > 0; $i--){
+					if (isset($tr["Etapas"][$i]["DatosSeguimiento"]))
+                        	        	foreach($tr["Etapas"][$i]["DatosSeguimiento"] as $d){
+							if ($d["nombre"] == "retorno_continuidad"){
+								if ($d["valor"] == '"devolver"'){
+									$estado = 'Proceso de pago';
+									break 2;
+								}
+								if ($d["valor"] == '"mantener"'){
+                                                	                $estado = 'Mantener en retorno';
+                                                	                break 2;
+                                                	        }
+								if ($d["valor"] == '"cerrar"'){
+                                                	                $estado = 'Finalizada';
+                                                	                break 2;
+                                                	        }
 							}						
-				}
-				if (isset($tr["Etapas"][2]["DatosSeguimiento"]))
-                        	        foreach($tr["Etapas"][2]["DatosSeguimiento"] as $d){
-						if ($d["nombre"] == "fecha_retorno_subsidio")
-                        	                        if ($d["valor"]){
-                        	                                $estado = 'Retornada';
-								break;
+					
+							if ($d["nombre"] == "pago_continuidad"){
+                                                        	if ($d["valor"] == '"mantener"'){
+                                                                	$estado = 'Mantener en pago';
+                                                                	break 2;
+                                                        	}
+                                                        	if ($d["valor"] == '"avanzar"'){
+                                                        	        $estado = 'Pagada';
+                                                        	        break 2;
+                                                        	}
+                                                        	if ($d["valor"] == '"cerrar"'){
+                                                        	        $estado = 'Finalizada';
+                                                        	        break 2;
+                                                        	}
 							}
+						 	if ($d["nombre"] == "ingreso_continuidad"){
+                                                        	if ($d["valor"] == '"avanzar"'){
+                                                        	        $estado = 'Ingresada';
+                                                        	        break 2;
+                                                        	}
+                                                        	if ($d["valor"] == '"cerrar"'){
+                                                        	        $estado = 'Finalizada';
+                                                        	        break 2;
+                                                        	}
+							}
+						}
 				}
-				if (isset($tr["Etapas"][2]["pendiente"]))
-					if (!$tr["Etapas"][2]["pendiente"])
-						$estado = 'Finalizada';
-				
+	
 				$tareas_completadas = 0;
 				$etapas_array = array();
                         

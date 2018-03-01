@@ -245,6 +245,67 @@ class Etapas extends MY_Controller {
         }
     }
 
+	public function ejecutar_licencia($etapa_id, $rut, $secuencia = 0) {
+        $iframe = $this->input->get('iframe');
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        if(!$etapa){
+            show_404();
+        }
+        if ($etapa->usuario_id != UsuarioSesion::usuario()->id) {
+            if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('autenticacion/login');
+            }
+            echo 'Usuario no tiene permisos para ejecutar esta etapa.';
+            exit;
+        }
+        if (!$etapa->pendiente) {
+            echo 'Esta etapa ya fue completada';
+            exit;
+        }
+        if (!$etapa->Tarea->activa()) {
+            echo 'Esta etapa no se encuentra activa';
+            exit;
+        }
+        if ($etapa->vencida()) {
+            echo 'Esta etapa se encuentra vencida';
+            exit;
+        }
+
+        $qs = $this->input->server('QUERY_STRING');
+        $paso = $etapa->getPasoEjecutable($secuencia);
+        if (!$paso) {
+            redirect('etapas/ejecutar_fin/' . $etapa->id . ($qs ? '?' . $qs : ''));
+        } else if (($etapa->Tarea->final || !$etapa->Tarea->paso_confirmacion) && $paso->getReadonly() && end($etapa->getPasosEjecutables()) == $paso) { //No se requiere mas input
+            $etapa->iniciarPaso($paso);
+            $etapa->finalizarPaso($paso);
+            $etapa->avanzar();
+            redirect('etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables())-1));
+        }else{
+            $etapa->iniciarPaso($paso);
+            //diccionario para mapear el id del proceso con su nombre del sidebar
+            $keys_dic = explode('-',keys_dic_procesos_sol_doc);
+            $values_dic = explode('-',values_dic_procesos_sol_doc);
+            $sidebar = '';
+
+            for ($i = 0; $i < count($keys_dic); $i++){
+                if ($keys_dic[$i] == $etapa->Tramite->proceso_id)
+                        $sidebar = $values_dic[$i];
+            }
+	    $data['secuencia'] = $secuencia;
+            $data['etapa'] = $etapa;
+            $data['paso'] = $paso;
+	    $data['rut'] = $rut;
+            $data['qs'] = $this->input->server('QUERY_STRING');
+            $data['sidebar'] = UsuarioSesion::usuario()->registrado ? $sidebar : 'disponibles';
+            $data['content'] = 'etapas/ejecutar';
+            $data['title'] = $etapa->Tarea->nombre;
+            $template = $this->input->get('iframe') ? 'template_iframe' : 'template';
+
+            $this->load->view('template', $data);
+        }
+    }
+
     function validate_captcha() {
         $CI = & get_instance();
         $captcha = $this->input->post('g-recaptcha-response');
@@ -256,7 +317,7 @@ class Etapas extends MY_Controller {
         }
     }
 
-    public function ejecutar_form($etapa_id, $secuencia) {
+    public function ejecutar_form($etapa_id, $secuencia, $rut = NULL) {
 
         log_message('info', 'ejecutar_form ($etapa_id [' . $etapa_id . '], $secuencia [' . $secuencia . '])');
 
@@ -331,7 +392,7 @@ class Etapas extends MY_Controller {
                 $qs = $this->input->server('QUERY_STRING');
                 $prox_paso = $etapa->getPasoEjecutable($secuencia + 1);
                 if (!$prox_paso) {
-                    $respuesta->redirect = site_url('etapas/ejecutar_fin/' . $etapa_id) . ($qs ? '?' . $qs : '');
+                    $respuesta->redirect = site_url('etapas/ejecutar_fin/' . $etapa_id) . ($rut?'/'.$rut:'').($qs ? '?' . $qs : '');
                 } else if ($etapa->Tarea->final && $prox_paso->getReadonly() && end($etapa->getPasosEjecutables()) == $prox_paso) { //Cerrado automatico    
                     $etapa->iniciarPaso($prox_paso);
                     $etapa->finalizarPaso($prox_paso);
@@ -401,9 +462,19 @@ class Etapas extends MY_Controller {
         redirect('etapas/ejecutar/'.$etapa_id);
     }	
 
+    public function asignar_ejecutar_licencia($etapa_id,$rut) {
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+	//usuario ya tiene asignada la etapa
+        if ($etapa->usuario_id != UsuarioSesion::usuario()->id ) {
+            $etapa->asignar(UsuarioSesion::usuario()->id);
+        }
+
+        redirect('etapas/ejecutar_licencia/'.$etapa_id.'/'.$rut);
+    }
 
 
-    public function ejecutar_fin($etapa_id) {
+
+    public function ejecutar_fin($etapa_id, $rut = NULL) {
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
         if ($etapa->usuario_id != UsuarioSesion::usuario()->id) {
@@ -428,7 +499,7 @@ class Etapas extends MY_Controller {
         $data['etapa'] = $etapa;
         $data['tareas_proximas'] = $etapa->getTareasProximas();
         $data['qs'] = $this->input->server('QUERY_STRING');
-
+	$data['rut'] = $rut;
         $data['sidebar'] = UsuarioSesion::usuario()->registrado ? 'inbox' : 'disponibles';
         $data['content'] = 'etapas/ejecutar_fin';
         $data['title'] = $etapa->Tarea->nombre;
@@ -437,7 +508,7 @@ class Etapas extends MY_Controller {
         $this->load->view('template', $data);
     }
 
-    public function ejecutar_fin_form($etapa_id) {
+    public function ejecutar_fin_form($etapa_id, $rut = NULL) {
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
         if ($etapa->usuario_id != UsuarioSesion::usuario()->id) {
@@ -486,7 +557,10 @@ class Etapas extends MY_Controller {
             $respuesta->redirect = site_url('etapas/ejecutar_exito');
         }
         else {
-            $respuesta->redirect = site_url();
+	    if ($rut)
+		$respuesta->redirect = site_url('/licencias/buscar?licencia_numero=&licencia_estado=&licencia_tipo=&trabajador_rut='.$rut);
+	    else
+            	$respuesta->redirect = site_url();
         }
         echo json_encode($respuesta);
     }

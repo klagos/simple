@@ -1,4 +1,4 @@
-<form method="POST" class="ajaxForm dynaForm" action="<?= site_url('etapas/ejecutar_fin_form/' . $etapa->id.($qs?'?'.$qs:'')) ?>">
+<form method="POST" class="ajaxForm dynaForm" action="<?= site_url('etapas/ejecutar_fin_form/' . $etapa->id.($rut?'/'.$rut:'').($qs?'?'.$qs:'')) ?>">
     <fieldset>
         <div class="validacion"></div>
         <legend>Paso final</legend>
@@ -24,7 +24,11 @@
 
 
         <div class="form-actions">
+	<?php if (!$rut){ ?>
             <a class="btn" href="<?= site_url('etapas/ejecutar/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1).($qs?'?'.$qs:'')) ?>"><i class="icon-chevron-left"></i> Volver</a>
+	<?php } else { ?>
+	    <a class="btn" href="<?= site_url('etapas/ejecutar_licencia/' . $etapa->id . '/' . $rut . '/'. (count($etapa->getPasosEjecutables()) - 1).($qs?'?'.$qs:'')) ?>"><i class="icon-chevron-left"></i> Volver</a>
+	<?php } ?>
             <?php if($tareas_proximas->estado!='sincontinuacion'):?><button class="btn btn-success" type="submit"><i class="icon-ok icon-white"></i> Finalizar</button><?php endif?>
         </div>
     </fieldset>
