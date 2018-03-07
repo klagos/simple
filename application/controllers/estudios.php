@@ -112,9 +112,71 @@ class Estudios extends MY_Controller {
                 $object_writer->save('php://output');
         }
 
+	        //Funcion que muestra los documentos del estudio psicolaboral   
+        public function doc1(){
+		$this->load->helper('download');
+		$file = 'uploads/datos/formatos_acta76.doc';
+		$data = file_get_contents ( $file );
+		force_download ( $file, $data );	
+	}
+	
+	 public function doc2(){
+                $this->load->helper('download');
+                $file = 'uploads/datos/instructivo_aplicacion71.pdf';
+                $data = file_get_contents ( $file );
+                force_download ( $file, $data );
+        }
+	
+	public function doc3(){
+                $this->load->helper('download');
+                $file = 'uploads/datos/instructivoparatrabajadores97.pdf';
+                $data = file_get_contents ( $file );
+                force_download ( $file, $data );
+        }
 
+	public function doc4(){
+                $this->load->helper('download');
+                $file = 'uploads/datos/registro_entrega_codigos63.doc';
+                $data = file_get_contents ( $file );
+                force_download ( $file, $data );
+        }
 
+	public function doc5(){
+                $this->load->helper('download');
+                $file = 'uploads/datos/tallerinformativotrabajadoresmail.pdf';
+                $data = file_get_contents ( $file );
+                force_download ( $file, $data );
+        }
 
+	public function doc6(){
+                $this->load->helper('download');
+                $file = 'uploads/datos/tallerinformativotrabajadorespresencial14.pptx';
+                $data = file_get_contents ( $file );
+                force_download ( $file, $data );
+        }
+	
+	public function doc7(){
+                $this->load->helper('download');
+                $file = 'uploads/datos/registrodecapacitacion37.pdf';
+                $data = file_get_contents ( $file );
+                force_download ( $file, $data );
+        }
+
+	public function doc8(){
+                $this->load->helper('download');
+                $file = 'uploads/datos/registrodecapacitacion97.pdf';
+                $data = file_get_contents ( $file );
+                force_download ( $file, $data );
+        }
+
+	 public function doc9(){
+                $this->load->helper('download');
+                $file = 'uploads/datos/ganttfrpsicosocial2016.xlsx';
+                $data = file_get_contents ( $file );
+                force_download ( $file, $data );
+        }
+
+	
   	//Funcion que muestra los documentos del estudio psicolaboral	
 	public function descargardoc(){
 		//Verificamos que el usuario ya se haya logeado 
@@ -149,63 +211,64 @@ class Estudios extends MY_Controller {
 					if ((strpos($string, 'formato_acta') !== false)  && !$url_formato_acta ) {
 						$s = "";
 	                                	preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-						$url_formato_acta= $s['href'][0];
+						$url_formato_acta= str_replace("amp;","", $s['href'][0]);
+						ChromePhp::log($url_formato_acta);	
 					}
 
 					//Instructivo_aplicacion
 					if ((strpos($string, 'instructivo_aplicacion') !== false)  && !$url_instructivo) {
                                 	        $s = "";
                                 	        preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-                                	        $url_instructivo= $s['href'][0];
+                                	        $url_instructivo= str_replace("amp;","", $s['href'][0]);
 					}
 
 					//Instructivo para trabajadores
                                 	if ((strpos($string, 'instructivo_trabajadores') !== false)  && !$url_instructivo_trabajadores) {
                                 	        $s = "";
                                 	        preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-                                        	$url_instructivo_trabajadores= $s['href'][0];
+                                        	$url_instructivo_trabajadores= str_replace("amp;","", $s['href'][0]);
                                 	}
 				
 					//Registro entrega de codigos
                                 	if ((strpos($string, 'registro_entrega_codigos') !== false)  && !$url_registro_entrega_codigos){
                                         	$s = "";
                                         	preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-                                        	$url_registro_entrega_codigos= $s['href'][0];
+                                        	$url_registro_entrega_codigos= str_replace("amp;","", $s['href'][0]);
                                 	}
 				
 					//Taller informativo trabajadores
                                 	if ((strpos($string, 'taller_trabajadores_mail') !== false)  && !$url_taller_trabajadores_mail) {
                                         	$s = "";
                                         	preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-                                        	$url_taller_trabajadores_mail= $s['href'][0];
+                                        	$url_taller_trabajadores_mail= str_replace("amp;","", $s['href'][0]);
                                 	}
 
 					//Taller informativo trabajadores
                                 	if ((strpos($string, 'taller_trabajadores_mail') !== false)  && !$url_taller_trabajadores_presencial) {
                                 	        $s = "";
                                 	        preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-                                	        $url_taller_trabajadores_presencial= $s['href'][0];
+                                	        $url_taller_trabajadores_presencial= str_replace("amp;","", $s['href'][0]);
                                 	}
 
 					//Registro de sensibilizacion
 					if ((strpos($string, 'registro_sensibilizacion') !== false)  && !$url_registro_sensibilizacion) {
                                                 $s = "";
                                                 preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-                                                $url_registro_sensibilizacion= $s['href'][0];
+                                                $url_registro_sensibilizacion= str_replace("amp;","", $s['href'][0]);
                                         }
 
 					//Registro de difusion
                                         if ((strpos($string, 'registro_difusion') !== false)  && !$url_registro_difusion) {
                                                 $s = "";
                                                 preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-                                                $url_registro_difusion= $s['href'][0];
+                                                $url_registro_difusion= str_replace("amp;","", $s['href'][0]);
                                         }
 
 					//Carta Gantt
                                         if ((strpos($string, 'carta_gantt') !== false)  && !$url_carta_gantt) {
                                                 $s = "";
                                                 preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $s);
-                                                $url_carta_gantt= $s['href'][0];
+                                                $url_carta_gantt= str_replace("amp;","", $s['href'][0]);
                                         }
 
 				}

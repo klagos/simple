@@ -14,7 +14,7 @@ php_value upload_max_filesize 100M
 ## EXPIRES HEADER CACHING ##
 <IfModule mod_expires.c>
     ExpiresActive On
-    ExpiresDefault "access plus 1 day"
+   # ExpiresDefault "access plus 1 day"
     ExpiresByType text/css "access plus 1 month"
     ExpiresByType image/gif "access plus 1 month"
     ExpiresByType image/png "access plus 1 month"
