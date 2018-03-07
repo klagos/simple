@@ -16,6 +16,11 @@ class Cuentas extends MY_Controller {
     }
 
     public function editar() {
+	//Verificamos que el usuario ya se haya logeado 
+	if (!UsuarioSesion::usuario()->registrado) {
+    		$this->session->set_flashdata('redirect', current_url());
+    		redirect('tramites/disponibles');
+	}
         $data['usuario']=UsuarioSesion::usuario();
         $data['redirect']=$this->session->flashdata('redirect');
        	$data['sidebar']='mi_cuenta'; 
@@ -25,6 +30,11 @@ class Cuentas extends MY_Controller {
     }
     
     public function editar_form(){
+	//Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
         $this->form_validation->set_rules('nombres','Nombre','required');
         $this->form_validation->set_rules('apellido_paterno','Apellido Paterno','required');
         $this->form_validation->set_rules('apellido_materno','Apellido Materno','required');
@@ -58,6 +68,11 @@ class Cuentas extends MY_Controller {
     }
     
     public function editar_password() {
+	//Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
         $data['usuario']=UsuarioSesion::usuario();
         $data['redirect']=$this->input->server('HTTP_REFERER');
 	$data['sidebar']='editar_pass';
@@ -67,6 +82,12 @@ class Cuentas extends MY_Controller {
     }
     
     public function editar_password_form(){
+	//Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+
         $this->form_validation->set_rules('password_old','Contraseña antigua','required|callback_check_password');
         $this->form_validation->set_rules('password_new','Contraseña nueva','required|min_length[6]');
         $this->form_validation->set_rules('password_new_confirm','Confirmar contraseña nueva','required|matches[password_new]');
@@ -89,6 +110,12 @@ class Cuentas extends MY_Controller {
     }
 
     function check_password($password){
+	//Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+
         $autorizacion=UsuarioSesion::validar_acceso(UsuarioSesion::usuario()->usuario,$this->input->post('password_old'));
         
         if($autorizacion)
@@ -100,6 +127,12 @@ class Cuentas extends MY_Controller {
     }
     
     function check_email($email) {
+	//Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+
         $usuario = Doctrine::getTable('Usuario')->findOneByEmailAndOpenId($email,0);
 
         if (!$usuario || $usuario==UsuarioSesion::usuario())

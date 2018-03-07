@@ -10,6 +10,13 @@ class Admindays extends MY_Controller {
     }
 
 public function consultar(){
+	
+	  //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+        	$this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }		
+
                 
 	$json_ws = apcu_fetch('json_list_users');
         if (!$json_ws){

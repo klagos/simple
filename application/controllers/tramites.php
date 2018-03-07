@@ -136,6 +136,12 @@ class Tramites extends MY_Controller {
 
     //Funcion que genera la vista para enviar documentos estudio
     public function enviardoc() {
+	
+	//Verificamos que el usuario ya se haya logeado 
+	if (!UsuarioSesion::usuario()->registrado) {
+    		$this->session->set_flashdata('redirect', current_url());
+    		redirect('tramites/disponibles');
+	}
 
         $data['procesos']=Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio(),'nombre','asc');
         $data['sidebar']='enviar_doc';
