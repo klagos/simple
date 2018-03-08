@@ -60,7 +60,7 @@ class Estudios extends MY_Controller {
 		$n_comite=30;
 		$n_procesos=8;
 		$num_rows=34;
-		$num_columns = 8;
+		$num_columns = 9;
 		
 		$id_proceso_1 = proceso_acta_de_reunion_id;
 		$id_proceso_2 = proceso_carta_gantt_id;
@@ -70,9 +70,11 @@ class Estudios extends MY_Controller {
                 $id_proceso_6 = proceso_reg_difusion_resultados_id;
                 $id_proceso_7 = proceso_informe_resultados;
                 $id_proceso_8 = proceso_informe_proceso;
+		$ii_proceso_9 = proceso_registro_capacitacion_comite;	
+	
 
 		//arreglo ordenado segun numero de columna de los procesos en el excel
-		$list_ids_procesos = array($id_proceso_3,$id_proceso_2,$id_proceso_1,$id_proceso_4,$id_proceso_5,$id_proceso_6,$id_proceso_7,$id_proceso_8);
+		$list_ids_procesos = array($id_proceso_3,$id_proceso_2,$id_proceso_1,$id_proceso_4,$id_proceso_5,$id_proceso_6,$id_proceso_7,$id_proceso_8,$id_proceso_9);
 
 		$sheet = $objPHPExcel->getSheet(0);
 
