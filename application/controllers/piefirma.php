@@ -10,7 +10,7 @@ class PieFirma extends MY_Controller {
     	}
 	
 	//Vista para el generador
-    	public function generar(){
+    	public function editar(){
 		//Verificamos que el usuario ya se haya logeado 
 		if (!UsuarioSesion::usuario()->registrado) {
             		$this->session->set_flashdata('redirect', current_url());
@@ -33,11 +33,20 @@ class PieFirma extends MY_Controller {
 		}
       		$data['json_list_users'] = $json_ws;		
 		$data['json_gerencias']  = $json_gerencias;	
-                $data['sidebar']='pie_firma';
-                $data['content'] = 'piefirma/generar';
+                $data['sidebar']='pie_firma_editar';
+                $data['content'] = 'piefirma/editar';
                 $this->load->view('template', $data);
 
 	}
+
+	public function generar(){
+               $data['sidebar']='pie_firma_generar';
+               $data['content'] = 'piefirma/generar';
+               $this->load->view('template', $data);
+        }
+
+
+
 	public function conectUrl($url){
 		$ch = curl_init($url);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -50,7 +59,10 @@ class PieFirma extends MY_Controller {
                 curl_close($ch);
 		return json_decode($result);
 	}
-	public function descargar(){
+
+	
+	/* UPDATE DATOS DEL USUARIO*/
+	public function update(){
                 //Verificamos que el usuario ya se haya logeado 
                 if (!UsuarioSesion::usuario()->registrado) {
                         $this->session->set_flashdata('redirect', current_url());
@@ -66,19 +78,35 @@ class PieFirma extends MY_Controller {
 		$codigo_trabajador	=($this->input->get('codigo_trabajador'))?$this->input->get('codigo_trabajador'):null;		
 		$rut_trabajador		=($this->input->get('rut_trabajador'))?$this->input->get('rut_trabajador'):null;		
 		
+		/** UPDATE USER  **/
+                //$url = "http://private-120a8-apisimpleist.apiary-mock.com/users";
+		$url  = urlapi."users/list";
+                $json = '[{"rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
+                $json=$json.'"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}]';
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                //curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
+                curl_exec($ch);
+                curl_close($ch);
+
+		$this->descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador);	
 				
-	
+	}
+	/* GENERA Y DESCARGA IMAGEN DEL USUARIO  */
+	public function descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador ){ 
+		
 		$file 	  = 'uploads/resources/piefirma/plantilla.png';
 		if(strlen($nombre_trabajador)>20)
-			$file     = 'uploads/resources/piefirma/plantilla_large.png';
-
-			
+			$file     = 'uploads/resources/piefirma/plantilla_large.png';			
 		
 		$font	  = 'uploads/resources/piefirma/calibri.ttf';
 		$font_bold= 'uploads/resources/piefirma/calibri_b.ttf';
 			
-		
-	
 		/** CREATE FILE  **/
 		if(file_exists($file)){
 			header("Content-type: image/png");
@@ -118,26 +146,9 @@ class PieFirma extends MY_Controller {
 				}
                         	imagettftext($im, $size,0,$x,$y,$color,$font_bold,$telefono);	
 			}
-			imagepng($im);
+			imagepng($im);	
 			imagedestroy($im);			
-		}
-
-		/** UPDATE USER  **/
-		$url  = urlapi."users";
-		$json = '{"rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
-		$json. '"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}';
-
-		$ch = curl_init();
-        	curl_setopt($ch, CURLOPT_URL, $url);
-       		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        	//curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        	curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-        	curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
-        	curl_exec($ch);
-       		curl_close($ch);
-		
-			
+		}			
         }
 
 }

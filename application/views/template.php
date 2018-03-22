@@ -99,6 +99,7 @@
 			$descargarAvanceEstudio=Doctrine::getTable('Proceso')->canDescargarAvanceEstudio(UsuarioSesion::usuario()->id);
 			$revisarDiasAdmin=Doctrine::getTable('Proceso')->canRevisarDiasAdmin(UsuarioSesion::usuario()->id);
 			$enviarDoc=Doctrine::getTable('Proceso')->canSolicitarDoc(UsuarioSesion::usuario()->id);
+			$pieFirma=Doctrine::getTable('Modulo')->moduloPieFirma(UsuarioSesion::usuario()->id);
 			?>
 			<ul id="sideMenu" class="nav nav-list">
 				<li class="iniciar"><a  href="#" onclick="Slide(['Inicio1','Inicio2','Inicio3'])">&nbsp;&nbsp;&nbsp;Inicio<span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-home"></a></li>
@@ -116,13 +117,20 @@
 				<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia' ? 'active' : '' ?>"><a id="Licencia4" href="<?= site_url('licencias/buscador') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Buscar&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:42px" class="pull-center hidden-xs  showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
 			     	<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_pago' ? 'active' : '' ?>"><a id="Licencia5" href="<?= site_url('licencias/pago') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pago&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:52px" class="pull-center hidden-xs showopacity glyphicon glyphicon-briefcase"></a></li><?php endif ?>
 			</ul>
-	
+			<!-- MODULO DIA ADMINISTRATIVO -->	
 			<ul id="sideMenu" class="nav nav-list">
 			     <?php if($revisarDiasAdmin): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['DiasAdmin1','DiasAdmin2'])">&nbsp;&nbsp;&nbsp;Días Administrativos<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-calendar"></span></a></li><?php endif ?>
 			     <?php if($revisarDiasAdmin): ?><li class="<?= isset($sidebar) && $sidebar == 'iniciar_admin_days' ? 'active' : '' ?>"><a id="DiasAdmin1" href="<?= site_url('tramites/iniciar/'. proceso_dias_admin_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:33px" class="pull-center hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
 			     <?php if($revisarDiasAdmin): ?><li class="<?= isset($sidebar) && $sidebar == 'consultar_admin_days' ? 'active' : '' ?>"><a id="DiasAdmin2" href="<?= site_url('admindays/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
 			</ul>
-			
+			<!--MODULO PIE DE FIRMA  -->
+			<ul id="sideMenu" class="nav nav-list">
+                             <?php if($pieFirma): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['pieFirma''])">&nbsp;&nbsp;&nbsp;Pie de firma<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li><?php endif ?>
+                             <?php if($pieFirma): ?><li class="<?= isset($sidebar) && $sidebar == 'pie_firma_editar' ? 'active' : '' ?>"><a id="pieFirma" href="<?= site_url('piefirma/editar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-cog"></a></li><?php endif ?>
+			     <?php if($pieFirma): ?><li class="<?= isset($sidebar) && $sidebar == 'pie_firma_generar' ? 'active' : '' ?>"><a id="pieFirma" href="<?= site_url('piefirma/generar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>	
+                        </ul>		
+
+	
 			<ul id="sideMenu" class="nav nav-list">     
 			    <?php if($descargarDocumentosEstudio or $descargarAvanceEstudio): $cont_menu++; ?><li class="iniciar"><a href="#" onclick="Slide(['Estudio1','Estudio2'])">&nbsp;&nbsp;&nbsp;Protocolo<span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-book"></a></li><?php endif ?>
 			    <?php if($descargarDocumentosEstudio): ?><li class="<?= isset($sidebar) && $sidebar == 'documentos_estudio' ? 'active' : '' ?>"><a id="Estudio1" href="<?= site_url('estudios/descargardoc') ?>">&nbsp;&nbsp;&nbsp;Descargar Documentos&nbsp;  <span style="font-size:13px;top:3px" class="pull-center hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
