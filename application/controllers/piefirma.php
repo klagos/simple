@@ -31,6 +31,7 @@ class PieFirma extends MY_Controller {
 			$json_gerencias = $this->conectUrl($url);
 			apcu_add('json_list_gerencias',$json_gerencias,120);
 		}
+
       		$data['json_list_users'] = $json_ws;		
 		$data['json_gerencias']  = $json_gerencias;	
                 $data['sidebar']='pie_firma_editar';
@@ -59,9 +60,49 @@ class PieFirma extends MY_Controller {
                 curl_close($ch);
 		return json_decode($result);
 	}
+	
+	public function buscar (){
+		$rut	=($this->input->get('rut'))?$this->input->get('rut'):null;
+		$rut  	=str_replace('.','', $rut);
+		$url    = urlapi."/users/footSignature/".$rut;	
+		$json_usuario = $this->conectUrl($url);
+		
+		//Nombres y apellidos en minusculas	
+		if($json_usuario){	
+			if(strlen($json_usuario->name)>18){
+				$json_usuario->name 	= substr(ucwords(mb_strtolower($json_usuario->name,'UTF-8')), 0, 18);	
+			}
+			else
+				$json_usuario->name     =ucwords(mb_strtolower($json_usuario->name,'UTF-8'));
+			$json_usuario->lastName	=ucwords(mb_strtolower($json_usuario->lastName,'UTF-8'));
+		}
+		$data['json_usuario'] = $json_usuario;
+		$data['rut'] = $rut;
+                $data['sidebar'] = 'pie_firma_generar';
+                $data['content'] = 'piefirma/resultado';
+                $this->load->view('template', $data);	
+	}
+	/* EDITAR SOLO LOS TELEFONOS Y CODIGOS DE AREA*/
+	public function update_half(){
+		$nombre     =($this->input->get('nombre'))?$this->input->get('nombre'):null;
+		$apellido   =($this->input->get('apellido'))?$this->input->get('apellido'):null;
+                $gerencia   =($this->input->get('gerencia'))?$this->input->get('gerencia'):null;
+                $cargo      =($this->input->get('cargo'))?$this->input->get('cargo'):null;
+                $celular    =($this->input->get('celular'))?$this->input->get('celular'):0;
+                $anexo      =($this->input->get('anexo'))?$this->input->get('anexo'):0;
+                $codigo     =($this->input->get('codigo'))?$this->input->get('codigo'):0;
+                $rut        =($this->input->get('rut'))?$this->input->get('rut'):null;		
+		if($rut){
+			$rut = trim($rut);
+			$json = '[{"rut":"'.$rut.'", "phone":"'.$celular.'","annexPhone":"'.$anexo.'","areaCode":"'.$codigo.'"}]';
+			$this->update_user_api($json);
+		}
+		$this->descargar($nombre.' '.$apellido,$gerencia,$cargo, $celular, $anexo, $codigo);
+	}	
 
 	
-	/* UPDATE DATOS DEL USUARIO*/
+	
+	/* EDITAR TODOS LOS  DATOS DEL PIE DE FIRMA*/
 	public function update(){
                 //Verificamos que el usuario ya se haya logeado 
                 if (!UsuarioSesion::usuario()->registrado) {
@@ -78,25 +119,33 @@ class PieFirma extends MY_Controller {
 		$codigo_trabajador	=($this->input->get('codigo_trabajador'))?$this->input->get('codigo_trabajador'):null;		
 		$rut_trabajador		=($this->input->get('rut_trabajador'))?$this->input->get('rut_trabajador'):null;		
 		
-		/** UPDATE USER  **/
-                //$url = "http://private-120a8-apisimpleist.apiary-mock.com/users";
-		$url  = urlapi."users/list";
-                $json = '[{"rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
-                $json=$json.'"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}]';
+		if($rut_trabajador){
+                	$json = '[{"rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
+                	$json=$json.'"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}]';
+		
+			$this->update_user_api($json);
+			$this->descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador);	
+		}
+	}
 
-                $ch = curl_init();
+	public function update_user_api($json){
+		
+		//$url = "http://private-120a8-apisimpleist.apiary-mock.com/users";
+                $url  = urlapi."users/list";
+
+		$ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                //curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
                 curl_exec($ch);
                 curl_close($ch);
-
-		$this->descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador);	
-				
+		
 	}
+
+
+
 	/* GENERA Y DESCARGA IMAGEN DEL USUARIO  */
 	public function descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador ){ 
 		
@@ -138,15 +187,27 @@ class PieFirma extends MY_Controller {
                                 	$numer = substr($anexo_trabajador,0,-4);
 					$telefono = $codigo_trabajador.'-'.$numer.' '.$anexo;
 					if($celular_trabajador!=0){
-						$telefono =$telefono.' / +569 '.$celular_trabajador;
+						$telefono =$telefono.' / +569 '.substr($celular_trabajador,1,8);
 					}
 				}
 				else{
-					$telefono = '+569 '.$celular_trabajador;
+					$telefono = '+569 '.substr($celular_trabajador,1,8);
 				}
                         	imagettftext($im, $size,0,$x,$y,$color,$font_bold,$telefono);	
 			}
-			imagepng($im);	
+			//ChromePhp::log($im);
+			//ChromePhp::log(imagepng($im));
+			$path  = 'uploads/resources/piefirma/tmp/pie_firma.png';
+	
+			//imagepng($im);
+			imagepng($im,$path);
+			//ChromePhp::log($path);		
+			$this->load->helper('download');
+			
+			$data = file_get_contents ( $path );
+                	force_download ("pie_firma.png", $data );	
+			
+			//force_download("pie_firma.png", $path);	
 			imagedestroy($im);			
 		}			
         }

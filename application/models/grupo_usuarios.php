@@ -6,6 +6,7 @@ class GrupoUsuarios extends Doctrine_Record {
         $this->hasColumn('id');
         $this->hasColumn('nombre');
         $this->hasColumn('cuenta_id');
+	$this->hasColumn('modulo_id');
         //$this->hasColumn('tipo');
     }
 
@@ -28,6 +29,12 @@ class GrupoUsuarios extends Doctrine_Record {
             'foreign'=>'tarea_id',
             'refClass' => 'TareaHasGrupoUsuarios'
         ));
+
+	$this->hasOne('Modulo', array(
+            'local' => 'modulo_id',
+            'foreign' => 'id'
+        ));
+
 
     }
     
