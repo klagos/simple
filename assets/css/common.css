@@ -1104,6 +1104,14 @@ footer .area2 .container-fluid .footerGob {
   display: none;
 }
 
+.procesos_eliminados_1 {
+  display: none;
+}
+
+.procesos_eliminados_2 {
+  display: none;
+}
+
 .map {
   height: 350px;
   width: 590px;

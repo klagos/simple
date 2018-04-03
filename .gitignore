@@ -33,3 +33,4 @@ uploads/tmp/*
 README.md
 procesos.php
 node_modules/*
+uploads/resources/contratoColectivo/*

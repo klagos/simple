@@ -100,6 +100,7 @@
 			$revisarDiasAdmin=Doctrine::getTable('Proceso')->canRevisarDiasAdmin(UsuarioSesion::usuario()->id);
 			$enviarDoc=Doctrine::getTable('Proceso')->canSolicitarDoc(UsuarioSesion::usuario()->id);
 			$pieFirma=Doctrine::getTable('Modulo')->moduloPieFirma(UsuarioSesion::usuario()->id);
+			$contratoColectivo=Doctrine::getTable('Modulo')->moduloContratoColectivo(UsuarioSesion::usuario()->id);
 			?>
 			<ul id="sideMenu" class="nav nav-list">
 				<li class="iniciar"><a  href="#" onclick="Slide(['Inicio1','Inicio2','Inicio3'])">&nbsp;&nbsp;&nbsp;Inicio<span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-home"></a></li>
@@ -129,8 +130,15 @@
                              <?php if($pieFirma): ?><li class="<?= isset($sidebar) && $sidebar == 'pie_firma_editar' ? 'active' : '' ?>"><a id="pieFirma" href="<?= site_url('piefirma/editar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-cog"></a></li><?php endif ?>
 			     <?php if($pieFirma): ?><li class="<?= isset($sidebar) && $sidebar == 'pie_firma_generar' ? 'active' : '' ?>"><a id="pieFirma" href="<?= site_url('piefirma/generar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>	
                         </ul>		
-
-	
+			<!-- MODULO CONTRATO COLECTIVO -->
+			<ul id="sideMenu" class="nav nav-list">
+                           <?php if($contratoColectivo): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['contrato_colectivo'])">&nbsp;&nbsp;&nbsp;Contratos Colectivos<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li><?php endif ?>
+                           <?php if($contratoColectivo): ?><li class="<?= isset($sidebar) && $sidebar == 'contrato_colectivo' ? 'active' : '' ?>"><a id="contrato_colectivo" href="<?= site_url('contratoColectivo/mostrar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Descargar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
+                            
+                        </ul>
+					
+			
+			<!-- MODULO ESTUDIO PSICOSOCIAL -->
 			<ul id="sideMenu" class="nav nav-list">     
 			    <?php if($descargarDocumentosEstudio or $descargarAvanceEstudio): $cont_menu++; ?><li class="iniciar"><a href="#" onclick="Slide(['Estudio1','Estudio2'])">&nbsp;&nbsp;&nbsp;Protocolo<span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-book"></a></li><?php endif ?>
 			    <?php if($descargarDocumentosEstudio): ?><li class="<?= isset($sidebar) && $sidebar == 'documentos_estudio' ? 'active' : '' ?>"><a id="Estudio1" href="<?= site_url('estudios/descargardoc') ?>">&nbsp;&nbsp;&nbsp;Descargar Documentos&nbsp;  <span style="font-size:13px;top:3px" class="pull-center hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
