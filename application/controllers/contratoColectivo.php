@@ -38,7 +38,7 @@ class contratoColectivo extends MY_Controller {
 		$data['list_sind2'] = $list_sind2;
 		$data['list_sind3'] = $list_sind3;
 
-	      	$data['sidebar']='pie_firma_generar';
+	      	$data['sidebar']='contrato_colectivo';
               	$data['content'] = 'contratoColectivo/mostrar';
          	$this->load->view('template', $data);
 
