@@ -132,6 +132,7 @@ var idCampoMedJor = "medias_jornadas_asignadas";
 var idCampoDiasTom = "dias_tomados";
 var idCampoDiasDis = "dias_disponibles";
 var idCampoMedJorDis = "medias_jornadas_disponibles";
+var urlapi = '<?php echo urlapi?>';
 
 //permitir un match de mas de 1 palabra (por 2 apellidos por ej)
 $("#"+idCampoRutUser).chosen({ search_contains: true});
@@ -204,14 +205,14 @@ function cargarDatos(){
 				days.push(date);
 			}
 			//ordenar los dias por la mas reciente
-			days = days.sort(function(a,b){return a<b});
-
+			//days = days.sort(function(a,b){return a<b});
+			
 			//rellenar tabla historial con fechas ordenadas
 			for (var i=0; i < json.history.length; i ++){
 
 				var date = days[i];
 		
-				var day = date.getDate();
+				var day = date.getDate() + 1;
 		                if (day < 10) day = "0" + day;
 
 		                var month = date.getMonth() + 1;
@@ -229,7 +230,7 @@ function cargarDatos(){
 	  	}
 	};
 	//mandar peticion XMLHttp
-	xhttp.open("GET", "http://nexoya.cl:8080/apiTest/users/"+document.getElementById(idCampoRut).value+"/admindayhistory", true);
+	xhttp.open("GET", urlapi + "/users/"+document.getElementById(idCampoRut).value+"/admindayhistory", true);
 	xhttp.send();
 
 }
