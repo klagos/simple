@@ -47,7 +47,7 @@ Convenios colectivos
 
 <h5><a href="#" id="id_sind2" onclick="return mostrarSind2();">Mostrar Sindicato Nacional +</a></h5>
        <?php if (sizeof($list_sind2) > 0) { ?>
-                <div class="procesos_eliminados_1">
+                <div class="procesos_eliminados_1" style="display:none">
                 <table>
 		<tr><td><b>Período</b></td><td></td></tr>
                                  <?php foreach($list_sind2 as $d): ?>
@@ -63,7 +63,7 @@ Convenios colectivos
 
 <h5><a href="#" id="id_sind3" onclick="return mostrarSind3();">Mostrar Sindicato Profesionales +</a></h5>
        <?php if (sizeof($list_sind3) > 0) { ?>
-                <div class="procesos_eliminados_2">
+                <div class="procesos_eliminados_2" style="display:none">
                 <table>
 		<tr><td><b>Período</b></td><td></td></tr>
                                  <?php foreach($list_sind3 as $d): ?>
