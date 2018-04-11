@@ -24,6 +24,8 @@
 			   $trabajador_rut = $t->rut_trabajador_subsidio;
 			   $licencia_fecha_i = $t->fecha_inicio_licencia;
 			   $licencia_fecha_t = $t->fecha_termino_licencia;
+			   $licencia_dia_no_cubierto = $t->dia_no_cubierto;
+				
   			   $licencia_cant_d  =0;
 			   if($licencia_fecha_i!='' && $licencia_fecha_t!=''){
 				$date_i = new DateTime( $licencia_fecha_i);
@@ -42,7 +44,12 @@
                 ?>
 
                 <tr>                     
-                    <td class="name"> <?php echo $licencia_nro != '' ? $licencia_nro : 'N/A';?> </td>
+                    <td class="name"> <?php echo $licencia_nro != '' ? $licencia_nro : 'N/A';?> <?php if( $licencia_dia_no_cubierto) : ?> 
+		<span  style="color:yellow" class="glyphicon glyphicon-warning-sign" ></span>	
+		<?php else: ?>
+                  
+                   <?php endif ?>
+			 </td>
                     <td class="name"> <?php echo $trabajador_rut!=''?$trabajador_rut:'N/A'; ?> </td>
                     <td class="name"> <?php echo ($licencia_fecha_i !='')?$licencia_fecha_i:'N/A';?> </td>
                     <td class="name"> <?php echo $licencia_fecha_t!=''?$licencia_fecha_t:'N/A';?> </td>

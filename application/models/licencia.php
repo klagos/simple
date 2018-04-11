@@ -12,7 +12,7 @@ class Licencia {
     public $etapa_id; //id etapa pendiente
     public $estado_licencia; 
     public $etapas_tramites;
-   
+    public $dia_no_cubierto;  
     public function __construct($id){
 	$this->id = $id;
     }

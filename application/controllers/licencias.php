@@ -83,10 +83,10 @@ class Licencias extends MY_Controller {
 			if ($tr["Etapas"][0]["DatosSeguimiento"]){
 				$licencia = new Licencia($tr['id']); //se crea objeto licencia
 				$estado = 'Ingresada'; //estado por defecto
-
-				if (isset($tr["Etapas"][0]["DatosSeguimiento"]))
+				$dia_no_cubierto = false;
+				if (isset($tr["Etapas"][0]["DatosSeguimiento"]))	
                         	        foreach($tr["Etapas"][0]["DatosSeguimiento"] as $d){
-                        	                if ($d["nombre"] == "rut_trabajador_subsidio")
+						if ($d["nombre"] == "rut_trabajador_subsidio")
                         	                        $licencia->rut_trabajador_subsidio =  substr($d["valor"],1,-1);
                         	                if ($d["nombre"] == "numero_licencia")
 							if ($d["valor"][0] == '"' and substr($d["valor"],-1) == '"')
@@ -104,6 +104,9 @@ class Licencias extends MY_Controller {
 				for ($i = count($tr["Etapas"]) - 1; $i >= 0; $i--){
 					if (isset($tr["Etapas"][$i]["DatosSeguimiento"]))
                         	        	foreach($tr["Etapas"][$i]["DatosSeguimiento"] as $d){
+							if ($d["nombre"] == "dias_no_cubiertos_subsidio")
+                                                        	$dia_no_cubierto = true;
+
 							if ($d["nombre"] == "retorno_continuidad"){
 								if ($d["valor"] == '"devolver"'){
 									$estado = 'Proceso de pago';
@@ -161,7 +164,7 @@ class Licencias extends MY_Controller {
 				$licencia->tareas_completadas = $tareas_completadas;
 				$licencia->estado_licencia = $estado;
 				$licencia->etapas_tramites = $licencia->getEtapasTramites();		
-	
+				$licencia->dia_no_cubierto = $dia_no_cubierto;
 				$objlicencias[] = $licencia;
 			}
 		}
