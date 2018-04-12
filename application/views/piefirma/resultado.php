@@ -35,9 +35,17 @@
         <td>Teléfono  &nbsp;&nbsp;&nbsp;&nbsp; </td>
         <td><input id="anexo" type="number" class="input-semi-large" name="anexo" value="<?php echo ($json_usuario->annexPhone!=0)?$json_usuario->annexPhone:'' ?>" placeholder="Formato 2652069" ></td>
 </tr>
+<tr >
+        <td></td>
+        <td> <font color="#A4A4A4">Formato 2652069</font></td>
+</tr>
 <tr style="text-align: right;">
         <td>Celular  &nbsp;&nbsp;&nbsp;&nbsp; </td>
 	<td><input id="celular"  type="number" class="input-semi-large" name="celular" value="<?php echo ($json_usuario->phone!=0)?$json_usuario->phone:'' ?>" pattern="\d*"  maxlength="9" placeholder="El número debe tener 9 dítigos. Ejemplo 984583008"> </td>
+</tr>
+<tr >
+        <td></td>
+        <td> <font color="#A4A4A4">Número con 9 dígitos</font></td>
 </tr>
 <!-- Rut trabajador-->
         <input  type="hidden" name="rut" id ="rut" value="<?php echo $json_usuario->rut ?> "/>

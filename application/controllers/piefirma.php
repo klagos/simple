@@ -163,8 +163,8 @@ class PieFirma extends MY_Controller {
 			
 			//Name
 			$color= imagecolorallocate($im,90,90,90);
-			$size = 18;		
-			$x = 108;
+			$size = 18;	
+			$x = 10;
 			$y = 26;
 			imagettftext($im, $size,0,$x,$y,$color,$font_bold,$nombre_trabajador);
 
@@ -185,9 +185,9 @@ class PieFirma extends MY_Controller {
 				if($anexo_trabajador!=0){
 					$anexo = substr($anexo_trabajador,-4);
                                 	$numer = substr($anexo_trabajador,0,-4);
-					$telefono = $codigo_trabajador.'-'.$numer.' '.$anexo;
+					$telefono = '+56 '.$codigo_trabajador.' '.$numer.' '.$anexo;
 					if($celular_trabajador!=0){
-						$telefono =$telefono.' / +569 '.substr($celular_trabajador,1,8);
+						$telefono =$telefono.' / +56 9 '.substr($celular_trabajador,1,8);
 					}
 				}
 				else{
