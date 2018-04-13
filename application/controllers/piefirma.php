@@ -175,7 +175,7 @@ class PieFirma extends MY_Controller {
 	public function descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador ){ 
 		
 		$file 	  = 'uploads/resources/piefirma/plantilla.png';
-		if(strlen($nombre_trabajador)>27 or strlen($gerencia_trabajador)>27)
+		if(strlen($nombre_trabajador)>27 /* or strlen($gerencia_trabajador)>27*/)
 			$file     = 'uploads/resources/piefirma/plantilla_large.png';			
 		
 		$font	  = 'uploads/resources/piefirma/calibri.ttf';
@@ -190,21 +190,23 @@ class PieFirma extends MY_Controller {
 			$color= imagecolorallocate($im,90,90,90);
 			$size = 18;	
 			$x = 10;
-			$y = 26;
+			$base=17;
+			$plus=16;
+			$y = $base + $plus;
 			imagettftext($im, $size,0,$x,$y,$color,$font_bold,$nombre_trabajador);
 
 			//Cargo
 			$color= imagecolorallocate($im, 115, 115, 115);
 			$size = 11;
-                        $y = 42;
+                        $y = $base + 2*$plus;
 			imagettftext($im, $size,0,$x,$y,$color,$font,$cargo_trabajador);
 			
 			//Gerencia
-			$y =58;
+			$y =$base + 3*$plus;
 			imagettftext($im, $size,0,$x,$y,$color,$font,$gerencia_trabajador );			
 			
 			//Telefono y celular 
-			$y =75;
+			$y =$base + 4*$plus;
 			if($anexo_trabajador!=0 || $celular_trabajador!=0){
 				$telefono="";
 				if($anexo_trabajador!=0){
@@ -216,7 +218,7 @@ class PieFirma extends MY_Controller {
 					}
 				}
 				else{
-					$telefono = '+569 '.substr($celular_trabajador,1,8);
+					$telefono = '+56 9 '.substr($celular_trabajador,1,4).' '.substr($celular_trabajador,5,8);
 				}
                         	imagettftext($im, $size,0,$x,$y,$color,$font_bold,$telefono);	
 			}
