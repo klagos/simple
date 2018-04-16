@@ -56,9 +56,8 @@
         <button class="btn btn-success" type="submit">Descargar</button>
 </div>
 
-* Si existe algún problema con su apellido, cargo o gerencia favor de enviar un correo a : eduardo.barra@ist.cl
+* Si existe algún problema con su apellido, cargo o gerencia favor de enviar un correo a <a href="mailto:eduardo.barra@ist.cl?Subject=Pie%20de%20firma%20<?php echo $json_usuario->name.' '.$json_usuario->lastName  ?>" target="_top">eduardo.barra@ist.cl</a>
 
 <?php else: ?>
     <p>No hay usuario asociado al rut: <?php echo $rut ?></p>
 <?php endif; ?>
-
