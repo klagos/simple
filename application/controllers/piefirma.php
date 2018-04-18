@@ -233,18 +233,17 @@ class PieFirma extends MY_Controller {
 				}
                         	imagettftext($im, $size,0,$x,$y,$color,$font,$telefono);	
 			}
-			$path  = 'uploads/resources/piefirma/tmp/pie_firma.png';
-	
-			//imagepng($im);
-			imagepng($im,$path);
-			//ChromePhp::log($path);		
+			$path	= 'uploads/resources/piefirma/tmp/pie_firma.jpg';
+			
+			$quality = 100; //Calidad de imagen
+			imagejpeg($im, $path, $quality);
+			
 			$this->load->helper('download');
+                        $data = file_get_contents ( $path );
+                        force_download ("pie_firma.jpg", $data );       
+                        
+                        imagedestroy($im);
 			
-			$data = file_get_contents ( $path );
-                	force_download ("pie_firma.png", $data );	
-			
-			//force_download("pie_firma.png", $path);	
-			imagedestroy($im);			
 		}			
         }
 
