@@ -238,6 +238,11 @@ class PieFirma extends MY_Controller {
 			$quality = 100; //Calidad de imagen
 			imagejpeg($im, $path, $quality);
 			
+			$dpi = 96;
+			$image = file_get_contents($path);
+			$image =substr_replace($image, pack("cnn", 1, $dpi, $dpi), 13, 5); 	
+			file_put_contents($path,$image);			
+			
 			$this->load->helper('download');
                         $data = file_get_contents ( $path );
                         force_download ("pie_firma.jpg", $data );       
