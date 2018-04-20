@@ -35,6 +35,20 @@ class ModuloTable extends Doctrine_Table {
                         return false;
 
         }
+	 public function moduloProcesoInduccion($usuario_id){
+                $modulo = 3;//modulo_induccion
+                $usuario=Doctrine::getTable('Usuario')->find($usuario_id);
 
+                $u = Doctrine_Query::create()
+                        ->from('Usuario u, u.GruposUsuarios g')
+                        ->where('u.id = ?', $usuario->id)
+                        ->andWhere('g.modulo_id = ?', $modulo)
+                        ->fetchOne();
+                if($u)
+                        return true;
+                else
+                        return false;
+
+        }
 	
 }

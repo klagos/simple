@@ -101,6 +101,9 @@
 			$enviarDoc=Doctrine::getTable('Proceso')->canSolicitarDoc(UsuarioSesion::usuario()->id);
 			$pieFirma=Doctrine::getTable('Modulo')->moduloPieFirma(UsuarioSesion::usuario()->id);
 			$contratoColectivo=Doctrine::getTable('Modulo')->moduloContratoColectivo(UsuarioSesion::usuario()->id);
+			$procesoInduccion=Doctrine::getTable('Modulo')->moduloProcesoInduccion(UsuarioSesion::usuario()->id);
+			//Verficamos si tiene lo permisos para descargar el estado de avance
+
 			?>
 			<ul id="sideMenu" class="nav nav-list">
 				<li class="iniciar"><a  href="#" onclick="Slide(['Inicio1','Inicio2','Inicio3'])">&nbsp;&nbsp;&nbsp;Inicio<span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-home"></a></li>
@@ -134,9 +137,14 @@
 			<ul id="sideMenu" class="nav nav-list">
                            <?php if($contratoColectivo): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['contrato_colectivo'])">&nbsp;&nbsp;&nbsp;Contratos Colectivos<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li><?php endif ?>
                            <?php if($contratoColectivo): ?><li class="<?= isset($sidebar) && $sidebar == 'contrato_colectivo' ? 'active' : '' ?>"><a id="contrato_colectivo" href="<?= site_url('contratoColectivo/mostrar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Descargar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
-                            
                         </ul>
-					
+			
+			<!-- MODULO PROCESO DE INDUCCION -->
+                        <ul id="sideMenu" class="nav nav-list">
+                           <?php if($procesoInduccion): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['proceso_induccion'])">&nbsp;&nbsp;&nbsp;Proceso de Inducción<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-folder-open"></span></a></li><?php endif ?>
+                           <?php if($procesoInduccion): ?><li class="<?= isset($sidebar) && $sidebar == 'descarga_inducccion' ? 'active' : '' ?>"><a id="descarga_induccion" href="<?= site_url('procesoInduccion/descargar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Descargar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
+                        </ul>
+		
 			
 			<!-- MODULO ESTUDIO PSICOSOCIAL -->
 			<ul id="sideMenu" class="nav nav-list">     
