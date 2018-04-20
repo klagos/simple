@@ -70,10 +70,12 @@ class PieFirma extends MY_Controller {
 		//Nombres y apellidos en minusculas	
 		if($json_usuario){	
 			if(strlen($json_usuario->name)>18){
-				$json_usuario->name 	= substr(ucwords(mb_strtolower($json_usuario->name,'UTF-8')), 0, 18);	
+				$name  = substr(ucwords(mb_strtolower($json_usuario->name,'UTF-8')), 0, 18);	
 			}
 			else
-				$json_usuario->name     =ucwords(mb_strtolower($json_usuario->name,'UTF-8'));
+				$name  = ucwords(mb_strtolower($json_usuario->name,'UTF-8'));
+
+				$json_usuario->name = explode(" ",$name)[0];
 			$json_usuario->lastName	=ucwords(mb_strtolower($json_usuario->lastName,'UTF-8'));
 		}
 		$data['json_usuario'] = $json_usuario;
@@ -112,6 +114,7 @@ class PieFirma extends MY_Controller {
 				
 		//Datos del formulario
                 $nombre_trabajador 	=($this->input->get('nombre_trabajador'))?$this->input->get('nombre_trabajador'):null;
+		$apellido_trabajador	=($this->input->get('apellido_trabajador'))?$this->input->get('apellido_trabajador'):null;
                 $gerencia_trabajador  	=($this->input->get('gerencia_trabajador'))?$this->input->get('gerencia_trabajador'):null;
 		$cargo_trabajador	=($this->input->get('cargo_trabajador'))?$this->input->get('cargo_trabajador'):null;
 		$celular_trabajador     =($this->input->get('celular_trabajador'))?$this->input->get('celular_trabajador'):0;
@@ -120,11 +123,33 @@ class PieFirma extends MY_Controller {
 		$rut_trabajador		=($this->input->get('rut_trabajador'))?$this->input->get('rut_trabajador'):null;		
 		
 		if($rut_trabajador){
-                	$json = '[{"rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
+                	$json = '[{"name":"'.$nombre_trabajador.'","lastName":"'.$apellido_trabajador.'","rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
                 	$json=$json.'"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}]';
 		
 			$this->update_user_api($json);
-			$this->descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador);	
+
+			//Los datos actualizados del usuario
+			$rut 	= $rut_trabajador;
+			$url    = urlapi."/users/footSignature/".$rut;
+			$json_usuario = $this->conectUrl($url);
+
+                	//Nombres y apellidos en minusculas     
+                	if($json_usuario){
+                	        if(strlen($json_usuario->name)>18){
+				        $name  = substr(ucwords(mb_strtolower($json_usuario->name,'UTF-8')), 0, 18);     
+                        	}
+                        	else
+                                	$name  = ucwords(mb_strtolower($json_usuario->name,'UTF-8'));
+
+                                $json_usuario->name = explode(" ",$name)[0];
+
+                        	$json_usuario->lastName =ucwords(mb_strtolower($json_usuario->lastName,'UTF-8'));
+                	}
+                	$data['json_usuario'] = $json_usuario;
+                	$data['rut'] = $rut;
+                	$data['sidebar'] = 'pie_firma_generar';
+                	$data['content'] = 'piefirma/resultado';
+                	$this->load->view('template', $data);
 		}
 	}
 
@@ -150,8 +175,19 @@ class PieFirma extends MY_Controller {
 	public function descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador ){ 
 		
 		$file 	  = 'uploads/resources/piefirma/plantilla.png';
-		if(strlen($nombre_trabajador)>20)
-			$file     = 'uploads/resources/piefirma/plantilla_large.png';			
+		
+		if(strlen($nombre_trabajador)>26 or strlen($gerencia_trabajador)>30 or strlen($cargo_trabajador)>40)
+			$file     = 'uploads/resources/piefirma/plantilla_2.png';
+		
+		if(strlen($nombre_trabajador)>34 or strlen($gerencia_trabajador)>36 or strlen($cargo_trabajador)>45)
+                        $file     = 'uploads/resources/piefirma/plantilla_3.png';
+		
+		if(strlen($nombre_trabajador)>37 or strlen($gerencia_trabajador)>36 or strlen($cargo_trabajador)>45)
+                        $file     = 'uploads/resources/piefirma/plantilla_4.png';
+		
+
+		//if(strlen($nombre_trabajador)>27  or strlen($gerencia_trabajador)>27) 
+		//	$file     = 'uploads/resources/piefirma/plantilla_large.png';			
 		
 		$font	  = 'uploads/resources/piefirma/calibri.ttf';
 		$font_bold= 'uploads/resources/piefirma/calibri_b.ttf';
@@ -165,21 +201,23 @@ class PieFirma extends MY_Controller {
 			$color= imagecolorallocate($im,90,90,90);
 			$size = 18;	
 			$x = 10;
-			$y = 26;
+			$base=17;
+			$plus=16;
+			$y = $base + $plus;
 			imagettftext($im, $size,0,$x,$y,$color,$font_bold,$nombre_trabajador);
 
 			//Cargo
 			$color= imagecolorallocate($im, 115, 115, 115);
 			$size = 11;
-                        $y = 42;
+                        $y = $base + 2*$plus;
 			imagettftext($im, $size,0,$x,$y,$color,$font,$cargo_trabajador);
 			
 			//Gerencia
-			$y =58;
+			$y =$base + 3*$plus;
 			imagettftext($im, $size,0,$x,$y,$color,$font,$gerencia_trabajador );			
 			
 			//Telefono y celular 
-			$y =75;
+			$y =$base + 4*$plus;
 			if($anexo_trabajador!=0 || $celular_trabajador!=0){
 				$telefono="";
 				if($anexo_trabajador!=0){
@@ -187,28 +225,30 @@ class PieFirma extends MY_Controller {
                                 	$numer = substr($anexo_trabajador,0,-4);
 					$telefono = '+56 '.$codigo_trabajador.' '.$numer.' '.$anexo;
 					if($celular_trabajador!=0){
-						$telefono =$telefono.' / +56 9 '.substr($celular_trabajador,1,8);
+						$telefono =$telefono.' / +56 9 '.substr($celular_trabajador,1,4).' '.substr($celular_trabajador,5,8) ;
 					}
 				}
 				else{
-					$telefono = '+569 '.substr($celular_trabajador,1,8);
+					$telefono = '+56 9 '.substr($celular_trabajador,1,4).' '.substr($celular_trabajador,5,8);
 				}
-                        	imagettftext($im, $size,0,$x,$y,$color,$font_bold,$telefono);	
+                        	imagettftext($im, $size,0,$x,$y,$color,$font,$telefono);	
 			}
-			//ChromePhp::log($im);
-			//ChromePhp::log(imagepng($im));
-			$path  = 'uploads/resources/piefirma/tmp/pie_firma.png';
-	
-			//imagepng($im);
-			imagepng($im,$path);
-			//ChromePhp::log($path);		
+			$path	= 'uploads/resources/piefirma/tmp/pie_firma.jpg';
+			
+			$quality = 100; //Calidad de imagen
+			imagejpeg($im, $path, $quality);
+			
+			$dpi = 96;
+			$image = file_get_contents($path);
+			$image =substr_replace($image, pack("cnn", 1, $dpi, $dpi), 13, 5); 	
+			file_put_contents($path,$image);			
+			
 			$this->load->helper('download');
+                        $data = file_get_contents ( $path );
+                        force_download ("pie_firma.jpg", $data );       
+                        
+                        imagedestroy($im);
 			
-			$data = file_get_contents ( $path );
-                	force_download ("pie_firma.png", $data );	
-			
-			//force_download("pie_firma.png", $path);	
-			imagedestroy($im);			
 		}			
         }
 

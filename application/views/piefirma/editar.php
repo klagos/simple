@@ -1,5 +1,5 @@
 <h2 style="line-height: 28px;">
-    Editar y generar pie de firma
+    Editar información para pie de firma
 
 <br><br>
 
@@ -27,11 +27,11 @@
 <br></br>
 <tr style="text-align: right;">
 	<td>Nombre &nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td> <input id="nombre_trabajador" type="text" class="input-semi-large" name="nombre_trabajador" maxlength="18" readonly></td>	
+	<td> <input id="nombre_trabajador" type="text" class="input-semi-large" name="nombre_trabajador" maxlength="18" ></td>	
 </tr>
 <tr style="text-align: right;">
         <td>Apellido &nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td> <input id="apellido_trabajador" type="text" class="input-semi-large" name="apellido_trabajador"  readonly></td>
+        <td> <input id="apellido_trabajador" type="text" class="input-semi-large" name="apellido_trabajador"  ></td>
 </tr>
 <tr>
 	<td style="text-align: right;">Gerencia  &nbsp;&nbsp;&nbsp;&nbsp; </td> 
@@ -54,15 +54,23 @@
 </tr>
 <tr style="text-align: right;">
         <td>Código de área &nbsp;&nbsp;&nbsp;&nbsp; </td>
-        <td><input id="codigo_trabajador" type="text" class="input-semi-large" name="codigo_trabajador" ></td>
+        <td><input id="codigo_trabajador" type="number" class="input-semi-large" name="codigo_trabajador" placeholder="El código de ciudad debe tener 1 o 2 dígitos según la región"></td>
 </tr>
 <tr style="text-align: right;">
         <td>Teléfono  &nbsp;&nbsp;&nbsp;&nbsp; </td>
-        <td><input id="anexo_trabajador" type="text" class="input-semi-large" name="anexo_trabajador" ></td>
+        <td><input id="anexo_trabajador" type="number" class="input-semi-large" name="anexo_trabajador" placeholder="Formato 2652069"></td>
+</tr>
+<tr >
+        <td></td>
+        <td> <font color="#A4A4A4">Formato 2652069</font></td>
 </tr>
 <tr style="text-align: right;">
         <td>Celular  &nbsp;&nbsp;&nbsp;&nbsp; </td>
-        <td><input id="celular_trabajador" type="text" class="input-semi-large" name="celular_trabajador" ></td>
+        <td><input id="celular_trabajador" type="number" class="input-semi-large" name="celular_trabajador" maxlength="9" placeholder="El númeo debe tener 9 dítigos. Ejemplo 984583008"></td>
+</tr>
+<tr >
+        <td></td>
+        <td> <font color="#A4A4A4">Número con 9 dígitos</font></td>
 </tr>
 	<!-- Rut trabajador-->
 	<input  type="hidden" name="rut_trabajador" id ="rut_trabajador" />
@@ -70,7 +78,7 @@
 </table>
 
 <div class="form-actions">
-                <button class="btn btn-primary" type="submit">Generar</button>
+                <button class="btn btn-primary" type="submit">Guardar</button>
         </div>
 <script>
 //parametros

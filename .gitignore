@@ -19,6 +19,8 @@ searchd.log
 composer.lock
 composer.phar
 vendor
+uploads/resources/piefirma/tmp/pie_firma.png
+uploads/resources/piefirma/tmp/pie_firma.jpg
 .DS_Store
 application/logs/log-*.php
 uploads/connectors/*
