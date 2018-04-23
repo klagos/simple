@@ -141,8 +141,9 @@
 			
 			<!-- MODULO PROCESO DE INDUCCION -->
                         <ul id="sideMenu" class="nav nav-list">
-                           <?php if($procesoInduccion): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['proceso_induccion'])">&nbsp;&nbsp;&nbsp;Proceso de Inducción<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-folder-open"></span></a></li><?php endif ?>
-                           <?php if($procesoInduccion): ?><li class="<?= isset($sidebar) && $sidebar == 'descarga_inducccion' ? 'active' : '' ?>"><a id="descarga_induccion" href="<?= site_url('procesoInduccion/descargar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Descargar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
+                           <?php if($procesoInduccion): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['descarga_induccion','agregar_induccion'])">&nbsp;&nbsp;&nbsp;Proceso de Inducción<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-folder-open"></span></a></li><?php endif ?>
+                           <?php if($procesoInduccion): ?><li class="<?= isset($sidebar) && $sidebar == 'descarga_inducccion' ? 'active' : '' ?>"><a id="descarga_induccion" href="<?= site_url('procesoInduccion/descargar')  ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Descargar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
+			   <?php if($procesoInduccion): ?><li class="<?= isset($sidebar) && $sidebar == 'agregar_inducccion' ? 'active' : '' ?>"><a id="agregar_induccion" href="<?= site_url('tramites/iniciar/'. proceso_induccion_id)  ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
                         </ul>
 		
 			
