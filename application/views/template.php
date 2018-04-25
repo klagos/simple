@@ -99,10 +99,15 @@
 			$descargarAvanceEstudio=Doctrine::getTable('Proceso')->canDescargarAvanceEstudio(UsuarioSesion::usuario()->id);
 			$revisarDiasAdmin=Doctrine::getTable('Proceso')->canRevisarDiasAdmin(UsuarioSesion::usuario()->id);
 			$enviarDoc=Doctrine::getTable('Proceso')->canSolicitarDoc(UsuarioSesion::usuario()->id);
-			$pieFirma=Doctrine::getTable('Modulo')->moduloPieFirma(UsuarioSesion::usuario()->id);
-			$contratoColectivo=Doctrine::getTable('Modulo')->moduloContratoColectivo(UsuarioSesion::usuario()->id);
-			$procesoInduccion=Doctrine::getTable('Modulo')->moduloProcesoInduccion(UsuarioSesion::usuario()->id);
-			//Verficamos si tiene lo permisos para descargar el estado de avance
+			$pieFirma=Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_PIE_DE_FIRMA");
+			$contratoColectivo=Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_NEG_COLECTIVA");
+			
+			
+			$procesoInduccion=Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_INDUCCION");
+			$procesoInduccion_resumen = null;
+			if($procesoInduccion>1)
+				//Verficamos si tiene lo permisos para descargar el estado de avance
+				$procesoInduccion_resumen = true;				
 
 			?>
 			<ul id="sideMenu" class="nav nav-list">
@@ -141,9 +146,11 @@
 			
 			<!-- MODULO PROCESO DE INDUCCION -->
                         <ul id="sideMenu" class="nav nav-list">
-                           <?php if($procesoInduccion): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['descarga_induccion','agregar_induccion'])">&nbsp;&nbsp;&nbsp;Proceso de Inducción<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-folder-open"></span></a></li><?php endif ?>
+                           <?php if($procesoInduccion): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['descarga_induccion','agregar_induccion', 'resumen_induccion'])">&nbsp;&nbsp;&nbsp;Proceso de Inducción<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-folder-open"></span></a></li><?php endif ?>
                            <?php if($procesoInduccion): ?><li class="<?= isset($sidebar) && $sidebar == 'descarga_inducccion' ? 'active' : '' ?>"><a id="descarga_induccion" href="<?= site_url('procesoInduccion/descargar')  ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Descargar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
 			   <?php if($procesoInduccion): ?><li class="<?= isset($sidebar) && $sidebar == 'agregar_inducccion' ? 'active' : '' ?>"><a id="agregar_induccion" href="<?= site_url('tramites/iniciar/'. proceso_induccion_id)  ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
+			<?php if($procesoInduccion_resumen): ?><li class="<?= isset($sidebar) && $sidebar == 'resumen_inducccion' ? 'active' : '' ?>"><a id="resumen_induccion" href="<?= site_url('procesoInduccion/resumen')  ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resumen&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-th-list"></a></li><?php endif ?>
+
                         </ul>
 		
 			
