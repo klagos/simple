@@ -176,6 +176,18 @@ class PieFirma extends MY_Controller {
 		
 		$file 	  = 'uploads/resources/piefirma/plantilla.png';
 		
+		if(strlen($nombre_trabajador)<24 && strlen($gerencia_trabajador)<40 && strlen($cargo_trabajador)<40){
+			$file     = 'uploads/resources/piefirma/plantilla.png';
+		}elseif(strlen($nombre_trabajador)<27 && strlen($gerencia_trabajador)<48 && strlen($cargo_trabajador)<48){
+			$file     = 'uploads/resources/piefirma/plantilla_2.png';
+		}elseif(strlen($nombre_trabajador)<30 && strlen($gerencia_trabajador)<56 && strlen($cargo_trabajador)<56){
+                        $file     = 'uploads/resources/piefirma/plantilla_3.png';
+                }
+		else{
+			$file     = 'uploads/resources/piefirma/plantilla_4.png';
+		}
+		/*
+			
 		if(strlen($nombre_trabajador)>26 or strlen($gerencia_trabajador)>30 or strlen($cargo_trabajador)>40)
 			$file     = 'uploads/resources/piefirma/plantilla_2.png';
 		
@@ -184,7 +196,7 @@ class PieFirma extends MY_Controller {
 		
 		if(strlen($nombre_trabajador)>37 or strlen($gerencia_trabajador)>36 or strlen($cargo_trabajador)>45)
                         $file     = 'uploads/resources/piefirma/plantilla_4.png';
-		
+		*/
 
 		//if(strlen($nombre_trabajador)>27  or strlen($gerencia_trabajador)>27) 
 		//	$file     = 'uploads/resources/piefirma/plantilla_large.png';			
