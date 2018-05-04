@@ -18,7 +18,7 @@ public function consultar(){
         }		
 
                 
-	$json_ws = apcu_fetch('json_list_users');
+	$json_ws = apcu_fetch('json_list_users_admin');
         if (!$json_ws){
                 //Obtener data de usuarios
                 $url = urlapi . "users/list/small/admindays";
@@ -33,7 +33,7 @@ public function consultar(){
                 curl_close($ch);
 
                 $json_ws = json_decode($result);
-                apcu_add('json_list_users',$json_ws,60);
+                apcu_add('json_list_users_admin',$json_ws,1);
         }
 	
 	$data['json_list_users'] = $json_ws;

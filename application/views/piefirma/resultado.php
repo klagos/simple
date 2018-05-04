@@ -7,7 +7,7 @@
 <table>
 <tr style="text-align: right;">
         <td>Nombre &nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td> <input maxlength="18" id="nombre" type="text" class="input-semi-large" name="nombre" value="<?php echo $json_usuario->name  ?>" placeholder="número máximo 18 caracteres" ></td>
+        <td> <input maxlength="20" id="nombre" type="text" class="input-semi-large" name="nombre" value="<?php echo $json_usuario->name  ?>" placeholder="número máximo 18 caracteres" ></td>
 </tr>
 <tr >
         <td></td>

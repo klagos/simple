@@ -119,7 +119,7 @@ class PieFirma extends MY_Controller {
 		$cargo_trabajador	=($this->input->get('cargo_trabajador'))?$this->input->get('cargo_trabajador'):null;
 		$celular_trabajador     =($this->input->get('celular_trabajador'))?$this->input->get('celular_trabajador'):0;
 		$anexo_trabajador     	=($this->input->get('anexo_trabajador'))?$this->input->get('anexo_trabajador'):0;
-		$codigo_trabajador	=($this->input->get('codigo_trabajador'))?$this->input->get('codigo_trabajador'):null;		
+		$codigo_trabajador	=($this->input->get('codigo_trabajador'))?$this->input->get('codigo_trabajador'):0;		
 		$rut_trabajador		=($this->input->get('rut_trabajador'))?$this->input->get('rut_trabajador'):null;		
 		
 		if($rut_trabajador){
