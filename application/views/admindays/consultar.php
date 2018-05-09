@@ -120,7 +120,8 @@ require_once(FCPATH."procesos.php");
     </tbody>
 </table>
 
-<div id ="msg">
+<div id ="msg"> </div>
+<div id="modal" class="modal hide fade" > </div>
 
 <script>
 
@@ -167,9 +168,6 @@ function cargarDatos(){
 	//console.log(document.getElementById(idCampoRutUser).value.split("-"));	
 	var json = '';
 
-	console.log(document.getElementById(idCampoRutUser).value.split("-"));
-	console.log(valorSelected[6]);	
-	
 	if(valorSelected[6]=='si'){	
 		
 		//Desplegar la tabla
@@ -207,38 +205,45 @@ function cargarDatos(){
 	        	         document.getElementById("rows").innerHTML = '';
 	        	}
 
-			//lista auxiliar para ordenar los dias
-			var days = [];
+				//lista auxiliar para ordenar los dias
+				var days = [];
 			
        				for (var i=0; i < json.history.length; i ++){
 
-                		var date = new Date(json.history[i].date);
-				var day = date.getDate();
-
-				days.push(date);
+                			var date = new Date(json.history[i].date);
+					var day = date.getDate();
+					
+					days.push(date);
 				}
 				//ordenar los dias por la mas reciente
-				//days = days.sort(function(a,b){return a<b});
+				days = days.sort(function(a,b){return a<b});
 			
 				//rellenar tabla historial con fechas ordenadas
-				for (var i=0; i < json.history.length; i ++){
+				var sizeHistory = json.history.length;
+				for (var i=sizeHistory -1; i > =0; i --){
 
-				var date = days[i];
+					//var date = days[i];
+					var date= new Date (json.history[i].date);
 		
-				var day = date.getDate() ;
-		                if (day < 10) day = "0" + day;
+					var day = date.getDate() ;
+		                	if (day < 10) day = "0" + day;
 
-		                var month = date.getMonth() + 1;
-        		        if (month < 10) month = "0" + (month);
+		                	var month = date.getMonth() + 1;
+        		        	if (month < 10) month = "0" + (month);
         		
-			        var type = "Jornada completa";
+			        	var type = "Jornada completa";
 
-             			if (json.history[i].type == 2)
-                        		 type = "Media jornada AM";
-                		else
+             				if (json.history[i].type == 2)
+                        			type = "Media jornada AM";
+                			
                 		        if (json.history[i].type == 3)
                         		        type = "Media jornada PM";
-                			document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td></tr>";
+					
+					if(i== (sizeHistory-1) && json.history[i].idTramite!=0 ){
+						document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+json.history[i].idTramite +");'><i class='icon-white icon-trash'></i></a> </td></tr>";
+					}
+					else
+                				document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td></td></tr>";
         			}
 	  		}
 		};
@@ -268,6 +273,37 @@ function mostrarHistorial() {
 function callbackHistorial() {
         var $link = $("#link_historial");
         $(this).is(":visible") ? $link.text("Ocultar Historial «") : $link.text("Mostrar Historial »");
+}
+
+function deleteRequest_t(id_request){
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("DELETE", urlapi + "users/"+id_request+"/admindayrequest", true);
+	
+	xhttp.onreadystatechange = function() {
+        	if (this.readyState == 4 && this.status == 204) {
+
+		}
+	};
+	
+	//xhttp.open("DELETE", urlapi + "users/"+id_request+"/admindayrequest", true);
+        xhttp.send();
+
+}
+
+function deleteRequest(tramiteId){
+	
+        $('#modal').load('http://www.dev.nexoya.cl/backend/seguimiento/ajax_auditar_eliminar_tramite/1212');
+        $('#modal').modal();
+        return false;
+
+}
+
+  function eliminarTramite(tramiteId){
+        console.log(tramiteId);
+	$("#modal").load(site_url + "backend/seguimiento/ajax_auditar_eliminar_tramite/" + tramiteId);
+        $("#modal").modal();
+        return false;
+
     }
 
 </script>

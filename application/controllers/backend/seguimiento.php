@@ -574,6 +574,14 @@ groupBy ( 't.id' )->orderBy ( $order . ' ' . $direction )->limit ( $per_page )->
 		 
 		 
 	}
+
+	public function ajax_auditar_eliminar_tramite_adminday($tramite_id){
+
+                $tramite = Doctrine::getTable("Tramite")->find($tramite_id);
+                $data['tramite'] = $tramite;
+                $this->load->view ( 'backend/seguimiento/ajax_auditar_eliminar_tramite_adminday', $data );
+        }
+
 	
 
 	public function ajax_auditar_limpiar_proceso($proceso_id){

@@ -33,8 +33,9 @@ class AccionEnviarAdminDays extends Accion {
 	$regla=new Regla($this->extra->rut);
         $rut=$regla->getExpresionParaOutput($etapa->id);
         
+	$tramite_id = $etapa->tramite_id;
 	$json= '{"date_request": '.(isset($date_request) ? '"'.$date_request.'"' : '""').', ';
-        $json.= '"type": '.(isset($type) ? $type : '0').'}';
+        $json.= '"type": '.(isset($type) ? $type : '0').',"idTramite":'.$tramite_id.'}';
 	
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, urlapi."users/".$rut."/admindayrequest");
