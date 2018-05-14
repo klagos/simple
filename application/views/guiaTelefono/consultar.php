@@ -8,10 +8,13 @@
   		<br> 
 		<select  size="35" style="width:380px" data-placeholder="Seleccione por rut o nombre" class="chosen"  id="consulta_admin_days">
                 
-		<?php 
+		<?php
+			 $tildes = array("á","é","í","ó","ú");			
+			$sintildes =array("a","e","i","o","u");
+			 
 			foreach ($json_list_users as $json){ 
 		?>
-				<option value ='<?php echo $json->lastName."/".$json->name.'*'.$json->rut.'*'.(isset($json->position)?'*'.$json->position:'').(isset($json->phone)?'*'.$json->phone:'').(isset($json->annexPhone)?'*'.$json->annexPhone:'').(isset($json->areaCode)?'*'.$json->areaCode:'').(isset($json->management)?'*'.$json->management:'').(isset($json->email)?'*'.$json->email:'') ?>'><?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
+				<option value ='<?php echo $json->lastName."/".$json->name.'*'.$json->rut.'*'.(isset($json->position)?'*'.$json->position:'').(isset($json->phone)?'*'.$json->phone:'').(isset($json->annexPhone)?'*'.$json->annexPhone:'').(isset($json->areaCode)?'*'.$json->areaCode:'').(isset($json->management)?'*'.$json->management:'').(isset($json->email)?'*'.$json->email:'') ?>'><?php echo str_replace($tildes,$sintildes, explode(" ",$json->name)[0] ).' '. str_replace($tildes,$sintildes,$json->lastName) .' - '.$json->rut ?> </option>
 
 		<?php 	
 			} 

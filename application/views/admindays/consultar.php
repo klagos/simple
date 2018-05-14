@@ -167,7 +167,8 @@ function cargarDatos(){
 	document.getElementById(idCampoMedJor).value =  valorSelected[5];
 	//console.log(document.getElementById(idCampoRutUser).value.split("-"));	
 	var json = '';
-
+	var rut = document.getElementById(idCampoRut).value;
+	
 	if(valorSelected[6]=='si'){	
 		
 		//Desplegar la tabla
@@ -199,7 +200,7 @@ function cargarDatos(){
 			//mostrar historial si existe más de un valor, sino se oculta	
 			if (json.history.length > 0){
 	        	         document.getElementById("link_historial").style.display = "inline";
-	        	         document.getElementById("rows").innerHTML = '<tr><th>Fecha</th><th>Tipo solicitud</th></tr>';
+	        	         document.getElementById("rows").innerHTML = '<tr><th>Fecha</th><th>Tipo solicitud</th><th >Ver detalle</th><th>Eliminar</th></tr>';
 	        	}else{
 	        	         document.getElementById("link_historial").style.display = "none";
 	        	         document.getElementById("rows").innerHTML = '';
@@ -220,7 +221,7 @@ function cargarDatos(){
 			
 				//rellenar tabla historial con fechas ordenadas
 				var sizeHistory = json.history.length;
-				for (var i=sizeHistory -1; i > =0; i --){
+				for(var i=sizeHistory -1; i >= 0; i--){
 
 					//var date = days[i];
 					var date= new Date (json.history[i].date);
@@ -240,15 +241,27 @@ function cargarDatos(){
                         		        type = "Media jornada PM";
 					
 					if(i== (sizeHistory-1) && json.history[i].idTramite!=0 ){
-						document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+json.history[i].idTramite +");'><i class='icon-white icon-trash'></i></a> </td></tr>";
+						dv  = String(rut.split("-")[1]);	
+						rut = String(rut.split("-")[0]);
+						
+						check_user(json.history[i].idTramite);
+
+						document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +" ><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td> <td id = "+'b_' +json.history[i].idTramite +"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+json.history[i].idTramite +","+json.history[i].id+","+ rut +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
 					}
-					else
-                				document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td></td></tr>";
+					else{
+
+						if(json.history[i].idTramite!=0){
+							check_user(json.history[i].idTramite);
+							document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +"><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td><td></td></tr>";
+						}
+						else
+                					document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td></td><td></td></tr>";
+					}
         			}
 	  		}
 		};
 		//mandar peticion XMLHttp
-		xhttp.open("GET", urlapi + "/users/"+document.getElementById(idCampoRut).value+"/admindayhistory", true);
+		xhttp.open("GET", urlapi + "/users/"+rut+"/admindayhistory", true);
 		xhttp.send();
 	}
 	else{
@@ -275,35 +288,36 @@ function callbackHistorial() {
         $(this).is(":visible") ? $link.text("Ocultar Historial «") : $link.text("Mostrar Historial »");
 }
 
-function deleteRequest_t(id_request){
-	var xhttp = new XMLHttpRequest();
-	xhttp.open("DELETE", urlapi + "users/"+id_request+"/admindayrequest", true);
-	
-	xhttp.onreadystatechange = function() {
-        	if (this.readyState == 4 && this.status == 204) {
-
-		}
-	};
-	
-	//xhttp.open("DELETE", urlapi + "users/"+id_request+"/admindayrequest", true);
-        xhttp.send();
-
-}
-
-function deleteRequest(tramiteId){
-	
-        $('#modal').load('http://www.dev.nexoya.cl/backend/seguimiento/ajax_auditar_eliminar_tramite/1212');
-        $('#modal').modal();
-        return false;
-
-}
-
-  function eliminarTramite(tramiteId){
-        console.log(tramiteId);
-	$("#modal").load(site_url + "backend/seguimiento/ajax_auditar_eliminar_tramite/" + tramiteId);
+//Funcion para eliminar el tramite y el request
+function eliminarTramite(tramiteId,requestId,rut,dv){
+	rut = rut + '-' + dv;	
+	$("#modal").load(site_url + "admindays/ajax_auditar_eliminar_tramite_adminday/" + tramiteId + "/"+requestId +"/"+rut );
         $("#modal").modal();
         return false;
+}
 
-    }
+//detail
+function detail(tramite) {
+	var url = site_url +"admindays/detail/"+tramite;
+	window.location.href = url ;
+}
+
+function check_user(tramite){
+	var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+		if(this.readyState == 4 ){
+                	json = JSON.parse(this.responseText);
+			if(!json.result){
+				document.getElementById(tramite).style.display = "none";
+				if(document.getElementById('b_'+tramite))
+					document.getElementById('b_'+tramite).style.display = "none";	
+			}
+		}
+	};
+	xhttp.open("GET", site_url + "/admindays/check_user/"+tramite,true);
+        xhttp.send();
+}
+
+
 
 </script>
