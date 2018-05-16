@@ -167,7 +167,7 @@
 			  <!-- MODULO TRABAJADORES -->
                         <ul id="sideMenu" class="nav nav-list">
                            <?php if($trabajadores): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['trabajadores_add','trabajadores_edit'])">&nbsp;&nbsp;&nbsp; Colaboradores<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-large"></span></a></li><?php endif ?>
-                           <?php if($trabajadores): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add' ? 'active' : '' ?>"><a id="trabajadores_add" href="<?= site_url('trabajadores/agregar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
+                           <?php if(false): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add' ? 'active' : '' ?>"><a id="trabajadores_add" href="<?= site_url('trabajadores/agregar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
 			<?php if($trabajadores): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_edit' ? 'active' : '' ?>"><a id="trabajadores_edit" href="<?= site_url('trabajadores/buscar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-cog"></a></li><?php endif ?>
                         </ul>
 

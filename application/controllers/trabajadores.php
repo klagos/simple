@@ -29,16 +29,8 @@ class Trabajadores extends MY_Controller {
                 	$json_ws = $this->conectUrl($url);
                 	apcu_add('json_list_users_editar',$json_ws,120);
         	}
-		//Lista de gerencias
-		/*$json_gerencias = apcu_fetch('json_list_gerencias');		
-		if(!$json_gerencias){
-			$url = "http://private-120a8-apisimpleist.apiary-mock.com/gerencias";
-			$json_gerencias = $this->conectUrl($url);
-			apcu_add('json_list_gerencias',$json_gerencias,120);
-		}*/
 
       		$data['json_list_users'] = $json_ws;		
-		//$data['json_gerencias']  = $json_gerencias;	
                 $data['sidebar']='trabajadores_edit';
                 $data['content'] = 'trabajadores/buscar';
                 $this->load->view('template', $data);
@@ -70,6 +62,10 @@ class Trabajadores extends MY_Controller {
 		$json_usuario->name =ucwords(mb_strtolower($json_usuario->name,'UTF-8'));
                 $json_usuario->lastName =ucwords(mb_strtolower($json_usuario->lastName,'UTF-8'));
 		
+		//Codigo localidad y centro
+		$code_localidad = $json_usuario->locationCode;	
+		$code_centro	= $json_usuario->costCenterCode;
+		
 		 //Lista de gerencias
                 $json_gerencias = apcu_fetch('json_list_gerencias');          
                 if(!$json_gerencias){
@@ -85,14 +81,34 @@ class Trabajadores extends MY_Controller {
                         $json_localidad = $this->conectUrl($url);
                         apcu_add('json_list_localidad',$json_localidad,120);
                 }
-
+		
+		//Localidad por defecto
+		if($code_localidad!=""){
+			foreach ($json_localidad as $item) {
+   				if($item->code==$code_localidad){
+					$json_usuario->location = $item->name.' - '.$item->code;
+					break; 
+				}
+			}
+		}
+		
 		$json_centro = apcu_fetch('json_list_centro'); 
                 if(!$json_centro){
                         $url = urlapi."/costcenter/list";
                         $json_centro = $this->conectUrl($url);
                         apcu_add('json_list_centro',$json_centro,120);
-                }	
-			
+                }
+
+		//Centro de codigo por defecto
+                if($code_centro!=""){
+                        foreach ($json_centro as $item) {
+                                if($item->code==$code_centro){
+                                        $json_usuario->costCenter = $item->name.' - '.$item->code;
+                                        break;
+                                }
+                        }
+                }
+	
 		$data['json_gerencias'] = $json_gerencias;  	
 		$data['json_usuario'] 	= $json_usuario;
 		$data['json_localidad'] = $json_localidad;
@@ -102,73 +118,57 @@ class Trabajadores extends MY_Controller {
                 $data['content'] = 'trabajadores/resultado';
                 $this->load->view('template', $data);	
 	}
-	/* EDITAR SOLO LOS TELEFONOS Y CODIGOS DE AREA*/
-	public function update_half(){
-		$nombre     =($this->input->get('nombre'))?$this->input->get('nombre'):null;
-		$apellido   =($this->input->get('apellido'))?$this->input->get('apellido'):null;
-                $gerencia   =($this->input->get('gerencia'))?$this->input->get('gerencia'):null;
-                $cargo      =($this->input->get('cargo'))?$this->input->get('cargo'):null;
-                $celular    =($this->input->get('celular'))?$this->input->get('celular'):0;
-                $anexo      =($this->input->get('anexo'))?$this->input->get('anexo'):0;
-                $codigo     =($this->input->get('codigo'))?$this->input->get('codigo'):0;
-                $rut        =($this->input->get('rut'))?$this->input->get('rut'):null;		
-		if($rut){
-			$rut = trim($rut);
-			$json = '[{"rut":"'.$rut.'", "phone":"'.$celular.'","annexPhone":"'.$anexo.'","areaCode":"'.$codigo.'"}]';
-			$this->update_user_api($json);
-		}
-		$this->descargar($nombre.' '.$apellido,$gerencia,$cargo, $celular, $anexo, $codigo);
-	}	
 
-	
-	
 	/* EDITAR TODOS LOS  DATOS DEL PIE DE FIRMA*/
 	public function update(){
-                //Verificamos que el usuario ya se haya logeado 
-                if (!UsuarioSesion::usuario()->registrado) {
-                        $this->session->set_flashdata('redirect', current_url());
-                        redirect('tramites/disponibles');
-                }
 				
 		//Datos del formulario
-                $nombre_trabajador 	=($this->input->get('nombre_trabajador'))?$this->input->get('nombre_trabajador'):null;
-		$apellido_trabajador	=($this->input->get('apellido_trabajador'))?$this->input->get('apellido_trabajador'):null;
-                $gerencia_trabajador  	=($this->input->get('gerencia_trabajador'))?$this->input->get('gerencia_trabajador'):null;
-		$cargo_trabajador	=($this->input->get('cargo_trabajador'))?$this->input->get('cargo_trabajador'):null;
-		$celular_trabajador     =($this->input->get('celular_trabajador'))?$this->input->get('celular_trabajador'):0;
-		$anexo_trabajador     	=($this->input->get('anexo_trabajador'))?$this->input->get('anexo_trabajador'):0;
-		$codigo_trabajador	=($this->input->get('codigo_trabajador'))?$this->input->get('codigo_trabajador'):0;		
-		$rut_trabajador		=($this->input->get('rut_trabajador'))?$this->input->get('rut_trabajador'):null;		
+		$rut            =($this->input->get('rut'))?$this->input->get('rut'):null;
+                $nombre 	=($this->input->get('nombre'))?$this->input->get('nombre'):null;
+		$apellido	=($this->input->get('apellido'))?$this->input->get('apellido'):null;
+		$gender       	=($this->input->get('gender'))?$this->input->get('gender'):null;
+		$birth_day	=($this->input->get('birth_day'))?$this->input->get('birth_day'):null;
+		//Datos laborales
+		$cargo          =($this->input->get('cargo'))?$this->input->get('cargo'):null;
+		$email          =($this->input->get('email'))?$this->input->get('email'):null;
+                $contract_date	=($this->input->get('contract_date'))?$this->input->get('contract_date'):null;
+		$contractType	=($this->input->get('contractType'))?intval($this->input->get('contractType')):null;	
+		$gerencia  	=($this->input->get('gerencia'))?$this->input->get('gerencia'):null;
+		$localidad      =($this->input->get('localidad'))?$this->input->get('localidad'):null;
+		$centro       	=($this->input->get('centro'))?$this->input->get('centro'):null;
+		$celular	=($this->input->get('celular'))?intval($this->input->get('celular')):0;
+		$anexo     	=($this->input->get('anexo'))?intval($this->input->get('anexo')):0;
+		$codigo		=($this->input->get('codigo'))?intval($this->input->get('codigo')):0;		
+		$active 	=($this->input->get('vinculacion'))?$this->input->get('vinculacion'):null;		
 		
-		if($rut_trabajador){
-                	$json = '[{"name":"'.$nombre_trabajador.'","lastName":"'.$apellido_trabajador.'","rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
-                	$json=$json.'"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}]';
+				
+		//Personales
+		$json->rut=trim($rut);
+		$json->name=$nombre;
+		$json->gender=$gender;
+		$json->apellido=$apellido;
+		$json->birth_day=$birth_day;
 		
-			$this->update_user_api($json);
-
-			//Los datos actualizados del usuario
-			$rut 	= $rut_trabajador;
-			$url    = urlapi."/users/footSignature/".$rut;
-			$json_usuario = $this->conectUrl($url);
-
-                	//Nombres y apellidos en minusculas     
-                	if($json_usuario){
-                	        if(strlen($json_usuario->name)>18){
-				        $name  = substr(ucwords(mb_strtolower($json_usuario->name,'UTF-8')), 0, 18);     
-                        	}
-                        	else
-                                	$name  = ucwords(mb_strtolower($json_usuario->name,'UTF-8'));
-
-                                $json_usuario->name = explode(" ",$name)[0];
-
-                        	$json_usuario->lastName =ucwords(mb_strtolower($json_usuario->lastName,'UTF-8'));
-                	}
-                	$data['json_usuario'] = $json_usuario;
-                	$data['rut'] = $rut;
-                	$data['sidebar'] = 'pie_firma_generar';
-                	$data['content'] = 'piefirma/resultado';
-                	$this->load->view('template', $data);
-		}
+		//Laborales
+		$json->position=$cargo;
+                $json->email=$email;
+                $json->contract_date=$contract_date;
+                $json->management=$gerencia;
+                $json->locationCode=trim(explode("-",$localidad)[1]);
+		$json->costCenterCode=trim(explode("-",$centro)[1]);
+		$json->phone=$celular;
+		$json->annexPhone = $anexo;
+		$json->contractType = $contractType;
+		$json->areaCode=$codigo;
+		$json->active = ($active==1)?true:false;		
+		
+		//Encode	
+		$json = json_encode($json);
+		$json = '['.$json.']';
+		$this->update_user_api($json);
+		$this->buscar();
+				
+		
 	}
 
 	public function update_user_api($json){
@@ -186,8 +186,4 @@ class Trabajadores extends MY_Controller {
                 curl_close($ch);
 		
 	}
-
-
-
-
 }
