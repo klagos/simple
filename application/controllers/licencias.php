@@ -335,6 +335,87 @@ class Licencias extends MY_Controller {
 
         }
 
+	public function reporte(){
+		//Verificamos que el usuario ya se haya logeado 
+                if (!UsuarioSesion::usuario()->registrado) {
+                        $this->session->set_flashdata('redirect', current_url());
+                        redirect('tramites/disponibles');
+                }
+
+		//Variables de la query
+                $proceso_id = proceso_subsidio_id;
+                $contador = 0;
+                $rowtramites = [];
+                $rowtramites = Doctrine::getTable('Tramite')->getDocumentosProcesoEstudios($proceso_id);
+
+                $CI =& get_instance();
+                $CI->load->library('Excel');
+                $object = new PHPExcel();
+
+                $table_columns = array("Rut","Nombre","Fecha_Inicio","Fecha_Termino","Num_Licencia","Org_salud");
+		         
+		$column = 0;
+
+                foreach($table_columns as $field){
+                        $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                        $column++;
+                }
+
+                $excel_row = 2;
+		ChromePhp::log( $rowtramites);
+					
+		foreach($rowtramites as $tramite){
+                        $rut = "";
+                        $nombre="";
+                        $fecha_inicio="";
+                        $fecha_termino="";
+                        $numero=0;
+			$organismo="";
+
+                        foreach ($tramite->getValorDatoSeguimiento() as $tra_nro){
+                                if($tra_nro->nombre == 'rut_trabajador_subsidio')
+                                        $rut = $tra_nro->valor;
+                                if($tra_nro->nombre == 'nombre_trabajador_subsidio')
+                                        $nombre = $tra_nro->valor;
+                                if($tra_nro->nombre == 'fecha_inicio_licencia')
+                                        $fecha_inicio = $tra_nro->valor;
+                                if($tra_nro->nombre == 'fecha_termino_licencia')
+                                        $fecha_termino = $tra_nro->valor;
+                                if($tra_nro->nombre == 'numero_licencia')
+                                        $numero = $tra_nro->valor;
+				if($tra_nro->nombre == 'organismo_salud_licencia')
+                                        $organismo = $tra_nro->valor;
+
+				
+                        }
+			if($rut!="")
+				$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+			
+			if($nombre!="")
+				$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$nombre);
+			
+			if($fecha_inicio!="")
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$fecha_inicio);
+			
+			if($fecha_termino!="")
+                      		$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$fecha_termino);
+
+			if($numero!=0)
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$numero);
+			
+			 if($organismo!="")
+                         	$object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$organismo);
+
+			$excel_row++;	
+		}
+
+		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+                header('Content-Type: application/vnd.ms-excel');
+                header('Content-Disposition: attachment;filename="reporte_licencia".xls"');
+                $object_writer->save('php://output');
+			
+	}
+
 	public function loadColumn($object,$excel_row){
 		$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, 0);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, 2);

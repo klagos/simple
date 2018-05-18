@@ -122,7 +122,7 @@
 				<li class="<?= isset($sidebar) && $sidebar == 'participados' ? 'active' : '' ?>"><a id="Inicio3" href="<?= site_url('tramites/participados') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Historial de Trámites (<?= $nparticipados ?>)&nbsp;&nbsp;&nbsp;<span id="span-historial" style="font-size:13px;top:3px" class="pull-center hidden-xs showopacity glyphicon glyphicon-folder-open"></a></li>
 			</ul>
 		
-
+			<!-- MODULO LICENCIAS MEDICAS -->
 			<ul id="sideMenu" class="nav nav-list">
 				<?php if($revisarLicencia): $cont_menu++; ?><li class="iniciar"><a href="#" onclick="Slide(['Licencia1','Licencia2','Licencia3','Licencia4','Licencia5'])">&nbsp;&nbsp;&nbsp;Licencias  <span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-file"></span></a><?php endif ?>
 				<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'agregar_licencia' ? 'active' : '' ?>"><a id="Licencia1" href="<?= site_url('tramites/iniciar/'.proceso_subsidio_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:33px" class="pull-center hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
@@ -130,6 +130,7 @@
 			     	<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'editar_masiva' ? 'active' : '' ?>"><a id="Licencia3" href="<?= site_url('tramites/iniciar/'.proceso_editar_masiva_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edición Masiva&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;" class="pull-center hidden-xs showopacity glyphicon glyphicon-edit"></a></li><?php endif ?>
 				<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia' ? 'active' : '' ?>"><a id="Licencia4" href="<?= site_url('licencias/buscador') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Buscar&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:42px" class="pull-center hidden-xs  showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
 			     	<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_pago' ? 'active' : '' ?>"><a id="Licencia5" href="<?= site_url('licencias/pago') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pago&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:52px" class="pull-center hidden-xs showopacity glyphicon glyphicon-briefcase"></a></li><?php endif ?>
+			<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_reporte' ? 'active' : '' ?>"><a id="Licencia6" href="<?= site_url('licencias/reporte') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reporte&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:52px" class="pull-center hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
 			</ul>
 			<!-- MODULO DIA ADMINISTRATIVO -->	
 			<ul id="sideMenu" class="nav nav-list">
