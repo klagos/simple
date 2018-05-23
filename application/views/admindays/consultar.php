@@ -105,7 +105,9 @@ require_once(FCPATH."procesos.php");
             <tr>
                 <td class="actions">
                     <?php if($p->canUsuarioIniciarlo(UsuarioSesion::usuario()->id)):?>
-                    <a href="#" onclick= "window.location= '/tramites/iniciar/'+<?php echo proceso_dias_admin_id?>+'/' + document.getElementById('rut_trabajador').value" class="btn btn-primary preventDoubleRequest"><i class="icon-file icon-white"></i> Iniciar Solicitud</a>
+                    <a href="#" id ="admin" onclick= "window.location= '/tramites/iniciar/'+<?php echo proceso_dias_admin_id?>+'/' + document.getElementById('rut_trabajador').value" class="btn btn-primary preventDoubleRequest"><i class="icon-file icon-white"></i> Iniciar Solicitud</a>
+		    <a href="#" id ="adicional" onclick= "window.location= '/tramites/iniciar/'+<?php echo proceso_dias_admin_id?>+'/' + document.getElementById('rut_trabajador').value" class="btn btn-primary preventDoubleRequest"><i class="icon-file icon-white"></i> Iniciar Solicitud</a>
+
                     <?php else: ?>
                         <?php if($p->getTareaInicial()->acceso_modo=='claveunica'):?>
                         <a href="<?=site_url('autenticacion/login_openid')?>?redirect=<?=site_url('tramites/iniciar/'.$p->id)?>" ><img style="max-width: none;" src="<?=base_url('assets/img/claveunica-medium.png')?>" alt="ClaveUnica" /></a>
@@ -187,6 +189,9 @@ function cargarDatos(){
 			document.getElementById(idCampoDiasTom).value =  json.takenDays;
         		document.getElementById(idCampoDiasDis).value =  json.pendingDays;
      			document.getElementById(idCampoMedJorDis).value =  json.pendingHalfDays;
+			
+			//dias  adicionales
+			var rotativeTurn = json.rotativeTurn;
 
 			//si no quedan dias disponibles, no se puede iniciar solicitud
         		if (json.pendingDays == 0){
@@ -194,6 +199,8 @@ function cargarDatos(){
                 		document.getElementById("msg").innerHTML = "<h4>Al trabajador no le quedan dias disponibles</h4>";
         		}else{
                 		document.getElementById("iniciarSolicitud").style.display = "inline";
+				document.getElementById("admin").style.display = (rotativeTurn!=0)?"none":"inline";
+				document.getElementById("adicional").style.display = (rotativeTurn!=0)?"inline":"none";
                 		document.getElementById("msg").innerHTML = "";
         		}
 	
