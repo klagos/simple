@@ -3,7 +3,7 @@ require_once(FCPATH."procesos.php");
 ?>
 
 <h2 style="line-height: 28px;">
-    Consulta días administrativo - Adicionales
+    Consulta dias Administrativos - Adicionales
 
 <br><br>
 
@@ -17,9 +17,9 @@ require_once(FCPATH."procesos.php");
 			//seleccionar trabajador cuando se vuelve a consulta luego de pedir un dia admin
 			if ($json->rut == explode("=",$_SERVER['REQUEST_URI'])[1]){ 
         ?>                
-<option selected value = '<?php echo $json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.(($json->day)?$json->day:'0').'-'.(($json->halfDay)?$json->halfDay:'0').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'-'.json_encode($json->adminDayRequest):'').'-'.(($json->hasDay)?'si' :'no'). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
+<option selected value = '<?php echo $json->lastName."/".$json->name.'*'.$json->rut.'*'.$json->location .'*'.(($json->day)?$json->day:'0').'*'.(($json->halfDay)?$json->halfDay:'0').(isset($json->takenDays)?'*'.$json->takenDays:'').(isset($json->pendingDays)?'*'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'*'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'*'.json_encode($json->adminDayRequest):'').'*'.(($json->hasDay)?'si' :'no'). (isset($json->service)? '*'.$json->service : '').(isset($json->email)?'*'.$json->email:'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
         <?php   	} else {	?>
-<option value = '<?php echo $json->lastName."/".$json->name.'-'.$json->rut.'-'.$json->location .'-'.(($json->day)?$json->day:'0').'-'.(($json->halfDay)?$json->halfDay:'0').(isset($json->takenDays)?'-'.$json->takenDays:'').(isset($json->pendingDays)?'-'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'-'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'-'.json_encode($json->adminDayRequest):'').'-'.(($json->hasDay)?'si' :'no'). (isset($json->service)? '-'.$json->service : '').(isset($json->email)?'-'.$json->email:'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
+<option value = '<?php echo $json->lastName."/".$json->name.'*'.$json->rut.'*'.$json->location .'*'.(($json->day)?$json->day:'0').'*'.(($json->halfDay)?$json->halfDay:'0').(isset($json->takenDays)?'*'.$json->takenDays:'').(isset($json->pendingDays)?'*'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'*'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'*'.json_encode($json->adminDayRequest):'').'*'.(($json->hasDay)?'si' :'no'). (isset($json->service)? '*'.$json->service : '').(isset($json->email)?'*'.$json->email:'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
 
 	<?php		}             
 		}  
@@ -106,7 +106,7 @@ require_once(FCPATH."procesos.php");
                 <td class="actions">
                     <?php if($p->canUsuarioIniciarlo(UsuarioSesion::usuario()->id)):?>
                     <a href="#" id ="admin" onclick= "window.location= '/tramites/iniciar/'+<?php echo proceso_dias_admin_id?>+'/' + document.getElementById('rut_trabajador').value" class="btn btn-primary preventDoubleRequest"><i class="icon-file icon-white"></i> Iniciar Solicitud</a>
-		    <a href="#" id ="adicional" onclick= "window.location= '/tramites/iniciar/'+<?php echo proceso_dias_admin_id?>+'/' + document.getElementById('rut_trabajador').value" class="btn btn-primary preventDoubleRequest"><i class="icon-file icon-white"></i> Iniciar Solicitud</a>
+		    <a href="#" id ="adicional" onclick= "window.location= '/tramites/iniciar/'+<?php echo proceso_dias_adicional_id?>+'/' + document.getElementById('rut_trabajador').value" class="btn btn-primary preventDoubleRequest"><i class="icon-file icon-white"></i> Iniciar Solicitud</a>
 
                     <?php else: ?>
                         <?php if($p->getTareaInicial()->acceso_modo=='claveunica'):?>
@@ -161,17 +161,18 @@ document.getElementById(idCampoRutUser).onchange = function(){
 //funcion para rellenar campos con un trabajador seleccionado
 function cargarDatos(){
 	//se rellenan los campos con el valor elegido
-	var valorSelected =  document.getElementById(idCampoRutUser).value.split("-");
-	document.getElementById(idCampoRut).value =  valorSelected[1].concat("-".concat(valorSelected[2]));
+	var valorSelected =  document.getElementById(idCampoRutUser).value.split("*");
+	document.getElementById(idCampoRut).value =  valorSelected[1];  //concat("-".concat(valorSelected[2]));
 	document.getElementById(idCampoName).value =  valorSelected[0].split("/")[1] +  " " + valorSelected[0].split("/")[0];
-	document.getElementById(idCampoLocation).value =  valorSelected[3].toUpperCase();
-	document.getElementById(idCampoDiasAsig).value =  valorSelected[4];
-	document.getElementById(idCampoMedJor).value =  valorSelected[5];
-	//console.log(document.getElementById(idCampoRutUser).value.split("-"));	
+	document.getElementById(idCampoLocation).value =  valorSelected[2].toUpperCase();
+	document.getElementById(idCampoDiasAsig).value =  valorSelected[3];
+	document.getElementById(idCampoMedJor).value =  valorSelected[4];
+	
+	console.log(document.getElementById(idCampoRutUser).value.split("*"));	
 	var json = '';
 	var rut = document.getElementById(idCampoRut).value;
 	
-	if(valorSelected[6]=='si'){	
+	if(valorSelected[5]=='si'){	
 		
 		//Desplegar la tabla
 		var lTable = document.getElementById("table_dias");
@@ -191,8 +192,8 @@ function cargarDatos(){
      			document.getElementById(idCampoMedJorDis).value =  json.pendingHalfDays;
 			
 			//dias  adicionales
-			var rotativeTurn = json.rotativeTurn;
-
+			var rotativeTurn = (json.rotativeTurn!=undefined)?json.rotativeTurn:0;
+			
 			//si no quedan dias disponibles, no se puede iniciar solicitud
         		if (json.pendingDays == 0){
                 		document.getElementById("iniciarSolicitud").style.display = "none";
@@ -207,13 +208,17 @@ function cargarDatos(){
 			//mostrar historial si existe más de un valor, sino se oculta	
 			if (json.history.length > 0){
 	        	         document.getElementById("link_historial").style.display = "inline";
-	        	         document.getElementById("rows").innerHTML = '<tr><th>Fecha</th><th>Tipo solicitud</th><th >Ver detalle</th><th>Eliminar</th></tr>';
+				 if(rotativeTurn!=0)
+					document.getElementById("rows").innerHTML = '<tr><th>Fechas</th><th>Dias solicitados</th><th >Ver detalle</th> <th>Eliminar</th></tr>';
+				 else
+	        	         	document.getElementById("rows").innerHTML = '<tr><th>Fecha</th><th>Tipo solicitud</th><th >Ver detalle</th><th>Eliminar</th></tr>';
 	        	}else{
 	        	         document.getElementById("link_historial").style.display = "none";
 	        	         document.getElementById("rows").innerHTML = '';
 	        	}
 
 				//lista auxiliar para ordenar los dias
+				/*
 				var days = [];
 			
        				for (var i=0; i < json.history.length; i ++){
@@ -225,46 +230,59 @@ function cargarDatos(){
 				}
 				//ordenar los dias por la mas reciente
 				days = days.sort(function(a,b){return a<b});
-			
+				*/
 				//rellenar tabla historial con fechas ordenadas
+
 				var sizeHistory = json.history.length;
 				for(var i=sizeHistory -1; i >= 0; i--){
 
 					//var date = days[i];
 					var date= new Date (json.history[i].date);
-		
-					var day = date.getDate() ;
+						
+					var day = date.getDate();
 		                	if (day < 10) day = "0" + day;
 
 		                	var month = date.getMonth() + 1;
         		        	if (month < 10) month = "0" + (month);
         		
 			        	var type = "Jornada completa";
+             				if (json.history[i].type == 2) type = "Media jornada AM";
+                		        if (json.history[i].type == 3) type = "Media jornada PM";
 
-             				if (json.history[i].type == 2)
-                        			type = "Media jornada AM";
-                			
-                		        if (json.history[i].type == 3)
-                        		        type = "Media jornada PM";
+					var fecha = day + "-"+ month + "-" + date.getFullYear();
+
+                                	
+                                	if(rotativeTurn!=0){
+                                        	date= new Date (json.history[i].datefinal);
+                                        	
+						day = date.getDate() ;
+                                        	if (day < 10) day = "0" + day; 
+
+						month = date.getMonth() + 1;
+                                        	if (month < 10) month = "0" + month;
+                                        	
+						fecha = fecha +" - " + day + "-"+ month + "-" + date.getFullYear();
+                                		type  = json.history[i].requiredDays;
+					}
 					
-					if(i== (sizeHistory-1) && json.history[i].idTramite!=0 ){
+					if(i==(sizeHistory-1) && json.history[i].idTramite!=0 ){
 						dv  = String(rut.split("-")[1]);	
 						rut = String(rut.split("-")[0]);
 						
 						check_user(json.history[i].idTramite);
 
-						document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +" ><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td> <td id = "+'b_' +json.history[i].idTramite +"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+json.history[i].idTramite +","+json.history[i].id+","+ rut +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
+						document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +" ><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td> <td id = "+'b_' +json.history[i].idTramite +"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+json.history[i].idTramite +","+json.history[i].id+","+ rut +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
 					}
 					else{
 
 						if(json.history[i].idTramite!=0){
 							check_user(json.history[i].idTramite);
-							document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +"><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td><td></td></tr>";
+							document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +"><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td><td></td></tr>";
 						}
 						else
-                					document.getElementById("rows").innerHTML += "<tr><td>"+ day + "-"+ month + "-" + date.getFullYear()+"</td><td>"+type+"</td><td></td><td></td></tr>";
+                					document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td></td><td></td></tr>";
 					}
-        			}
+        			}//End for 
 	  		}
 		};
 		//mandar peticion XMLHttp
@@ -288,7 +306,7 @@ $(".historial").slideToggle(0);
 function mostrarHistorial() {
         $(".historial").slideToggle('slow', callbackHistorial);
         return false;
-    }
+}
 //cambia texto del slide
 function callbackHistorial() {
         var $link = $("#link_historial");
@@ -309,11 +327,13 @@ function detail(tramite) {
 	window.location.href = url ;
 }
 
+//Chequea si el usuario participo en el tramite
 function check_user(tramite){
 	var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
 		if(this.readyState == 4 ){
-                	json = JSON.parse(this.responseText);
+			json = this.responseText ; 
+			json = JSON.parse(json);
 			if(!json.result){
 				document.getElementById(tramite).style.display = "none";
 				if(document.getElementById('b_'+tramite))
@@ -324,7 +344,5 @@ function check_user(tramite){
 	xhttp.open("GET", site_url + "/admindays/check_user/"+tramite,true);
         xhttp.send();
 }
-
-
 
 </script>

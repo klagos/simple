@@ -134,9 +134,10 @@
 			</ul>
 			<!-- MODULO DIA ADMINISTRATIVO -->	
 			<ul id="sideMenu" class="nav nav-list">
-			     <?php if($revisarDiasAdmin): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['DiasAdmin1','DiasAdmin2'])">&nbsp;&nbsp;&nbsp;Días Administrativos<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-calendar"></span></a></li><?php endif ?>
-			     <?php if($revisarDiasAdmin): ?><li class="<?= isset($sidebar) && $sidebar == 'iniciar_admin_days' ? 'active' : '' ?>"><a id="DiasAdmin1" href="<?= site_url('tramites/iniciar/'. proceso_dias_admin_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:33px" class="pull-center hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
-			     <?php if($revisarDiasAdmin): ?><li class="<?= isset($sidebar) && $sidebar == 'consultar_admin_days' ? 'active' : '' ?>"><a id="DiasAdmin2" href="<?= site_url('admindays/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
+			     <?php if($revisarDiasAdmin): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['DiasAdmin1','DiasAdmin2','DiasAdmin3'])">&nbsp;&nbsp;&nbsp;Días Admi. y Adic.<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-calendar"></span></a></li><?php endif ?>
+				<?php if($revisarDiasAdmin): ?><li class="<?= isset($sidebar) && $sidebar == 'consultar_admin_days' ? 'active' : '' ?>"><a id="DiasAdmin1" href="<?= site_url('admindays/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
+				<?php if($revisarDiasAdmin): ?><li class="<?= isset($sidebar) && $sidebar == 'iniciar_admin_days' ? 'active' : '' ?>"><a id="DiasAdmin2" href="<?= site_url('tramites/iniciar/'. proceso_dias_admin_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Administrativos&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:33px" class="pull-center hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
+				<?php if($revisarDiasAdmin): ?><li class="<?= isset($sidebar) && $sidebar == 'iniciar_adicional_days' ? 'active' : '' ?>"><a id="DiasAdmin3" href="<?= site_url('tramites/iniciar/'. proceso_dias_adicional_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adicionales&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:33px" class="pull-center hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
 			</ul>
 			<!--MODULO PIE DE FIRMA  -->
 			<ul id="sideMenu" class="nav nav-list">
@@ -245,7 +246,7 @@ if (diff < 0){
 
 //si hay más de 3 menús, ninguno estará desplegado
 if (cont_menu > 3)
-	Slide(["Licencia1","Licencia2","Licencia3","Licencia4","DiasAdmin1","DiasAdmin2","Estudio1","Estudio2","Doc1"],0);
+	Slide(["Licencia1","Licencia2","Licencia3","Licencia4","DiasAdmin2","DiasAdmin3","Estudio1","Estudio2","Doc1"],0);
 
 </script>
 

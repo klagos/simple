@@ -147,6 +147,7 @@ class Admindays extends MY_Controller {
   }	
 
   public function check_user($tramite_id){
+	ChromePhp::log($tramite_id);
 	$tramite = Doctrine::getTable ( 'Tramite' )->find ( $tramite_id );
  	$user_id = UsuarioSesion::usuario()->id;
 	if($tramite->usuarioHaParticipado($user_id)) 
