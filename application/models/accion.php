@@ -18,6 +18,8 @@ class Accion extends Doctrine_Record {
 		'AccionEditarLicencia'  => array('tipo' => 'editar_licencia'),
 		'AccionWebservice'  => array('tipo' => 'webservice'),
                 'AccionVariable'  => array('tipo' => 'variable'),
+		'AccionGuardarFasMedico'  => array('tipo' => 'guardar_fas_medico'),
+		'AccionGuardarUsuarioPersonal'  => array('tipo' => 'accion_usuario_personal'),
 		'AccionGuardarFiniquito'  => array('tipo' => 'guardar_finiquito'),
 		'AccionGuardarLicencia'  => array('tipo' => 'guardar_licencia')
             )

@@ -113,7 +113,9 @@
 			//Modulo trabajadores
 			$trabajadores =Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_GUIA_TRABAJADORES");
 
-
+			//Modulo FAS
+			$fas= true;
+			
 			?>
 			<ul id="sideMenu" class="nav nav-list">
 				<li class="iniciar"><a  href="#" onclick="Slide(['Inicio1','Inicio2','Inicio3'])">&nbsp;&nbsp;&nbsp;Inicio<span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-home"></a></li>
@@ -169,8 +171,15 @@
 			  <!-- MODULO TRABAJADORES -->
                         <ul id="sideMenu" class="nav nav-list">
                            <?php if($trabajadores): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['trabajadores_add','trabajadores_edit'])">&nbsp;&nbsp;&nbsp; Colaboradores<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-large"></span></a></li><?php endif ?>
-                           <?php if(false): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add' ? 'active' : '' ?>"><a id="trabajadores_add" href="<?= site_url('trabajadores/agregar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
+                           <?php if($trabajadores): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add' ? 'active' : '' ?>"><a id="trabajadores_add" href="<?= site_url('tramites/iniciar/'. proceso_agregar_colaboradores) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
 			<?php if($trabajadores): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_edit' ? 'active' : '' ?>"><a id="trabajadores_edit" href="<?= site_url('trabajadores/buscar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-cog"></a></li><?php endif ?>
+                        </ul>
+
+			 <!-- MODULO FAS -->
+                        <ul id="sideMenu" class="nav nav-list">
+                           <?php if($fas): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['fas_consultar'])">&nbsp;&nbsp;&nbsp;FAS<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-large"></span></a></li><?php endif ?>
+                           <?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add' ? 'active' : '' ?>"><a id="trabajadores_add" href="<?= site_url('tramites/iniciar/'. proceso_fas_medicos) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
+                        <?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_consultar' ? 'active' : '' ?>"><a id="fas_consultar" href="<?= site_url('fas/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
                         </ul>
 
 

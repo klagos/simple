@@ -20,6 +20,8 @@
 	    <option value="editar_licencia">Editar Licencia</option>
 	    <option value="guardar_finiquito">Guardar Finiquito</option>
             <option value="guardar_licencia">Guardar Licencia</option>
+	    <option value="guardar_fas_medico">Guardar FAS Medico</option>
+	    <option value="accion_usuario_personal">Guardar Usuarios D.Pers.</option>	
         </select>
     </form>
 </div>

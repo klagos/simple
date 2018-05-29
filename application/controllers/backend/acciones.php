@@ -88,12 +88,18 @@ class Acciones extends MY_BackendController {
             $accion=new AccionExcelLicencia();
 	else if($tipo=='validar_excel_licencia')
             $accion=new AccionValidarExcelLicencia();
+	else if($tipo=='guardar_fas_medico')
+            $accion=new AccionGuardarFasMedico();
+
 	else if($tipo=='editar_licencia')
 	    $accion=new AccionEditarLicencia();
 	else if($tipo=='guardar_finiquito')
             $accion= new AccionGuardarFiniquito();
 	else if ($tipo=='guardar_licencia')
-            $accion=new AccionGuardarLicencia();        
+            $accion=new AccionGuardarLicencia();
+	else if ($tipo=='accion_usuario_personal')
+            $accion=new AccionGuardarUsuarioPersonal();
+        
         $data['edit']=FALSE;
         $data['proceso']=$proceso;
         $data['tipo']=$tipo;
@@ -140,10 +146,18 @@ class Acciones extends MY_BackendController {
                 $accion=new AccionExcelLicencia();
 	    else if($this->input->post('tipo')=='validar_excel_licencia')
                 $accion=new AccionValidarExcelLicencia();
+	    
 	    else if($this->input->post('tipo')=='editar_licencia')
                 $accion=new AccionEditarLicencia();
+		
+	    else if($this->input->post('tipo')=='guardar_fas_medico')
+                $accion=new AccionGuardarFasMedico();
+
             else if($this->input->post('tipo')=='guardar_finiquito')
                 $accion=new AccionGuardarFiniquito();
+	    else if($this->input->post('tipo')=='accion_usuario_personal')
+                $accion=new AccionGuardarUsuarioPersonal();
+
 	    else if($this->input->post('tipo')=='guardar_licencia')
 		$accion=new AccionGuardarLicencia();
             $accion->proceso_id=$this->input->post('proceso_id');
