@@ -114,7 +114,7 @@
 			$trabajadores =Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_GUIA_TRABAJADORES");
 
 			//Modulo FAS
-			$fas= true;
+			$fas= Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_FAS");
 			
 			?>
 			<ul id="sideMenu" class="nav nav-list">
@@ -178,10 +178,15 @@
 			 <!-- MODULO FAS -->
                         <ul id="sideMenu" class="nav nav-list">
                            <?php if($fas): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['fas_consultar'])">&nbsp;&nbsp;&nbsp;FAS<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-large"></span></a></li><?php endif ?>
-                           <?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add' ? 'active' : '' ?>"><a id="trabajadores_add" href="<?= site_url('tramites/iniciar/'. proceso_fas_medicos) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
-                        <?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_consultar' ? 'active' : '' ?>"><a id="fas_consultar" href="<?= site_url('fas/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
-                        </ul>
+                           <?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_add_medico' ? 'active' : '' ?>"><a id="fas_add_medico" href="<?= site_url('tramites/iniciar/'. proceso_fas_medicos) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beneficio Medico&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
+			<?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_add_medico' ? 'active' : '' ?>"><a id="fas_add_medico" href="<?= site_url('tramites/iniciar/'. proceso_fas_social) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beneficio Social&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
 
+                        <?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_consultar' ? 'active' : '' ?>"><a id="fas_consultar" href="<?= site_url('fas/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
+                        
+			<?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_pagar_medico' ? 'active' : '' ?>"><a id="fas_pagar_medico" href="<?= site_url('fas/generarpago') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pagar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-briefcase"></a></li><?php endif ?>
+			<?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_consolidado' ? 'active' : '' ?>"><a id="fas_consolidado" href="<?= site_url('fas/consolidado') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consolidado&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-briefcase"></a></li><?php endif ?>
+
+                        </ul>
 
 
 	

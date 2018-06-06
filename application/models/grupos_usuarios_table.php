@@ -8,6 +8,7 @@ class GrupoUsuariosTable extends Doctrine_Table {
 	const MODULO_DIAS_ADMIN	= 4;
 	const MODULO_GUIA_TELEFONO = 5;
 	const MODULO_GUIA_TRABAJADORES = 6;
+	const MODULO_FAS = 7;	
 
 	public function cantGruposUsuaros($usuario_id,$mod){
                 $modulo = $this->modulo($mod);
@@ -35,6 +36,8 @@ class GrupoUsuariosTable extends Doctrine_Table {
                                 return self::MODULO_GUIA_TELEFONO;
 			case "MODULO_GUIA_TRABAJADORES":
                                 return self::MODULO_GUIA_TRABAJADORES;
+			case "MODULO_FAS":
+                                return self::MODULO_FAS;
     			
 		}
 	}	
