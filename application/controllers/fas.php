@@ -236,8 +236,14 @@ public function generarconsolidado(){
                 redirect('tramites/disponibles');
         }
 	
+	$escolar =($this->input->get('escolar'))?$this->input->get('escolar'):null;
+	
 	$url = urlapi . "/fas/paidBenefit";
-        $ch = curl_init($url);
+        if($escolar=='si')
+		$url = $url.'?paidEscolar=true';
+	
+
+	$ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL,$url);

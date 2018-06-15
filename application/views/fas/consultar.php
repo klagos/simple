@@ -200,9 +200,15 @@ function cargarDatos(){
         document.getElementById("tr_saldo").style.display="none";
 	document.getElementById("tr_acumulado").style.display="none";
 	document.getElementById("link_historial").style.display = "none";
-	//document.getElementById("iniciarSolicitud").style.display = "inline";
 	document.getElementById(idCampoMedico).selectedIndex = 0;
 	document.getElementById(idCampoSocial).selectedIndex = 0;
+
+	document.getElementById("link_historial").style.display = "none";
+        document.getElementById("msg").innerHTML = "";
+	document.getElementById("rows").innerHTML = '';
+	
+        document.getElementById("solic_social").style.display = "none";
+        document.getElementById("solic_medico").style.display = "none";
 }
 
 document.getElementById(idCampoSocial).onchange = function(){
@@ -276,7 +282,7 @@ document.getElementById(idCampoSocial).onchange = function(){
 						else
                                                         row+="<td></td>";
 	
-                                                if(json.socialHistory[i].idTramite!=null){
+                                                if(json.socialHistory[i].idTramite!=null && json.socialHistory[i].idTramite!=0 ){
                                                         check_user(json.socialHistory[i].idTramite);
                                                         row+="<td id ="+json.socialHistory[i].idTramite +"><a class='btn btn-info' href='#' onclick =' return detail("+json.socialHistory[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
                                                 }
@@ -284,7 +290,7 @@ document.getElementById(idCampoSocial).onchange = function(){
                                                         row+="<td></td>";
                                                 
 
-                                                if(json.socialHistory[i].idTramite!=null && json.socialHistory[i].paid ==false){
+                                                if(json.socialHistory[i].idTramite!=null && json.socialHistory[i].idTramite!=0 && json.socialHistory[i].paid ==false){
                                                         dv  = String(rut.split("-")[1]);        
                                                         rut = String(rut.split("-")[0]);
                                                         
@@ -375,7 +381,7 @@ document.getElementById(idCampoMedico).onchange = function(){
 						var row = "<tr><td>"+ value +"</td><td>"+fecha+"</td>";
 						row += (json.history[i].paid ==true)?"<td>Pagado</td>":"<td>Pendiente</td>"; 
 						
-						if(json.history[i].idTramite!=null){
+						if(json.history[i].idTramite!=null && json.history[i].idTramite!=0){
 							check_user(json.history[i].idTramite);
 							row+="<td id ="+json.history[i].idTramite +"><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
 						}
@@ -383,7 +389,7 @@ document.getElementById(idCampoMedico).onchange = function(){
 							row+="<td></td>";
 						
 
-						if(json.history[i].idTramite!=null && json.history[i].paid ==false){
+						if(json.history[i].idTramite!=null && json.history[i].idTramite!=0 &&  json.history[i].paid ==false){
 							dv  = String(rut.split("-")[1]);        
                                                 	rut = String(rut.split("-")[0]);
 							
