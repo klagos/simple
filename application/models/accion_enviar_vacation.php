@@ -53,19 +53,89 @@ class AccionEnviarVacation extends Accion {
 
 	$json = json_encode($json);
         $json = '['.$json.']';
-	
-	
-        $ch = curl_init();
+
 	$url = urlapi."/users/list/vacationrequest";
 	
 	$ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
-        curl_exec($ch);
+        $result = curl_exec($ch);
         curl_close($ch);
+	$result = json_decode($result);
+	
+	if($result!=null && $result!=null){
+	
+		//PERIODS BEFORE
+		$tr_before='';
+		$size 	=count($result->vacationPeriodResponsesAvailableBefore);
+		if($size>0){
+			foreach($result->vacationPeriodResponsesAvailableBefore as $json){
+                		$tr_before = $tr_before.'<tr><td>'.$json->dates.'</td><td>'.$json->basic.'</td><td>'.$json->progressive.'</td><td>'.$json->total.'</td></tr>';
+			}
+			$tr_before = $tr_before.'<tr ><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td></tr>';
+			$tr_before = $tr_before.'<tr><td>TOTALES</td><td>'.$result->totalAvailableBefore[0].'</td><td>'.$result->totalAvailableBefore[1].'</td><td>'.$result->totalAvailableBefore[2].'</td></tr>';
+		}
+		else{	
+			$tr_before = '<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+			$tr_before = $tr_before.'<tr><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td></tr>';
+			$tr_before = $tr_before.'<tr><td>TOTALES</td><td></td><td></td><td></td></tr>';
+		}
+	
+		$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("tabla_before", $etapa->id);	
+		if($dato){
+			$dato->valor = str_replace("trs_before",$tr_before, $dato->valor);
+			$dato->save();
+		}
+
+
+		//PERIODS REQUEST
+		$tr_used='';
+                $size   =count($result->vacationPeriodResponsesUsed);
+                if($size>0){
+			foreach($result->vacationPeriodResponsesUsed as $json){
+                                $tr_used = $tr_used.'<tr><td>'.$json->dates.'</td><td>'.$json->basic.'</td><td>'.$json->progressive.'</td><td>'.$json->date_init.'</td><td>'.$json->date_final.'</td><td>'.$json->total.'</td></tr>';
+                        }
+			$tr_used = $tr_used.'<tr><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td></tr>';
+			$tr_used = $tr_used.'<tr><td>TOTALES</td><td>'.$result->totalAvailableUsed[0].'</td><td>'.$result->totalAvailableUsed[1].'</td><td></td><td></td><td>'.$result->totalAvailableUsed[2].'</td></tr>';
+		}
+		else{
+                        $tr_used = '<tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+                        $tr_used = $tr_used.'<tr><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td></tr>';
+                        $tr_used = $tr_used.'<tr><td>TOTALES</td><td></td><td></td><td></td><td></td><td></td></tr>';
+                }		
+		
+ 		$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("tabla_used", $etapa->id);
+                if($dato){
+                        $dato->valor = str_replace("trs_used",$tr_used, $dato->valor);
+                        $dato->save();
+                }
+
+		//PERIODS AFTER
+                $tr_after='';
+                $size    =count($result->vacationPeriodResponsesAvailableAfter);
+		if($size > 0){
+			foreach($result->vacationPeriodResponsesAvailableAfter as $json){
+                                $tr_after = $tr_after.'<tr><td>'.$json->dates.'</td><td>'.$json->basic.'</td><td>'.$json->progressive.'</td><td>'.$json->total.'</td></tr>';
+                        }
+                        $tr_after = $tr_after.'<tr ><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td></tr>';
+                        $tr_after = $tr_after.'<tr><td>TOTALES</td><td>'.$result->totalAvailableAfter[0].'</td><td>'.$result->totalAvailableAfter[1].'</td><td>'.$result->totalAvailableAfter[2].'</td></tr>';
+		}
+		else{
+			$tr_after = '<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+			$tr_after = $tr_after.'<tr><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td><td style="border-bottom: 1px solid #1a1a1a;"></td></tr>';
+			$tr_after = $tr_after.'<tr><td>TOTALES</td><td></td><td></td><td></td></tr>';	
+		}
+
+		$dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("tabla_after", $etapa->id);
+                if($dato){
+                        $dato->valor = str_replace("trs_after",$tr_after, $dato->valor);
+                        $dato->save();
+                }
+
+	}//End if rsult !=0
 	
     }
 
