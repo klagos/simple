@@ -55,7 +55,8 @@ class AccionEnviarVacation extends Accion {
         $json = '['.$json.']';
 
 	$url = urlapi."/users/list/vacationrequest";
-	
+
+//	ChromePhp::log($json);	
 	$ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -65,6 +66,8 @@ class AccionEnviarVacation extends Accion {
         $result = curl_exec($ch);
         curl_close($ch);
 	$result = json_decode($result);
+	
+//	 ChromePhp::log($result); 
 	
 	if($result!=null && $result!=null){
 	

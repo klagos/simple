@@ -117,7 +117,7 @@
 			$fas= Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_FAS");
 			
 			//Modulo Vacation
-			$vacation = true;
+			$vacation = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_VACATION");
 			
 			?>
 			<ul id="sideMenu" class="nav nav-list">
@@ -191,9 +191,9 @@
                         </ul>
 			<!-- MODULO VACATION -->
                         <ul id="sideMenu" class="nav nav-list">
-                           <?php if($vacation): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['vacation_add'])">&nbsp;&nbsp;&nbsp;Feriados<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-large"></span></a></li><?php endif ?>
+                           <?php if($vacation): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['vacation_add','vacation_consultar'])">&nbsp;&nbsp;&nbsp;Feriados<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-plane"></span></a></li><?php endif ?>
                            <?php if($vacation): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_add' ? 'active' : '' ?>"><a id="vacation_add" href="<?= site_url('tramites/iniciar/'. proceso_vacation) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
-                        <?php if(false): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_add_medico' ? 'active' : '' ?>"><a id="fas_add_medico" href="<?= site_url('tramites/iniciar/'. proceso_fas_social) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beneficio Social&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
+			<?php if($vacation): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_consultar' ? 'active' : '' ?>"><a id="vacation_consultar" href="<?= site_url('vacation/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
 			</ul>
 
 	
