@@ -213,8 +213,13 @@ function cargarDatos(){
 						
 						var row = '<h5><a id="link_historial_'+i+'" onclick="return mostrarHistorial('+i+');" >'+ fecha+' +</a></h5>';
 						
-						if(periodos[i].endDate==null)
-							var tabla    = '<table ><tbody><tr><td>Basicos </td><td></td> <td></td></tr><tr><td style="border-bottom: 1px solid #1a1a1a;"> Progresivos </td><td style="border-bottom: 1px solid #1a1a1a;" ><td><td></td> </tr> <tr><td>Total </td><td></td> <td> '+periodos[i].avaible+' <td></tr> </tbody></table>';
+						if(periodos[i].endDate==null){
+							var total    = periodos[i].basicAvailable + periodos[i].progressiveAvailable;
+							 
+							var tabla    = 'A la fecha <br><table><tbody><tr><td>Basicos </td><td></td> <td></td></tr><tr><td style="border-bottom: 1px solid #1a1a1a;"> Progresivos </td><td style="border-bottom: 1px solid #1a1a1a;" ><td><td></td> </tr> <tr><td>total </td><td></td> <td> '+periodos[i].avaible+' <td></tr> </tbody></table>';
+							
+							tabla +='<br>Al finalizar el periodo <br><table><tbody><tr><td>Basicos </td><td></td><td>'+periodos[i].basicAvailable+' </td></tr><tr><td style="border-bottom: 1px solid #1a1a1a;"> Progresivos </td><td style="border-bottom: 1px solid #1a1a1a;"><td><td>'+periodos[i].progressiveAvailable +'</td> </tr> <tr><td>Total </td><td></td> <td> '+ total+' <td></tr> </tbody></table>';
+						}
 						else
 							var tabla    = '<table ><tbody><tr><td>Basicos </td> <td></td><td> '+periodos[i].basicAvailable +' </td></tr><tr><td style="border-bottom: 1px solid #1a1a1a;">Progresivos </td><td></td> <td style="border-bottom: 1px solid #1a1a1a;">'+ (periodos[i].progressiveAvailable)   +'<td></tr> <tr><td>Total </td><td style="border-bottom: 1px solid #1a1a1a;"></td> <td> '+periodos[i].avaible+' <td></tr> </tbody></table>';
 						row    += '<div class="historial_'+i+'" style="display: none;" >'+tabla+' <table class="table"><thead id="rows_'+i+'"></thead></table></div>';
