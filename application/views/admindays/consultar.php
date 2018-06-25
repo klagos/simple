@@ -267,11 +267,16 @@ function cargarDatos(){
 					
 					if(i==(sizeHistory-1) && json.history[i].idTramite!=0 ){
 						dv  = String(rut.split("-")[1]);	
-						rut = String(rut.split("-")[0]);
-						
+						rut = String(rut.split("-")[0]);		
+							
 						check_user(json.history[i].idTramite);
 
+						if(dv=='K')
+							dv = 10;
+
 						document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +" ><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td> <td id = "+'b_' +json.history[i].idTramite +"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+json.history[i].idTramite +","+json.history[i].id+","+ rut +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
+						
+
 					}
 					else{
 
@@ -315,6 +320,8 @@ function callbackHistorial() {
 
 //Funcion para eliminar el tramite y el request
 function eliminarTramite(tramiteId,requestId,rut,dv){
+	if(dv==10)
+		dv='K'
 	rut = rut + '-' + dv;	
 	$("#modal").load(site_url + "admindays/ajax_auditar_eliminar_tramite_adminday/" + tramiteId + "/"+requestId +"/"+rut );
         $("#modal").modal();

@@ -362,8 +362,7 @@ class Licencias extends MY_Controller {
                 }
 
                 $excel_row = 2;
-		ChromePhp::log( $rowtramites);
-					
+			
 		foreach($rowtramites as $tramite){
                         $rut = "";
                         $nombre="";
