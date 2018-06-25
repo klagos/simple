@@ -37,7 +37,8 @@ class Vacation extends MY_Controller {
         }
 	
 	$data['json_list_users'] = $json_ws;
-        $data['sidebar']='vacation_consultar';
+        $data['title']='Consultar';
+	$data['sidebar']='vacation_consultar';
         $data['content'] = 'vacation/consultar';
        
         $this->load->view('template', $data);
@@ -144,7 +145,6 @@ class Vacation extends MY_Controller {
   }	
 
   public function check_user($tramite_id){
-	ChromePhp::log($tramite_id);
 	$tramite = Doctrine::getTable ( 'Tramite' )->find ( $tramite_id );
  	$user_id = UsuarioSesion::usuario()->id;
 	if($tramite->usuarioHaParticipado($user_id)) 
@@ -154,6 +154,91 @@ class Vacation extends MY_Controller {
 	header("Content-Type: application/json");
 	echo json_encode($data);
  }
+
+
+ public function provision(){
+	  //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+
+ 	$data['title']='Provision';
+        $data['sidebar']='vacation_provision';
+        $data['content'] = 'vacation/provision';
+
+        $this->load->view('template', $data);
+
+ }
+
+
+ public function provision_diasSolicitados(){
+          //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+	
+	$mes   =($this->input->get('mes'))?$this->input->get('mes'):null;
+	
+	$url = urlapi . "/vacation/".$mes."/provision";
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                       "Content-Type: application/json"
+                ));
+        $result=curl_exec($ch);
+        curl_close($ch);
+
+        $json_ws = json_decode($result);
+        $CI =& get_instance();
+        $CI->load->library('Excel');
+        $object = new PHPExcel();
+
+	
+	$table_columns = array("Rut","Dev. Basicos","Dev. Progresivos","Req. Basicos","Req. Progresivos");
+
+	$column = 0;
+
+       foreach($table_columns as $field){
+                        $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                        $column++;
+        }
+        $excel_row = 2;
+        foreach ($json_ws  as $json){
+		 $rut  = $json->rut;
+		 $dev_basico = $json->devBasic;
+		 $dev_progre = $json->devProgresivo;
+
+		$req_basico = $json->reqBasico;
+		$req_progre = $json->reqProgresivo; 
+		
+		$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$dev_basico);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$dev_progre);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$req_basico);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$req_progre);
+		 $excel_row++;
+	}
+	
+	$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="provision_vacation".xls"');
+        $object_writer->save('php://output');
+
+        $data['sidebar']='vacation_provision';
+        $data['content'] = 'vacation/provision';
+
+        $this->load->view('template', $data);
+
+ }
+
+
+
+
+
 	
 
 }

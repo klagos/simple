@@ -191,9 +191,11 @@
                         </ul>
 			<!-- MODULO VACATION -->
                         <ul id="sideMenu" class="nav nav-list">
-                           <?php if($vacation): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['vacation_add','vacation_consultar'])">&nbsp;&nbsp;&nbsp;Feriados<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-plane"></span></a></li><?php endif ?>
+                           <?php if($vacation): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['vacation_add','vacation_consultar','vacation_provision'])">&nbsp;&nbsp;&nbsp;Feriados<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-plane"></span></a></li><?php endif ?>
                            <?php if($vacation): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_add' ? 'active' : '' ?>"><a id="vacation_add" href="<?= site_url('tramites/iniciar/'. proceso_vacation) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
-			<?php if($vacation): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_consultar' ? 'active' : '' ?>"><a id="vacation_consultar" href="<?= site_url('vacation/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
+			<?php if($vacation): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_consultar' ? 'active' : '' ?>"><a id="vacation_consultar" href="<?= site_url('vacation/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>				
+			<?php if($vacation>1): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_provision' ? 'active' : '' ?>"><a id="vacation_provision" href="<?= site_url('vacation/provision') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provision&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-th-list"></a></li><?php endif ?>
+
 			</ul>
 
 	
