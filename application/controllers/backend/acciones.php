@@ -99,6 +99,9 @@ class Acciones extends MY_BackendController {
             $accion=new AccionGuardarLicencia();
 	else if ($tipo=='accion_usuario_personal')
             $accion=new AccionGuardarUsuarioPersonal();
+	else if ($tipo=='accion_enviar_vacation')
+            $accion=new AccionEnviarVacation();
+
         
         $data['edit']=FALSE;
         $data['proceso']=$proceso;
@@ -157,6 +160,9 @@ class Acciones extends MY_BackendController {
                 $accion=new AccionGuardarFiniquito();
 	    else if($this->input->post('tipo')=='accion_usuario_personal')
                 $accion=new AccionGuardarUsuarioPersonal();
+	   else if($this->input->post('tipo')=='accion_enviar_vacation')
+                $accion=new AccionEnviarVacation();
+
 
 	    else if($this->input->post('tipo')=='guardar_licencia')
 		$accion=new AccionGuardarLicencia();

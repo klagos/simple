@@ -13,6 +13,7 @@ class Accion extends Doctrine_Record {
         $this->setSubclasses(array(
                 'AccionEnviarCorreo'  => array('tipo' => 'enviar_correo'),
                 'AccionEnviarAdminDays'  => array('tipo' => 'enviar_admin_days'),
+		'AccionEnviarVacation'  => array('tipo' => 'accion_enviar_vacation'),
 		'AccionExcelLicencia'  => array('tipo' => 'excel_licencia'),
 		'AccionValidarExcelLicencia'  => array('tipo' => 'validar_excel_licencia'),
 		'AccionEditarLicencia'  => array('tipo' => 'editar_licencia'),
