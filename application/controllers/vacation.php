@@ -53,7 +53,7 @@ class Vacation extends MY_Controller {
   }
   
   public function borrar_tramite_vacation($tramite_id,$request_id,$rut) {
-
+		ChromePhp::log($tramite_id);
 
                 //Verificamos que el usuario ya se haya logeado 
                 if (!UsuarioSesion::usuario()->registrado) {
@@ -70,7 +70,7 @@ class Vacation extends MY_Controller {
 
                         if($tramite!=null){
                                 $user_id = UsuarioSesion::usuario()->id;
-
+				
                                 if($tramite->usuarioHaParticipado($user_id)){
                                         $fecha = new DateTime ();
                                         $proceso = $tramite->Proceso;
@@ -111,6 +111,7 @@ class Vacation extends MY_Controller {
                                         $respuesta->redirect = site_url('vacation/consultar?rut='.$rut);
 
                                 }else{
+					ChromePhp::log('El usuario no participo en el tramite');
 				//El usuario no realizo esta solicitud
 					$respuesta->validacion = FALSE;
                                 	$respuesta->errores = validation_errors();

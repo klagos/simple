@@ -32,19 +32,25 @@ class AccionEnviarAdminDays extends Accion {
     public function ejecutar(Etapa $etapa) {
         $regla=new Regla($this->extra->date_request);
         $date_request=$regla->getExpresionParaOutput($etapa->id);
-
-	$regla=new Regla($this->extra->date_request_final);
-        $date_request_final=$regla->getExpresionParaOutput($etapa->id);
-
+	
+	$date_request_final = '';
+	if(isset ($this->extra->date_request_final)){
+		$regla=new Regla($this->extra->date_request_final);
+		$date_request_final= $regla->getExpresionParaOutput($etapa->id);
+	}
+	
         $regla=new Regla($this->extra->type);
         $type=$regla->getExpresionParaOutput($etapa->id);
 
 	$regla=new Regla($this->extra->rut);
         $rut=$regla->getExpresionParaOutput($etapa->id);
-
-	$regla=new Regla($this->extra->cantidad);
-        $cantidad=$regla->getExpresionParaOutput($etapa->id);
-	$cantidad= isset($cantidad)?$cantidad:'';
+	
+	$cantidad = '';
+	if(isset($this->extra->cantidad)){
+		$regla=new Regla($this->extra->cantidad);
+        	$cantidad= $regla->getExpresionParaOutput($etapa->id);
+		$cantidad= isset($cantidad)?$cantidad:'';
+	}
 	$cantidad= ($cantidad!='')?$cantidad:1;        
 
 	$tramite_id = $etapa->tramite_id;
@@ -53,7 +59,6 @@ class AccionEnviarAdminDays extends Accion {
 	$json.= '"requiredDays": '.$cantidad.','; 
         $json.= '"type": '.(isset($type) ? $type : '0').',"idTramite":'.$tramite_id.'}';
 	
-	ChromePhp::log($json);
 	
         $ch = curl_init();
 	$url = urlapi."users/".$rut."/admindayrequest";

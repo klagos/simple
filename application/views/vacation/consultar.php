@@ -196,20 +196,6 @@ function cargarDatos(){
                                                         
                                                 var fecha_termino = day + "/"+ month + "/" + date_end.getFullYear();						
 						var fecha = fecha_inicio+' - '+fecha_termino;
-						/*
-						var basico = periodos[i].basicAvailable;
-						var progre = periodos[i].progressiveAvailable;
-						var total  = periodos[i].avaible;
-							
-						if(periodos[i].endDate==null){
-							basico = "";
-							progre = "";
-						}
-						
-						document.getElementById("link_historial").style.display = "inline";
-						document.getElementById("rows").innerHTML = '<tr><th>Saldo Básico</th><th>Saldo Progresivo</th><th >Total</th> <th>Detalle</th></tr>';									  document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+ basico+"</td><td>"+ progr+"</td> <td>"+ total+"</td>  <td id ><a class='btn btn-info' href='#' onclick =' return detail("+rut+");' ><i class='icon-eye-open icon-white'></i></a> </td> </tr>";
-												
-						*/		
 						
 						var row = '<h5><a id="link_historial_'+i+'" onclick="return mostrarHistorial('+i+');" >'+ fecha+' +</a></h5>';
 						
@@ -247,13 +233,15 @@ function cargarDatos(){
 									var total  = request[e].progressive + request[e].basic;	
 									var row_p = "<tr><td>"+ request[e].basic +"</td><td>"+ request[e].progressive +"</td><td>"+ fecha_i +"</td><td>"+ fecha_f +"</td> <td>"+ total +"</td> ";					 
 									if(request[e].idTramite){
-										dv  = String(rut.split("-")[1]);        
-                                                        			rut = String(rut.split("-")[0]);
+										
+										dv     = String(rut.split("-")[1]);        
+                                                        			rut_sd = String(rut.split("-")[0]);
                                                         			if(dv=='K')
-											dv = 0;
-                                                        			check_user(request[e].idTramite);
-										row_p +="<td id ="+request[e].idTramite +"><a class='btn btn-info' href='#' onclick =' return detail("+request[e].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
-										row_p +="<td id = "+'b_' +request[e].idTramite +"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
+											dv = 10;
+										
+                                                        			check_user(request[e].idTramite,request[e].id);
+										row_p +="<td id ="+'view_'+request[e].idTramite+'_'+ request[e].id+"><a class='btn btn-info' href='#' onclick =' return detail("+request[e].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
+										row_p +="<td id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
 									
 									}
 									else
@@ -315,8 +303,8 @@ function callbackHistorial() {
 
 //Funcion para eliminar el tramite y el request
 function eliminarTramite(tramiteId,requestId,rut,dv){
-	if(dv==0)
-                dv='K';
+	if(dv==10)
+        	dv='K';
 	rut = rut + '-' + dv;	
 	$("#modal").load(site_url + "vacation/ajax_auditar_eliminar_tramite_vacation/" + tramiteId + "/"+requestId +"/"+rut );
         $("#modal").modal();
@@ -333,21 +321,20 @@ function detail(tramite) {
 
 
 //Chequea si el usuario participo en el tramite
-function check_user(tramite){
+function check_user(tramite, id){
 	var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
 		if(this.readyState == 4 ){
-			json = this.responseText; 
-			console.log(json);
+			json = this.responseText;
 			json = JSON.parse(json);
+			console.log(json.result);
 			if(!json.result){
-				document.getElementById(tramite).style.display = "none";
 				//Boton borrar
-				if(document.getElementById('b_'+tramite))
-					document.getElementById('b_'+tramite).style.display = "none";
-				//Boton editar
-				if(document.getElementById('edit_'+tramite))
-                                        document.getElementById('b_'+tramite).style.display = "none"; 	
+				if(document.getElementById('b_'+tramite+'_'+id))
+					document.getElementById('b_'+tramite+'_'+id).style.display = "none";
+				//Boton view
+				if(document.getElementById('view_'+tramite+'_'+id))
+                                        document.getElementById('view_'+tramite+'_'+id).style.display = "none"; 	
 			}
 		}
 	};
