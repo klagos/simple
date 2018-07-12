@@ -159,6 +159,13 @@ class Licencias extends MY_Controller {
         	                        else
         	                                $tareas_completadas ++; //analogo a getTareasCompletadas, metodo de clase tramite
         	                }
+				//Si aparece el boton eliminar
+				$tramite = Doctrine::getTable ( 'Tramite' )->find ( $licencia->id);
+				$user_id = UsuarioSesion::usuario()->id;
+				$delete_tramite = false;
+				if($tramite->usuarioHaParticipado($user_id))
+					$delete_tramite = true;
+			        $licencia->delete_tramite = $delete_tramite;	
 				$licencia->pendiente = (int) $tr["pendiente"];
 				$licencia->etapa_id = implode(', ', $etapas_array);
 				$licencia->tareas_completadas = $tareas_completadas;
@@ -334,8 +341,23 @@ class Licencias extends MY_Controller {
   		$object_writer->save('php://output');
 
         }
-
+	
 	public function reporte(){
+		 //Verificamos que el usuario ya se haya logeado 
+                if (!UsuarioSesion::usuario()->registrado) {
+                        $this->session->set_flashdata('redirect', current_url());
+                        redirect('tramites/disponibles');
+                }
+
+	 	$data['sidebar']='reporte';
+         	$data['content'] = 'licencias/reporte';
+                $data['title'] = 'Reporte de Licencias';
+                $this->load->view('template', $data);
+           
+
+	}
+	
+	public function reporte_masivo(){
 		//Verificamos que el usuario ya se haya logeado 
                 if (!UsuarioSesion::usuario()->registrado) {
                         $this->session->set_flashdata('redirect', current_url());
@@ -343,77 +365,184 @@ class Licencias extends MY_Controller {
                 }
 
 		//Variables de la query
-                $proceso_id = proceso_subsidio_id;
-                $contador = 0;
-                $rowtramites = [];
-                $rowtramites = Doctrine::getTable('Tramite')->getDocumentosProcesoEstudios($proceso_id);
+		$proceso_id = proceso_subsidio_id;
+		$contador = 0;
+		$rowtramites = [];
 
-                $CI =& get_instance();
-                $CI->load->library('Excel');
-                $object = new PHPExcel();
+		$rowtramites = Doctrine::getTable('Tramite')->findLicenciasMasiva($proceso_id,0,null);
 
-                $table_columns = array("Rut","Nombre","Fecha_Inicio","Fecha_Termino","Num_Licencia","Org_salud");
-		         
+		$CI =& get_instance();
+		$CI->load->library('Excel');
+		$object = new PHPExcel();
+
+		$table_columns = array("RUT","NOMBRE", "ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO");    
+		
+		$excel_row = 2;
+
 		$column = 0;
 
                 foreach($table_columns as $field){
                         $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
                         $column++;
                 }
-
-                $excel_row = 2;
-			
-		foreach($rowtramites as $tramite){
-                        $rut = "";
-                        $nombre="";
-                        $fecha_inicio="";
-                        $fecha_termino="";
-                        $numero=0;
-			$organismo="";
-
-                        foreach ($tramite->getValorDatoSeguimiento() as $tra_nro){
-                                if($tra_nro->nombre == 'rut_trabajador_subsidio')
-                                        $rut = $tra_nro->valor;
-                                if($tra_nro->nombre == 'nombre_trabajador_subsidio')
-                                        $nombre = $tra_nro->valor;
-                                if($tra_nro->nombre == 'fecha_inicio_licencia')
-                                        $fecha_inicio = $tra_nro->valor;
-                                if($tra_nro->nombre == 'fecha_termino_licencia')
-                                        $fecha_termino = $tra_nro->valor;
-                                if($tra_nro->nombre == 'numero_licencia')
-                                        $numero = $tra_nro->valor;
-				if($tra_nro->nombre == 'organismo_salud_licencia')
-                                        $organismo = $tra_nro->valor;
-
+		
+		foreach ($rowtramites as $tramite){
+			if (isset($tramite["Etapas"][0]["DatosSeguimiento"])){
+				//DATOS INGRESO
+				$rut = "";
+				$nombre="";
+				$org_salud="";
+				$inicio = "";
+				$termino= "";
+				$dias="";
+				$tipo="";
 				
-                        }
-			if($rut!="")
-				$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
-			
-			if($nombre!="")
-				$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$nombre);
-			
-			if($fecha_inicio!="")
-                                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$fecha_inicio);
-			
-			if($fecha_termino!="")
-                      		$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$fecha_termino);
+				//DATOS PAGO
+				$fecha_pago = "";
+				$pagado_anterior="";
+				$anticipo = "";
+				$meses = "";
+				$dias_no_cu = "";
+				$comple = "";
+								
+				foreach ($tramite["Etapas"][0]["DatosSeguimiento"] as $tra_nro){
+                        	       
+					if($tra_nro["nombre"] == 'rut_trabajador_subsidio')
+                        	                $rut = str_replace('"','',$tra_nro["valor"]);
+                                	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio')
+                                	        $nombre = str_replace('"','',$tra_nro["valor"]);
+                                	if($tra_nro["nombre"] == 'organismo_salud_licencia')
+                                	        $org_salud = str_replace('"','',$tra_nro["valor"]);
+                                	if($tra_nro["nombre"] == 'fecha_inicio_licencia')
+                                	        $inicio = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'fecha_termino_licencia')
+                                	        $termino = str_replace('"','',$tra_nro["valor"]);
+                                	if($tra_nro["nombre"] == 'dias_licencia')
+                                	        $dias = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'tipo_licencia')
+                                	        $tipo = str_replace('"','',$tra_nro["valor"]);
+                        	}
 
-			if($numero!=0)
-                                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$numero);
-			
-			 if($organismo!="")
-                         	$object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$organismo);
 
-			$excel_row++;	
+				$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $rut);
+				$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $nombre);
+				$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $org_salud);
+				$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $inicio);
+				$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $termino);
+				$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $dias);
+				$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $tipo);
+			
+				$excel_row++;
+			}
+			
 		}
-
+	
 		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
-                header('Content-Type: application/vnd.ms-excel');
-                header('Content-Disposition: attachment;filename="reporte_licencia".xls"');
-                $object_writer->save('php://output');
+        	header('Content-Type: application/vnd.ms-excel');
+        	header('Content-Disposition: attachment;filename="masiva_licencias".xls"');
+		header_remove('Set-Cookie');
+        	$object_writer->save('php://output');
+
+			
+		$data['sidebar']='reporte';
+                $data['content'] = 'licencias/reporte';
+                $data['title'] = 'Reporte de Licencias';
+                $this->load->view('template', $data);
 			
 	}
+	
+	public function ajax_auditar_eliminar_tramite_licencias($tramite_id,$rut){
+		$tramite = Doctrine::getTable("Tramite")->find($tramite_id);
+        	$data['tramite'] = $tramite;
+        	$data['rut'] = $rut;
+        	$this->load->view ( 'licencias/ajax_auditar_eliminar_tramite_licencias', $data );	
+	
+	}
+
+
+	 public function borrar_tramite_licencias($tramite_id,$rut) {
+               
+                //Verificamos que el usuario ya se haya logeado 
+                if (!UsuarioSesion::usuario()->registrado) {
+                        $this->session->set_flashdata('redirect', current_url());
+                        redirect('tramites/disponibles');
+                }
+
+                $this->form_validation->set_rules ( 'descripcion', 'Razón', 'required' );
+
+                $respuesta = new stdClass ();
+                if ($this->form_validation->run () == TRUE){
+
+                        $tramite = Doctrine::getTable ( 'Tramite' )->find ( $tramite_id );
+
+                        if($tramite!=null){
+                                $user_id = UsuarioSesion::usuario()->id;
+
+                                if($tramite->usuarioHaParticipado($user_id)){
+                                        $fecha = new DateTime ();
+                                        $proceso = $tramite->Proceso;
+                                        // Auditar
+                                        $registro_auditoria = new AuditoriaOperaciones ();
+                                        $registro_auditoria->fecha = $fecha->format ( "Y-m-d H:i:s" );
+                                        $registro_auditoria->operacion = 'Eliminaciónlicencia del rut '.$rut ;
+                                        $registro_auditoria->motivo = $this->input->post('descripcion');
+
+                                        $registro_auditoria->usuario= UsuarioSesion::usuario()->nombres .' '. UsuarioSesion::usuario()->apellido_paterno.' '.UsuarioSesion::usuario()->apellido_materno.' '.UsuarioSesion::usuario()->email;
+
+                                        $registro_auditoria->proceso = $proceso->nombre;
+                                        $registro_auditoria->cuenta_id = 1;
+
+                                        $tramite_array['proceso'] = $proceso->toArray(false);
+
+                                        $tramite_array['tramite'] = $tramite->toArray(false);
+                                        unset($tramite_array['tramite']['proceso_id']);
+
+
+                                        $registro_auditoria->detalles = json_encode($tramite_array);
+					/*
+                                        $data = array();
+                                        $url = urlapi."vacation/".$tramite_id."/deletevacationrequest";
+                                        $ch = curl_init($url);
+                                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                                        curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
+
+                                        $response = curl_exec($ch);
+
+                                        if ($response){
+                                                $tramite->delete ();
+                                                $registro_auditoria->save();
+                                        }*/
+					$tramite->delete ();
+                                        $registro_auditoria->save();
+					
+                                        $respuesta->validacion = TRUE;
+                                        $respuesta->redirect = site_url('licencias/buscador');
+
+                                }else{
+                                        ChromePhp::log('El usuario no participo en el tramite');
+                                //El usuario no realizo esta solicitud
+                                        $respuesta->validacion = FALSE;
+                                        $respuesta->errores = validation_errors();
+
+                                }
+                        }
+                        else{
+
+                                $respuesta->validacion = FALSE;
+                                $respuesta->errores = validation_errors();
+                        }
+
+                }else {
+                        $respuesta->validacion = FALSE;
+                        $respuesta->errores = validation_errors();
+                }
+
+                echo json_encode($respuesta);
+        }
+
+
+
 
 	public function loadColumn($object,$excel_row){
 		$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, 0);

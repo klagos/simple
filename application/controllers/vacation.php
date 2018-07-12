@@ -173,7 +173,7 @@ class Vacation extends MY_Controller {
  }
 
 
- public function provision_diasSolicitados(){
+ public function request_descargar(){
           //Verificamos que el usuario ya se haya logeado 
         if (!UsuarioSesion::usuario()->registrado) {
                 $this->session->set_flashdata('redirect', current_url());
@@ -182,7 +182,7 @@ class Vacation extends MY_Controller {
 	
 	$mes   =($this->input->get('mes'))?$this->input->get('mes'):null;
 	
-	$url = urlapi . "/vacation/".$mes."/provision";
+	$url = urlapi . "/vacation/".$mes."/request";
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -199,7 +199,7 @@ class Vacation extends MY_Controller {
         $object = new PHPExcel();
 
 	
-	$table_columns = array("Rut","Dev. Basicos","Dev. Progresivos","Req. Basicos","Req. Progresivos");
+	$table_columns = array("Rut","Dev. Basicos","Dev. Progresivos","Req. Basicos","Req. Progresivos","Festivos");
 
 	$column = 0;
 
@@ -214,19 +214,21 @@ class Vacation extends MY_Controller {
 		 $dev_progre = $json->devProgresivo;
 
 		$req_basico = $json->reqBasico;
-		$req_progre = $json->reqProgresivo; 
+		$req_progre = $json->reqProgresivo;
+		$req_festivos=$json->reqHolidays;  
 		
 		$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
                 $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$dev_basico);
                 $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$dev_progre);
                 $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$req_basico);
                 $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$req_progre);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$req_festivos);
 		 $excel_row++;
 	}
 	
 	$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="provision_vacation".xls"');
+        header('Content-Disposition: attachment;filename="request_vacation".xls"');
         $object_writer->save('php://output');
 
         $data['sidebar']='vacation_provision';
@@ -236,11 +238,160 @@ class Vacation extends MY_Controller {
 
  }
 
+ public function provision_descargar(){
+          //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+
+        $mes   =($this->input->get('mes'))?$this->input->get('mes'):null;
+
+        $url = urlapi . "/vacation/".$mes."/provision";
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                       "Content-Type: application/json"
+                ));
+        $result=curl_exec($ch);
+        curl_close($ch);
+
+        $json_ws = json_decode($result);
+        $CI =& get_instance();
+        $CI->load->library('Excel');
+        $object = new PHPExcel();
 
 
+        $table_columns = array("Rut","Acum. Basic","Acum. Prog","Total Acum. Anterior","Provisionado Anterior","Req. Basicos","Req. Progresivos","Festivos","Total no trabajados","Acum. Basic actual","Acum. Progre actual", "Total Acum. Actual", "Provisionado Actual");
+
+	$column = 0;
+
+       foreach($table_columns as $field){
+                        $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                        $column++;
+        }
+        $excel_row = 2;
+        foreach ($json_ws  as $json){
+                
+		$rut  = $json->rut;
+		if($rut !="" ){
+			//1ra parte
+			$acum_basic = $json->acumuladoBasic;
+			$acum_progre= $json->acumuladoProgresivo;
+			$acum_total = $json->acumuladoTotal;
+			$acum_function =$json->acumladoFunction;
+		
+			//2da parte
+                	$req_basico = $json->reqBasico;
+                	$req_progre = $json->reqProgresivo;
+                	$req_festivos=$json->reqHolidays;
+			$req_total   =$json->reqTotal;
+		
+			//3ra parte
+			$acum_basic_ac = $json->acumuladoActualBasic;
+			$acum_progre_ac= $json->acumuladoActualProgresivo;
+			$acum_total_ac = $json->acumuladoActualTotal;
+			$acum_function_ac = $json->acumladoActualFunction;
+			
+			//1ra parte
+                	$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                	$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$acum_basic);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$acum_progre);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$acum_total);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$acum_function);
+		
+			//2da parte	
+                	$object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$req_basico);
+                	$object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$req_progre);
+                	$object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,$req_festivos);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row,$req_total);
+			
+			//3ra parte
+			$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row,$acum_basic_ac );
+			$object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row,$acum_progre_ac);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(11,$excel_row,$acum_total_ac);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(12,$excel_row,$acum_function_ac);		
+
+                	$excel_row++;
+		}
+        }
+
+        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="provision_vacation".xls"');
+        $object_writer->save('php://output');
+
+        $data['sidebar']='vacation_provision';
+        $data['content'] = 'vacation/provision';
+
+        $this->load->view('template', $data);
+
+}
+
+public function request_all_descargar(){
+          //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
 
 
+        $url = urlapi . "/vacation/vacationrequestdownloaded";
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                       "Content-Type: application/json"
+                ));
+        $result=curl_exec($ch);
+        curl_close($ch);
+
+        $json_ws = json_decode($result);
+        $CI =& get_instance();
+        $CI->load->library('Excel');
+        $object = new PHPExcel();
+
+        $table_columns = array("Rut","Name","HABILES","CORRIDOS","INICIO","TERMINO");
+
+        $column = 0;
+
+       foreach($table_columns as $field){
+                        $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                        $column++;
+        }
+
+	$excel_row = 2;
+        foreach ($json_ws  as $json){
+                 $rut  = $json->rut;
+                 $name = $json->name;
+                 $workday = $json->workDay;
+
+                $totalday = $json->totalDay;
+                $fecha_inicio  = $json->initDate;
+                $fecha_termino = $json->endDate;
+
+                $object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$name);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$workday);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$totalday);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$fecha_inicio);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$fecha_termino);
+                 $excel_row++;
+        }
+	$now = new DateTime();
+	$fecha = $now->format('d-m-Y');
 	
+        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="request_all_vacation_'.$fecha.'.xls"');
+        $object_writer->save('php://output');
+
+
+
+ }
 
 }
 ?>

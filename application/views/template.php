@@ -94,7 +94,9 @@
 			$npendientes=count(Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio()));
 			$nsinasignar=Doctrine::getTable('Etapa')->findSinAsignar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
 			$nparticipados=count(Doctrine::getTable('Tramite')->findParticipadosALL(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio()));
-			$revisarLicencia=Doctrine::getTable('Proceso')->canRevisarLicencia(UsuarioSesion::usuario()->id);
+			
+			//$revisarLicencia=Doctrine::getTable('Proceso')->canRevisarLicencia(UsuarioSesion::usuario()->id);
+			
 			$descargarDocumentosEstudio=Doctrine::getTable('Proceso')->canDesargarDocEstudio(UsuarioSesion::usuario()->id);
 			$descargarAvanceEstudio=Doctrine::getTable('Proceso')->canDescargarAvanceEstudio(UsuarioSesion::usuario()->id);
 			$revisarDiasAdmin=Doctrine::getTable('Proceso')->canRevisarDiasAdmin(UsuarioSesion::usuario()->id);
@@ -119,6 +121,9 @@
 			//Modulo Vacation
 			$vacation = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_VACATION");
 			
+			//Modulo Vacaciones
+			$revisarLicencia = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_LICENCIA");
+			
 			?>
 			<ul id="sideMenu" class="nav nav-list">
 				<li class="iniciar"><a  href="#" onclick="Slide(['Inicio1','Inicio2','Inicio3'])">&nbsp;&nbsp;&nbsp;Inicio<span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-home"></a></li>
@@ -131,11 +136,11 @@
 			<ul id="sideMenu" class="nav nav-list">
 				<?php if($revisarLicencia): $cont_menu++; ?><li class="iniciar"><a href="#" onclick="Slide(['Licencia1','Licencia2','Licencia3','Licencia4','Licencia5'])">&nbsp;&nbsp;&nbsp;Licencias  <span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-file"></span></a><?php endif ?>
 				<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'agregar_licencia' ? 'active' : '' ?>"><a id="Licencia1" href="<?= site_url('tramites/iniciar/'.proceso_subsidio_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:33px" class="pull-center hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
-			     	<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'carga_masiva' ? 'active' : '' ?>"><a id="Licencia2" href="<?= site_url('tramites/iniciar/'.proceso_carga_masiva_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Carga Masiva&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;" class="pull-center hidden-xs showopacity glyphicon glyphicon-list-alt"></a></li><?php endif ?>
-			     	<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'editar_masiva' ? 'active' : '' ?>"><a id="Licencia3" href="<?= site_url('tramites/iniciar/'.proceso_editar_masiva_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edición Masiva&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;" class="pull-center hidden-xs showopacity glyphicon glyphicon-edit"></a></li><?php endif ?>
+			     	<?php if($revisarLicencia>1): ?><li class="<?= isset($sidebar) && $sidebar == 'carga_masiva' ? 'active' : '' ?>"><a id="Licencia2" href="<?= site_url('tramites/iniciar/'.proceso_carga_masiva_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Carga Masiva&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;" class="pull-center hidden-xs showopacity glyphicon glyphicon-list-alt"></a></li><?php endif ?>
+			     	<?php if($revisarLicencia>1): ?><li class="<?= isset($sidebar) && $sidebar == 'editar_masiva' ? 'active' : '' ?>"><a id="Licencia3" href="<?= site_url('tramites/iniciar/'.proceso_editar_masiva_id) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edición Masiva&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;" class="pull-center hidden-xs showopacity glyphicon glyphicon-edit"></a></li><?php endif ?>
 				<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia' ? 'active' : '' ?>"><a id="Licencia4" href="<?= site_url('licencias/buscador') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Buscar&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:42px" class="pull-center hidden-xs  showopacity glyphicon glyphicon-search"></a></li><?php endif ?>
-			     	<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_pago' ? 'active' : '' ?>"><a id="Licencia5" href="<?= site_url('licencias/pago') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pago&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:52px" class="pull-center hidden-xs showopacity glyphicon glyphicon-briefcase"></a></li><?php endif ?>
-			<?php if($revisarLicencia): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_reporte' ? 'active' : '' ?>"><a id="Licencia6" href="<?= site_url('licencias/reporte') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reporte&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:52px" class="pull-center hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
+			     	<?php if($revisarLicencia>1): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_pago' ? 'active' : '' ?>"><a id="Licencia5" href="<?= site_url('licencias/pago') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pago&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:52px" class="pull-center hidden-xs showopacity glyphicon glyphicon-briefcase"></a></li><?php endif ?>
+			<?php if($revisarLicencia>1): ?><li class="<?= isset($sidebar) && $sidebar == 'licencia_reporte' ? 'active' : '' ?>"><a id="Licencia6" href="<?= site_url('licencias/reporte') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reporte&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:52px" class="pull-center hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
 			</ul>
 			<!-- MODULO DIA ADMINISTRATIVO -->	
 			<ul id="sideMenu" class="nav nav-list">
@@ -194,7 +199,7 @@
                            <?php if($vacation): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['vacation_add','vacation_consultar','vacation_provision'])">&nbsp;&nbsp;&nbsp;Feriados<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-plane"></span></a></li><?php endif ?>
                            <?php if($vacation): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_add' ? 'active' : '' ?>"><a id="vacation_add" href="<?= site_url('tramites/iniciar/'. proceso_vacation) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
 			<?php if($vacation): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_consultar' ? 'active' : '' ?>"><a id="vacation_consultar" href="<?= site_url('vacation/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-search"></a></li><?php endif ?>				
-			<?php if($vacation>1): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_provision' ? 'active' : '' ?>"><a id="vacation_provision" href="<?= site_url('vacation/provision') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provision&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-th-list"></a></li><?php endif ?>
+			<?php if($vacation>1): ?><li class="<?= isset($sidebar) && $sidebar == 'vacation_provision' ? 'active' : '' ?>"><a id="vacation_provision" href="<?= site_url('vacation/provision') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reporte&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-th-list"></a></li><?php endif ?>
 
 			</ul>
 

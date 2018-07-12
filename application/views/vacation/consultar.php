@@ -132,9 +132,10 @@ document.getElementById(idCampoRutUser).onchange = function(){
 function cargarDatos(){
 	//se rellenan los campos con el valor elegido
 	var valorSelected =  document.getElementById(idCampoRutUser).value.split("*");
-	document.getElementById(idCampoRut).value =  valorSelected[1];  //concat("-".concat(valorSelected[2]));
-	document.getElementById(idCampoName).value =  valorSelected[0].split("/")[1] +  " " + valorSelected[0].split("/")[0];
-	document.getElementById(idCampoLocation).value =  valorSelected[2].toUpperCase();
+	document.getElementById(idCampoRut).value =  valorSelected[1];
+	console.log(valorSelected[0]);
+	document.getElementById(idCampoName).value	=  valorSelected[0].split("/")[1] +  " " + valorSelected[0].split("/")[0];
+	document.getElementById(idCampoLocation).value  =  valorSelected[2].toUpperCase();
 	
 	var rut = document.getElementById(idCampoRut).value;
 	if(rut!=""){

@@ -529,7 +529,7 @@ class Etapas extends MY_Controller {
         $respuesta->validacion = TRUE;
         try{
             $agenda = new agenda();  
-            $appointments=$agenda->obtener_citas_de_tramite($etapa_id);
+            $appointments= null;//$agenda->obtener_citas_de_tramite($etapa_id);
             if(isset($appointments) && is_array($appointments) && (count($appointments)>=1) ){
                 $json='{"ids":[';
                 $i=0;

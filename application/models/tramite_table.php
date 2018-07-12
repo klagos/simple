@@ -66,7 +66,7 @@ class TramiteTable extends Doctrine_Table {
 
 		//LICENCIA NUMERO
 		if($licencia_numero)
-			$query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'numero_licencia' AND ds.valor LIKE ?)",''.$licencia_numero);
+			$query->andWhere("t.id IN (SELECT tr.id FROM Tramite tr INNER JOIN tr.Etapas et INNER JOIN et.DatosSeguimiento ds WHERE ds.nombre = 'numero_licencia' AND ds.valor LIKE ?)",'%'.$licencia_numero.'%');
 
 		//TRABAJADOR RUT
 		if($trabajador_rut)
@@ -139,7 +139,17 @@ class TramiteTable extends Doctrine_Table {
 		return $query->execute();
 	}
 
+	public function findLicenciasMasiva($proceso_id,$inicio,$limite){
+ 		$query= Doctrine_Query::create()
+           	 ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
+           	 ->where('p.activo=1 AND p.id = ?', $proceso_id);
 
+ 	   	$query->andWhere("t.id IN (SELECT trNU.id FROM Tramite trNU INNER JOIN trNU.Etapas etNU INNER JOIN etNU.DatosSeguimiento dsNU WHERE dsNU.nombre = 'numero_licencia' AND dsNU.valor IS NOT NULL)");
+		if($inicio) $query->offset($inicio);
+                if($limite) $query->limit($limite);
+    		$query->orderBy('t.updated_at desc');
+    		return $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+	}
 
 
 }

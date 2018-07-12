@@ -1,8 +1,12 @@
 <h2 style="line-height: 28px;">
-    Reporte de pago de Licencias
+    Reporte de Licencias
     <!--buscador--> 
-<br></br>  
-<form  method="GET" action="<?= site_url('vacation/provision_diasSolicitados')?>">
+<br></br> 
+
+<tr>
+        <td><h4> Solicitudes del mes</h4></td>
+</tr> 
+<form  method="GET" action="<?= site_url('vacation/request_descargar')?>">
 <fieldset>
         <label>Seleccione el mes</label>
                 <select class="select" name="mes" required>
@@ -22,6 +26,38 @@
 		</select>
 	<div class="form-actions">
 		<button class="btn btn-primary" type="submit">Generar</button>
+        </div>
+</fieldset>
+</form>
+
+
+<tr>
+        <td><h4> Provisión del mes </h4></td>
+</tr> 
+<form  method="GET" action="<?= site_url('vacation/provision_descargar')?>">
+<fieldset>
+        <label>Seleccione el mes</label>
+                <select class="select" name="mes" required>
+                        <option value="">Seleccionar</option>
+			<option value=3>Abril</option>
+                        <option value=4>Mayo</option>
+                        <option value=5>Junio</option>
+                        <option value=6>Julio</option>
+                </select>
+        <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Generar</button>
+        </div>
+</fieldset>
+</form>
+
+
+<tr>
+        <td><h4> Toda solicitud no descargada </h4></td>
+</tr> 
+<form  method="GET" action="<?= site_url('vacation/request_all_descargar')?>">
+<fieldset>
+        <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Generar</button>
         </div>
 </fieldset>
 </form>

@@ -322,9 +322,11 @@ function callbackHistorial() {
 function eliminarTramite(tramiteId,requestId,rut,dv){
 	if(dv==10)
 		dv='K'
-	rut = rut + '-' + dv;	
+	rut = rut + '-' + dv;
+	//console.log(site_url + "admindays/ajax_auditar_eliminar_tramite_adminday/" + tramiteId + "/"+requestId +"/"+rut);	
 	$("#modal").load(site_url + "admindays/ajax_auditar_eliminar_tramite_adminday/" + tramiteId + "/"+requestId +"/"+rut );
-        $("#modal").modal();
+        //$("#modal").load(site_url + "licencias/ajax_auditar_eliminar_tramite_licencias/" + tramiteId + "/"+requestId );
+	$("#modal").modal();
         return false;
 }
 
