@@ -4,7 +4,9 @@
 <br></br>  
 <form  method="GET" action="<?= site_url('licencias/buscar')?>">
 <fieldset>
-        <label>Número de licencia</label>
+	<h4> Datos Licencia </h4>
+        
+	<label>Número de licencia</label>
                 <input type="number" name="licencia_numero" value=""/>
         <label>Estado licencia</label>
 		<select name="licencia_estado">
@@ -25,7 +27,10 @@
 			<option value=7>Patologías del embarazo</option>
 			<option value=8>Permiso post natal parental</option>
                 </select>
-	<label>Rut del trabajador</label>
+	<h4> Datos Trabajador </h4>
+	
+               
+	<label>Rut</label>
                 <input type="text" maxlenght="8" name="trabajador_rut" value=""/>
 	
         <div class="form-actions">

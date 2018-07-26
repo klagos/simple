@@ -1,5 +1,5 @@
 <h2 style="line-height: 28px;">
-    Reporte de Licencias
+    Reporte de Vacaciones
     <!--buscador--> 
 <br></br> 
 

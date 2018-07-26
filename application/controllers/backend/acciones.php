@@ -90,7 +90,8 @@ class Acciones extends MY_BackendController {
             $accion=new AccionValidarExcelLicencia();
 	else if($tipo=='guardar_fas_medico')
             $accion=new AccionGuardarFasMedico();
-
+	else if($tipo=='guardar_medico')
+            $accion=new AccionGuardarMedico();
 	else if($tipo=='editar_licencia')
 	    $accion=new AccionEditarLicencia();
 	else if($tipo=='guardar_finiquito')
@@ -155,6 +156,9 @@ class Acciones extends MY_BackendController {
 		
 	    else if($this->input->post('tipo')=='guardar_fas_medico')
                 $accion=new AccionGuardarFasMedico();
+	
+	    else if($this->input->post('tipo')=='guardar_medico')
+                $accion=new AccionGuardarMedico();
 
             else if($this->input->post('tipo')=='guardar_finiquito')
                 $accion=new AccionGuardarFiniquito();

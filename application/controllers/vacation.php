@@ -33,7 +33,7 @@ class Vacation extends MY_Controller {
                 curl_close($ch);
 
                 $json_ws = json_decode($result);
-                apcu_add('json_list_users_vacation',$json_ws,1);
+                apcu_add('json_list_users_vacation',$json_ws,1800);
         }
 	
 	$data['json_list_users'] = $json_ws;

@@ -91,7 +91,6 @@ class AccionGuardarFasMedico extends Accion {
         $json = '['.$json.']';
 	
 	
-	ChromePhp::log($json);
 	$url = urlapi."users/list/".$request;
 	// $url = "http://private-120a8-apisimpleist.apiary-mock.com/users/list/medicalbenefitrequest";
 	$ch = curl_init();

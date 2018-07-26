@@ -5,7 +5,7 @@ class DatoSeguimientoTable extends Doctrine_Table{
     //Busca el valor del dato hasta la etapa $etapa_id
     public function findByNombreHastaEtapa($nombre,$etapa_id){
         $etapa=Doctrine::getTable('Etapa')->find($etapa_id);
-        
+       
         return Doctrine_Query::create()
                 ->from('DatoSeguimiento d, d.Etapa e, e.Tramite t')
                 ->where('d.nombre = ?',$nombre)
@@ -14,6 +14,23 @@ class DatoSeguimientoTable extends Doctrine_Table{
                 ->orderBy('d.id DESC')
                 ->fetchOne();        
     }
+
+     //Busca el valor del dato hasta la etapa $etapa_id
+    public function findByNombreEtapa($nombre,$etapa_id){
+        $etapa=Doctrine::getTable('Etapa')->find($etapa_id);
+        
+        return Doctrine_Query::create()
+                ->from('DatoSeguimiento d, d.Etapa e, e.Tramite t')
+                ->where('d.nombre = ?',$nombre)
+                ->andWhere('t.id = ?',$etapa->tramite_id)
+                ->andWhere('e.id = ?',$etapa->id)
+                ->orderBy('d.id DESC')
+                ->fetchOne();        
+    }		
+
+
+
+
     
     //Busca todos los dato hasta la ultima etapa del $tramite_id
     public function findByTramite($tramite_id){

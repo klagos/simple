@@ -9,19 +9,38 @@ class Licencias extends MY_Controller {
         	parent::__construct();
     	}
 
-    	public function buscador(){
-		//Verificamos que el usuario ya se haya logeado 
-		if (!UsuarioSesion::usuario()->registrado) {
-            		$this->session->set_flashdata('redirect', current_url());
-            		redirect('tramites/disponibles');
-        	}
-				
+	public function buscador_new(){
+                //Verificamos que el usuario ya se haya logeado 
+                if (!UsuarioSesion::usuario()->registrado) {
+                        $this->session->set_flashdata('redirect', current_url());
+                        redirect('tramites/disponibles');
+                }
+
+                $json_ws = apcu_fetch('json_list_users_vacation');
+                if (!$json_ws){
+                        //Obtener data de usuarios
+                        $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
+                        $ch = curl_init($url);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_URL,$url);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                               "Content-Type: application/json"
+                        ));
+                        $result=curl_exec($ch);
+                        curl_close($ch);
+
+                        $json_ws = json_decode($result);
+                        apcu_add('json_list_users_vacation',$json_ws,1800);
+                }
+
+                $data['json_list_users'] = $json_ws;
                 $data['sidebar']='licencia';
-                $data['content'] = 'licencias/buscador';
+                $data['content'] = 'licencias/buscador_new';
                 $data['title'] = 'Buscador de Licencias';
                 $this->load->view('template', $data);
+        }
 
-	}
 
 	public function pago(){
                 //Verificamos que el usuario ya se haya logeado 
@@ -37,183 +56,211 @@ class Licencias extends MY_Controller {
 
         }
 
-
-	public function buscar($inicio=0){	
-		//Verificamos que el usuario ya se haya logeado	
-		if (!UsuarioSesion::usuario()->registrado) {
+	public function buscar_new($inicio=0){
+                //Verificamos que el usuario ya se haya logeado 
+                if (!UsuarioSesion::usuario()->registrado) {
                         $this->session->set_flashdata('redirect', current_url());
                         redirect('tramites/disponibles');
                 }
 
-		//Datos del formulario
-        	$licencia_numero =trim(($this->input->get('licencia_numero'))?$this->input->get('licencia_numero'):null);
-        	$licencia_tipo   =trim(($this->input->get('licencia_tipo'))?$this->input->get('licencia_tipo'):null);
-		$licencia_estado =trim(($this->input->get('licencia_estado'))?$this->input->get('licencia_estado'):null);
-		$trabajador_rut  =trim(($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null);
-		$trabajador_rut  =str_replace('.','', $trabajador_rut);	
+                //Datos del formulario
+                $licencia_numero =trim(($this->input->get('licencia_numero'))?$this->input->get('licencia_numero'):null);
+                $licencia_tipo   =trim(($this->input->get('licencia_tipo'))?$this->input->get('licencia_tipo'):null);
+                $licencia_estado =trim(($this->input->get('licencia_estado'))?$this->input->get('licencia_estado'):null);
+                $fecha_inicial   =trim(($this->input->get('fecha_inicial'))?$this->input->get('fecha_inicial'):null);
+                $fecha_final     =trim(($this->input->get('fecha_termino'))?$this->input->get('fecha_termino'):null);
+                $trabajador_rut  =trim(($this->input->get('trabajador_rut'))?$this->input->get('trabajador_rut'):null);
+                $trabajador_rut  =str_replace('.','', $trabajador_rut);
+                
 		//Frase para cache
-		$cacheString = $licencia_numero +  $licencia_tipo + $licencia_estado + $trabajador_rut;		
+                $cacheString = $licencia_numero +  $licencia_tipo + $licencia_estado + $trabajador_rut;
 
-		//Variables de la query
-		$proceso_id = proceso_subsidio_id;
-		$contador = 0;
-		$rowtramites = [];
-		//$inicio =0;//incio
-		$limite =30;//limite
-		
-		//librerias
-		$this->load->library('pagination');
-        	$this->load->helper('form');
-        	$this->load->helper('url');
-		
-		//obtener contador del cache
-		$id_cache = (($licencia_numero)?'_'.$licencia_numero:'').(($licencia_tipo)?'_'.$licencia_tipo:'').(($licencia_estado)?'_'.$licencia_estado:'').(($trabajador_rut)?'_'.$trabajador_rut:'');
-		$contador = apcu_fetch('contador_tram_busc'.$id_cache);
+                //Variables de la query
+                $proceso_id = proceso_subsidio_id;
+                $contador = 0;
+                $rowtramites = [];
+               
+                $limite =30;//limite
 
-		//si no esta en cache
-		if (!$contador){
-			$contador = count(Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,null, null));
-			//se agrega la variable en el cache
-			apcu_add('contador_tram_busc'.$id_cache,$contador,300);
-		}
-		if($contador>0)
-			$rowtramites = Doctrine::getTable('Tramite')->findLicencias($licencia_numero,$licencia_tipo,$licencia_estado,$trabajador_rut,$proceso_id,$inicio, $limite);	
-		$objlicencias = array();
-		foreach ($rowtramites as $tr){
-			if ($tr["Etapas"][0]["DatosSeguimiento"]){
-				$licencia = new Licencia($tr['id']); //se crea objeto licencia
-				$estado = 'Ingresada'; //estado por defecto
-				$dia_no_cubierto = false;
-				if (isset($tr["Etapas"][0]["DatosSeguimiento"]))	
-                        	        foreach($tr["Etapas"][0]["DatosSeguimiento"] as $d){
-						if ($d["nombre"] == "rut_trabajador_subsidio")
-                        	                        $licencia->rut_trabajador_subsidio =  substr($d["valor"],1,-1);
-                        	                if ($d["nombre"] == "numero_licencia")
-							if ($d["valor"][0] == '"' and substr($d["valor"],-1) == '"')
-								$licencia->numero_licencia = (int) substr($d["valor"],1,-1);
-							else 
-                        	                       		$licencia->numero_licencia = (int) $d["valor"];
-                        	                if ($d["nombre"] == "fecha_inicio_licencia")
-                        	                        $licencia->fecha_inicio_licencia = substr($d["valor"],1,-1);
-                        	                if ($d["nombre"] == "fecha_termino_licencia")
-                        	                        $licencia->fecha_termino_licencia = substr($d["valor"],1,-1);
-                        	        }
-
-				//obtener estado de licencia
-				$estado="";
-				for ($i = count($tr["Etapas"]) - 1; $i >= 0; $i--){
-					if (isset($tr["Etapas"][$i]["DatosSeguimiento"]))
-                        	        	foreach($tr["Etapas"][$i]["DatosSeguimiento"] as $d){
-							if ($d["nombre"] == "dias_no_cubiertos_subsidio")
-                                                        	$dia_no_cubierto = true;
-
-							if ($d["nombre"] == "retorno_continuidad"){
-								if ($d["valor"] == '"devolver"'){
-									$estado = 'Proceso de pago';
-									break 2;
-								}
-								if ($d["valor"] == '"mantener"'){
-                                                	                $estado = 'Mantener en retorno';
-                                                	                break 2;
-                                                	        }
-								if ($d["valor"] == '"cerrar"'){
-                                                	                $estado = 'Finalizada';
-                                                	                break 2;
-                                                	        }
-							}						
-					
-							if ($d["nombre"] == "pago_continuidad"){
-                                                        	if ($d["valor"] == '"mantener"'){
-                                                                	$estado = 'Mantener en pago';
-                                                                	break 2;
-                                                        	}
-                                                        	if ($d["valor"] == '"avanzar"'){
-                                                        	        $estado = 'Pagada';
-                                                        	        break 2;
-                                                        	}
-                                                        	if ($d["valor"] == '"cerrar"'){
-                                                        	        $estado = 'Finalizada';
-                                                        	        break 2;
-                                                        	}
-							}
-						 	if ($d["nombre"] == "ingreso_continuidad"){	
-                                                        	if ($d["valor"] == '"avanzar"'){
-                                                        	        $estado = 'Ingresada';
-                                                        	        break 2;
-                                                        	}
-                                                        	if ($d["valor"] == '"cerrar"'){
-                                                        	        $estado = 'Finalizada';
-                                                        	        break 2;
-                                                        	}
-							}
-						}
-				}
+                //librerias
+                $this->load->library('pagination');
+                $this->load->helper('form');
+                $this->load->helper('url');
 	
-				$tareas_completadas = 0;
-				$etapas_array = array();
-                        
-				foreach($tr["Etapas"] as $e){
-                        	        if ($e["pendiente"]){  //analogo a getEtapasActuales, metodo de clase tramite
-                        	                $etapas_array[] = $e["id"];	
-        	                        }
-        	                        else
-        	                                $tareas_completadas ++; //analogo a getTareasCompletadas, metodo de clase tramite
-        	                }
-				//Si aparece el boton eliminar
-				$tramite = Doctrine::getTable ( 'Tramite' )->find ( $licencia->id);
-				$user_id = UsuarioSesion::usuario()->id;
-				$delete_tramite = false;
-				if($tramite->usuarioHaParticipado($user_id))
-					$delete_tramite = true;
-			        $licencia->delete_tramite = $delete_tramite;	
-				$licencia->pendiente = (int) $tr["pendiente"];
-				$licencia->etapa_id = implode(', ', $etapas_array);
-				$licencia->tareas_completadas = $tareas_completadas;
-				$licencia->estado_licencia = $estado;
-				$licencia->etapas_tramites = $licencia->getEtapasTramites();		
-				$licencia->dia_no_cubierto = $dia_no_cubierto;
-				$objlicencias[] = $licencia;
-			}
+		$json   = new stdClass();
+		$json->number 	= $licencia_numero;
+		$json->type	=  $licencia_tipo;	
+		$json->fecha_inicio  = $fecha_inicial;
+		$json->fecha_termino = $fecha_final;
+		$json->rut	=$trabajador_rut;
+		$json->state	= $licencia_estado;	
+		$json = json_encode($json);
+		$url = urlapi . "licenses/count?";
+			 
+		$id_cache = (($licencia_numero)?'_'.$licencia_numero:'').(($licencia_tipo)?'_'.$licencia_tipo:'').(($licencia_estado)?'_'.$licencia_estado:'').(($trabajador_rut)?'_'.$trabajador_rut:'');
+                $contador = apcu_fetch('contador_tram_busc'.$id_cache);
+		if (!$contador){
+			$contador = $this->conectUrl($url,$json);			
+			apcu_add('contador_tram_busc'.$id_cache,$contador,300);
+			
 		}
+		if($contador>0){
+			$url = urlapi . "licenses/find?limitInit=".$inicio."&limitEnd=".$limite."";
+			$rowtramites = json_decode($this->conectUrl($url,$json));
+		}
+		//Se puede borrar si : 1 Super usuario
+		$permisoLicencia = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_LICENCIA");
+		$objlicencias = array();
+                foreach ($rowtramites as $tr){	
+			$estado = 'Ingresada';
 			
-		$config['base_url'] = site_url('licencias/buscar');
-        	$config['total_rows'] = $contador;
-        	$config['per_page']   = $limite;
-        	$config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
-		if (count($_GET) > 0) $config['suffix'] = '?' . http_build_query($_GET, '', "&");	
-		
-		$config['full_tag_close'] = '</ul></div>';
-        	$config['page_query_string']=false;
-        	$config['query_string_segment']='offset';
-        	$config['first_link'] = 'Primero';
-        	$config['first_tag_open'] = '<li>';
-        	$config['first_tag_close'] = '</li>';
-        	$config['last_link'] = 'Último';
-        	$config['last_tag_open'] = '<li>';
-        	$config['last_tag_close'] = '</li>';
-        	$config['next_link'] = '»';
-        	$config['next_tag_open'] = '<li>';
-        	$config['next_tag_close'] = '</li>';
-        	$config['prev_link'] = '«';
-        	$config['prev_tag_open'] = '<li>';
-        	$config['prev_tag_close'] = '</li>';
-        	$config['cur_tag_open'] = '<li class="active"><a href="#">';
-       		$config['cur_tag_close'] = '</a></li>';
-        	$config['num_tag_open'] = '<li>';
-        	$config['num_tag_close'] = '</li>';	
-		
-		$this->pagination->initialize($config);
-        	//$data['tramites']=$rowtramites;
-        	$data['tramites']=$objlicencias;
+			if($tr->state!=1){
+				if($tr->state==2){
+					$estado = 'Pagada';
+				}else{
+					if($tr->state==3)
+						$estado = 'Retornada';
+					else 
+                        	        	$estado = 'Finalizada';
+				}
+			}
+			//Values for object
 			
-		$data['sidebar'] ='licencia';
-        	$data['content'] ='licencias/encontrados';
-		$data['title']   = 'Licencias encontradas';
-		
-		$data['links'] = $this->pagination->create_links();
-       		$this->load->view('template', $data);	
-	}
+			$idTramite	= $tr->idTramite;		
+			$fecha_inicio 	= date('d-m-Y', ($tr->initDate)/1000);
+			$fecha_termino	= date('d-m-Y', ($tr->endDate)/1000);
+			$dias	      	= $tr->days;
+			$numero 	= $tr->number;
+			$rut 		= $tr->rut;		
+			$tramite 	= Doctrine::getTable ( 'Tramite' )->find ($idTramite);
+			$etapas 	= $tramite->getEtapasTramites();
+				
+			$countEtapas 	= count($etapas);
+			$accion ="-";	
+			$delete = false;
+			if($tr->state!=4){
+				for($i = $countEtapas -1; $i >= 0; $i--){
+					$id = $etapas[$i]->id;	
+					//Etapa 3
+					$d = Doctrine::getTable('DatoSeguimiento')->findByNombreEtapa("retorno_continuidad",$id);
+					if($d!=false){
+						if ($d["valor"] == 'devolver'){
+                                	       		$accion = 'Pagar';
+                                	                break;
+                                        	}
+                                        	if ($d["valor"] == 'mantener'){
+                                        		$accion = 'Retornar';
+							$estado = 'Mantenida en retorno';
+                                        	        break;
+                                		}	
 
+					}
+					//Etapa 2
+					$d = Doctrine::getTable('DatoSeguimiento')->findByNombreEtapa("pago_continuidad",$id);
+					if($d!=false){
+                                	        if ($d["valor"] == 'mantener'){
+                                	      		$accion = 'Pagar';
+							$estado = 'Mantenida en pago';
+                                	                break;
+                                        	}
+                                        	if ($d["valor"] == 'avanzar'){
+                                        		$accion = 'Retornar';
+                                        	        break;
+                                        	}        
+					}
+					//Etapa 1
+					$d = Doctrine::getTable('DatoSeguimiento')->findByNombreEtapa("ingreso_continuidad",$id);
+                                        if($d!=false){
+                                                if ($d["valor"] == 'avanzar'){
+                                                        $accion = 'Pagar';
+                                                        break;
+                                                }
+                                        }
+					
+
+ 
+                         	}      
+			}
+				
+			$id_pendiente   = 0;
+                        if(( $permisoLicencia>=3 && $accion=='Retornar') || $permisoLicencia==4 )
+                        	$id_pendiente = $tramite->getEtapasActuales()[0]->id;
+			
+
+			//Se puede borrar si :
+			
+			//Permiso basico
+			//Ingresado
+			//Participado
+			if($permisoLicencia == 1 && $tr->state==1 && $tramite->usuarioHaParticipado( UsuarioSesion::usuario()->id ) && !$tr->downloaded )
+				$delete = true;
+			
+			//Permiso admin
+			//Ingresado
+			if($permisoLicencia == 2 && $tr->state==1 && !$tr->downloaded )
+				$delete = true;
+			
+			//Super admin
+			if($permisoLicencia ==4)	
+				$delete = true;
+
+
+			//Save object
+			$licencia = new Licencia($idTramite); //se crea objeto licencia
+			$licencia->estado_licencia = $estado;
+			$licencia->numero_licencia = $numero;
+			$licencia->fecha_inicio_licencia  = $fecha_inicio;
+			$licencia->fecha_termino_licencia = $fecha_termino;
+			$licencia->rut_trabajador_subsidio = $rut;
+			$licencia->dias	= $dias;
+			$licencia->etapas_tramites = $etapas ;
+			$licencia->pendiente= $id_pendiente;
+			$licencia->accion = $accion;
+			$licencia->delete = $delete;
+			$objlicencias[] = $licencia;
+			
+		}
+
+		$config['base_url'] = site_url('licencias/buscar_new');
+                $config['total_rows'] = $contador;
+                $config['per_page']   = $limite;
+                $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
+                if (count($_GET) > 0) $config['suffix'] = '?' . http_build_query($_GET, '', "&");
+
+                $config['full_tag_close'] = '</ul></div>';
+                $config['page_query_string']=false;
+                $config['query_string_segment']='offset';
+                $config['first_link'] = 'Primero';
+                $config['first_tag_open'] = '<li>';
+                $config['first_tag_close'] = '</li>';
+                $config['last_link'] = 'Ultimo';
+                $config['last_tag_open'] = '<li>';
+                $config['last_tag_close'] = '</li>';
+                $config['next_link'] = '»';
+                $config['next_tag_open'] = '<li>';
+                $config['next_tag_close'] = '</li>';
+                $config['prev_link'] = '«';
+                $config['prev_tag_open'] = '<li>';
+                $config['prev_tag_close'] = '</li>';
+                $config['cur_tag_open'] = '<li class="active"><a href="#">';
+                $config['cur_tag_close'] = '</a></li>';
+                $config['num_tag_open'] = '<li>';
+                $config['num_tag_close'] = '</li>';
+
+                $this->pagination->initialize($config);
+                $data['tramites']=$objlicencias;
+
+                $data['sidebar'] ='licencia';
+                $data['content'] ='licencias/encontrados_new';
+                $data['title']   = 'Licencias encontradas';
+
+                $data['links'] = $this->pagination->create_links();
+                $this->load->view('template', $data);
+
+
+
+	}
+	
 	public function generarpago(){
 		//Verificamos que el usuario ya se haya logeado 
                 if (!UsuarioSesion::usuario()->registrado) {
@@ -229,11 +276,6 @@ class Licencias extends MY_Controller {
 		$tipo_pago  =($this->input->get('tipo_pago'))?$this->input->get('tipo_pago'):null;		
 		
 		$contador = Doctrine::getTable('Tramite')->findLicenciasPago($fecha_pago,$proceso_id)->count();
-                /*
-		if($contador >0){
-                        $rowtramites = Doctrine::getTable('Tramite')->findLicenciasPago($fecha_pago,$proceso_id);
-                }
-		*/
 		
 		$data['fecha']=$fecha_pago;
 		$data['tipo'] =$tipo_pago;
@@ -245,6 +287,20 @@ class Licencias extends MY_Controller {
                 $data['title']   = 'Licencias encontradas';
                 $this->load->view('template', $data);
 	}
+
+	public function conectUrl($url,$json){
+		
+		$ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
+                $result = curl_exec($ch);
+                curl_close($ch);                
+                return $result;
+        }
+
 
 	public function generarexcel($fecha_pago,$tipo_pago){
                 
@@ -356,6 +412,80 @@ class Licencias extends MY_Controller {
            
 
 	}
+
+	public function reporte_descargar(){
+		if (!UsuarioSesion::usuario()->registrado) {
+                        $this->session->set_flashdata('redirect', current_url());
+                        redirect('tramites/disponibles');
+                }
+		$fecha_inicial   =trim(($this->input->get('fecha_inicial'))?$this->input->get('fecha_inicial'):null);
+                $fecha_final     =trim(($this->input->get('fecha_termino'))?$this->input->get('fecha_termino'):null);
+		$downloaded	 =trim(($this->input->get('downloaded'))?$this->input->get('downloaded'):null);		
+	
+		$url = urlapi . "licenses/report?";	
+		
+		if($fecha_inicial!=null)
+			$url.="&finit=".$fecha_inicial;
+		if($fecha_final!=null)
+                        $url.="&fend=".$fecha_final;
+		if($downloaded !=null)
+                        $url.="&down=".$downloaded ;	
+			
+		//CALL API
+		$ch = curl_init($url);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_URL,$url);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                               "Content-Type: application/json"
+                        ));
+                $result=curl_exec($ch);
+                curl_close($ch);
+               	$json_lic = json_decode($result);
+		
+		//EXCEL
+		$CI =& get_instance();
+                $CI->load->library('Excel');
+                $object = new PHPExcel();	
+		$table_columns = array("RUT","NOMBRE","NUMERO","ORG SALUD", "INICIO","TERMINO","DIAS","TIPO","TIPO REPOSO");
+		$excel_row 	= 2;
+                $column 	= 0;
+		foreach($table_columns as $field){
+                        $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                        $column++;
+                }		
+		
+		//VALUES FROM API
+		foreach($json_lic as $json){
+			$rut		= $json->rut;
+			$fullname 	= $json->lastName." ".$json->name;
+			$number   	= $json->number;
+			$org_salud	= $json->healthAgency;
+			$fecha_inicio	= date('d-m-Y', ($json->initDate)/1000);
+			$fecha_termino  = date('d-m-Y', ($json->endDate)/1000);
+			$days		= $json->days;
+			$typeRepose	= ($json->typeRepose==1)?'Total':'Parcial';
+			$type		= $json->type;
+			
+			$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $rut);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $fullname);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $number);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $org_salud);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $fecha_inicio);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $fecha_termino);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $days);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $type);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $typeRepose);
+			
+			$excel_row++;	
+		}
+	
+			
+		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+                header('Content-Type: application/vnd.ms-excel');
+                header('Content-Disposition: attachment;filename="reporte_licencia.xls"');
+                $object_writer->save('php://output');	
+	}
 	
 	public function reporte_masivo(){
 		//Verificamos que el usuario ya se haya logeado 
@@ -375,7 +505,7 @@ class Licencias extends MY_Controller {
 		$CI->load->library('Excel');
 		$object = new PHPExcel();
 
-		$table_columns = array("RUT","NOMBRE", "ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO");    
+		$table_columns = array("idTramite","RUT","NOMBRE","NUMERO","FECHA RECEPCION","ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO","TIPO REPOSO","LUGAR REPOSO","FECHA RETORNO","PAGADO ANT.", "ANTICIPO","MESES ANT.","DIAS NO CUBIERTOS","COMPLEMENTO","OBSERV. PAGO","FECHA RETORNO","MONTO RETORNO","SALDO RETORNO","OBSERV. RETORNO","ESTADO","RUT MEDICO");
 		
 		$excel_row = 2;
 
@@ -387,31 +517,55 @@ class Licencias extends MY_Controller {
                 }
 		
 		foreach ($rowtramites as $tramite){
-			if (isset($tramite["Etapas"][0]["DatosSeguimiento"])){
-				//DATOS INGRESO
-				$rut = "";
-				$nombre="";
-				$org_salud="";
-				$inicio = "";
-				$termino= "";
-				$dias="";
-				$tipo="";
-				
-				//DATOS PAGO
-				$fecha_pago = "";
-				$pagado_anterior="";
-				$anticipo = "";
-				$meses = "";
-				$dias_no_cu = "";
-				$comple = "";
-								
-				foreach ($tramite["Etapas"][0]["DatosSeguimiento"] as $tra_nro){
+			$idTramite="";
+			$rut = "";
+			$nombre="";
+			$numero="";
+			$fecha_rec="";
+			$org_salud="";
+			$inicio = "";
+			$termino= "";
+			$dias="";
+			$tipo="";
+			$tipo_reposo="";
+			$lugar_reposo="";
+					
+			//DATOS PAGO
+			$fecha_pago = "";
+			$pagado_anterior="";
+			$anticipo = "";
+			$meses_ant = "";
+			$dias_no_cu = "";
+			$complemento = "";
+			$obs_pago = "";
+			
+			//DATOS RETORNO
+			$fecha_retorno = "";
+			$monto_retorno = "";
+			$saldo_retorno = "";
+			$obs_retorno   = "";
+			
+			//ESTADO 
+			$estado="";
+
+			//RUT
+			$rut_medico="";
+
+			$idTramite = $tramite['id'];
+			$num_etapas = count($tramite["Etapas"]);
+			for($i = 0 ; $i< $num_etapas ; $i++){ 									
+				foreach ($tramite["Etapas"][$i]["DatosSeguimiento"] as $tra_nro){
                         	       
+					//DATOS LICENCIA
 					if($tra_nro["nombre"] == 'rut_trabajador_subsidio')
                         	                $rut = str_replace('"','',$tra_nro["valor"]);
                                 	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio')
                                 	        $nombre = str_replace('"','',$tra_nro["valor"]);
-                                	if($tra_nro["nombre"] == 'organismo_salud_licencia')
+                                	if($tra_nro["nombre"] == 'numero_licencia')
+                                                $numero = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'fecha_recepcion_licencia')
+                                                $fecha_rec = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'organismo_salud_licencia')
                                 	        $org_salud = str_replace('"','',$tra_nro["valor"]);
                                 	if($tra_nro["nombre"] == 'fecha_inicio_licencia')
                                 	        $inicio = str_replace('"','',$tra_nro["valor"]);
@@ -421,19 +575,112 @@ class Licencias extends MY_Controller {
                                 	        $dias = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'tipo_licencia')
                                 	        $tipo = str_replace('"','',$tra_nro["valor"]);
-                        	}
+                        		if($tra_nro["nombre"] == 'tipo_reposo_licencia')
+                                                $tipo_reposo = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'lugar_reposo_licencia'){
+                                                $lugar_reposo = str_replace('"','',$tra_nro["valor"]);
+						$lugar_reposo = str_replace('[','',$lugar_reposo);
+						$lugar_reposo = str_replace(']','',$lugar_reposo);
+					}
+					
+					//DATOS PAGO
+					if($tra_nro["nombre"] == 'fecha_pago_subsidio')
+                                                $fecha_pago = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'pagado_anterior_subsidio')
+                                                $pagado_anterior = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'anticipo_subsidio')
+                                                $anticipo = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'meses_anteriores_subsidio')
+                                                $meses_ant = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'dias_no_cubiertos_subsidio')
+                                                $dias_no_cu = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'complemento_subsidio')
+                                               	$complemento = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'observacion_pago_sub')
+                                                $obs_pago = str_replace('"','',$tra_nro["valor"]);
+					
+					//DATOS RETORNO
+					if($tra_nro["nombre"] == 'fecha_retorno_subsidio')
+                                                 $fecha_retorno = str_replace('"','',$tra_nro["valor"]);
+                                        if($tra_nro["nombre"] == 'monto_retorno_subsidio')
+                                                $monto_retorno = str_replace('"','',$tra_nro["valor"]);
+                                        if($tra_nro["nombre"] == 'saldo_retorno_subsidio')
+                                                $saldo_retorno = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'observacion_retorno_sub')
+                                                $obs_retorno = str_replace('"','',$tra_nro["valor"]);
 
 
-				$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $rut);
-				$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $nombre);
-				$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $org_salud);
-				$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $inicio);
-				$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $termino);
-				$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $dias);
-				$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $tipo);
-			
-				$excel_row++;
+					//ESTADO LICENCIA
+					if($tra_nro["nombre"] == 'ingreso_continuidad'){
+                                        	$estado = str_replace('"','',$tra_nro["valor"]);
+						if($estado =='avanzar')
+							$estado = 1;
+						if($estado =='cerrar')
+							$estado = 4;
+					}
+
+					if($tra_nro["nombre"] == 'pago_continuidad'){
+                                                $estado = str_replace('"','',$tra_nro["valor"]);
+                                                if($estado =='mantener')
+                                                        $estado = 2;
+                                                if($estado =='avanzar')
+                                                        $estado = 2;
+						if($estado =='cerrar')
+                                                        $estado = 4;
+                                        }
+					
+					if($tra_nro["nombre"] == 'retorno_continuidad'){
+                                                $estado = str_replace('"','',$tra_nro["valor"]);
+                                                if($estado =='devolver')
+                                                        $estado = 3;
+                                                if($estado =='mantener')
+                                                        $estado = 3;
+                                                if($estado =='cerrar')
+                                                        $estado = 4;
+                                        }
+					//RUT MEDICO
+					if($tra_nro["nombre"] == 'rut_medico')
+                                                 $rut_medico = str_replace('"','',$tra_nro["valor"]);
+					
+					
+				}
 			}
+			
+			$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $idTramite);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $rut);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $nombre);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $numero);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $fecha_rec);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $org_salud);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $inicio);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $termino);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $dias);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $tipo);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $tipo_reposo);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $lugar_reposo);				
+
+			//PAGO
+			$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $fecha_pago);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $pagado_anterior);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $anticipo);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(15, $excel_row, $meses_ant);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(16, $excel_row, $dias_no_cu);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(17, $excel_row, $complemento);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(18, $excel_row, $obs_pago);
+			
+			//RETORNO
+			$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $fecha_retorno);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, $monto_retorno);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(21, $excel_row, $saldo_retorno);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $obs_retorno);
+			
+			//ESTADO	
+			$object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $estado);
+
+			//RUT MEDICO
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(24, $excel_row, $rut_medico);
+			$excel_row++;
+			
 			
 		}
 	
@@ -478,7 +725,7 @@ class Licencias extends MY_Controller {
                         if($tramite!=null){
                                 $user_id = UsuarioSesion::usuario()->id;
 
-                                if($tramite->usuarioHaParticipado($user_id)){
+                                if(true){
                                         $fecha = new DateTime ();
                                         $proceso = $tramite->Proceso;
                                         // Auditar
@@ -499,9 +746,9 @@ class Licencias extends MY_Controller {
 
 
                                         $registro_auditoria->detalles = json_encode($tramite_array);
-					/*
+					
                                         $data = array();
-                                        $url = urlapi."vacation/".$tramite_id."/deletevacationrequest";
+                                        $url = urlapi."licenses/".$tramite_id."/delete";
                                         $ch = curl_init($url);
                                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -512,7 +759,7 @@ class Licencias extends MY_Controller {
                                         if ($response){
                                                 $tramite->delete ();
                                                 $registro_auditoria->save();
-                                        }*/
+                                        }
 					$tramite->delete ();
                                         $registro_auditoria->save();
 					

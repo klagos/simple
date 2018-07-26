@@ -558,7 +558,7 @@ class Etapas extends MY_Controller {
         }
         else {
 	    if ($rut)
-		$respuesta->redirect = site_url('/licencias/buscar?licencia_numero=&licencia_estado=&licencia_tipo=&trabajador_rut='.$rut);
+		$respuesta->redirect = site_url('/licencias/buscar_new?licencia_numero=&licencia_estado=&licencia_tipo=&trabajador_rut='.$rut);
 	    else
             	$respuesta->redirect = site_url();
         }
