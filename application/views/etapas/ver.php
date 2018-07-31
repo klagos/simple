@@ -9,8 +9,10 @@
             </div>
         <?php endforeach ?>
         <div class="form-actions">
-            <?php if ($secuencia > 0): ?><a class="btn" href="<?= site_url('etapas/ver/' . $etapa->id . '/' . ($secuencia - 1)) ?>"><i class="icon-chevron-left"></i> Volver</a><?php endif; ?>
-            <?php if ($secuencia + 1 < count($etapa->getPasosEjecutables())): ?><a class="btn btn-primary" href="<?= site_url('etapas/ver/' . $etapa->id . '/' . ($secuencia + 1)) ?>">Siguiente</a><?php endif; ?>
+            <?php if ($secuencia > 0 && !$ver_sinpermiso): ?><a class="btn" href="<?= site_url('etapas/ver/' . $etapa->id . '/' . ($secuencia - 1)) ?>"><i class="icon-chevron-left"></i> Volver</a><?php endif; ?>
+	    <?php if ($secuencia > 0 && $ver_sinpermiso): ?><a class="btn" href="<?= site_url('etapas/ver_sinpermiso/' . $etapa->id . '/' . ($secuencia - 1)) ?>"><i class="icon-chevron-left"></i> Volver</a><?php endif; ?>
+            <?php if ($secuencia + 1 < count($etapa->getPasosEjecutables()) && $ver_sinpermiso ): ?><a class="btn btn-primary" href="<?= site_url('etapas/ver_sinpermiso/' . $etapa->id . '/' . ($secuencia + 1)) ?>">Siguiente</a><?php endif; ?>   
+	 <?php if ($secuencia + 1 < count($etapa->getPasosEjecutables()) && !$ver_sinpermiso ): ?><a class="btn btn-primary" href="<?= site_url('etapas/ver/' . $etapa->id . '/' . ($secuencia + 1)) ?>">Siguiente</a><?php endif; ?>
         </div>
     </fieldset>
 </form>

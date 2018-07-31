@@ -603,7 +603,8 @@ class Etapas extends MY_Controller {
 
         $data['sidebar'] = 'participados';
         $data['title'] = 'Historial - ' . $etapa->Tarea->nombre;
-        $data['content'] = 'etapas/ver';
+        $data['ver_sinpermiso'] = true;
+	$data['content'] = 'etapas/ver';
         $this->load->view('template', $data);
     }
 

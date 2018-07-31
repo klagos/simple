@@ -53,7 +53,6 @@ class Vacation extends MY_Controller {
   }
   
   public function borrar_tramite_vacation($tramite_id,$request_id,$rut) {
-		ChromePhp::log($tramite_id);
 
                 //Verificamos que el usuario ya se haya logeado 
                 if (!UsuarioSesion::usuario()->registrado) {
@@ -71,7 +70,7 @@ class Vacation extends MY_Controller {
                         if($tramite!=null){
                                 $user_id = UsuarioSesion::usuario()->id;
 				
-                                if($tramite->usuarioHaParticipado($user_id)){
+                                //if($tramite->usuarioHaParticipado($user_id)){
                                         $fecha = new DateTime ();
                                         $proceso = $tramite->Proceso;
                                         // Auditar
@@ -110,13 +109,14 @@ class Vacation extends MY_Controller {
                                         $respuesta->validacion = TRUE;
                                         $respuesta->redirect = site_url('vacation/consultar?rut='.$rut);
 
-                                }else{
+                                //}
+				/*else{
 					ChromePhp::log('El usuario no participo en el tramite');
 				//El usuario no realizo esta solicitud
 					$respuesta->validacion = FALSE;
                                 	$respuesta->errores = validation_errors();
            				
-                                }
+                                }*/
         		}
                         else{	
 				
@@ -150,8 +150,10 @@ class Vacation extends MY_Controller {
  	$user_id = UsuarioSesion::usuario()->id;
 	if($tramite->usuarioHaParticipado($user_id)) 
 		$data['result']=true;
-	else
-		$data['result']=false;
+	else{	
+		$permisoLicencia = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_VACATION");
+		$data['result']=($permisoLicencia==2)?true:false;
+	}
 	header("Content-Type: application/json");
 	echo json_encode($data);
  }

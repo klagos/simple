@@ -67,9 +67,9 @@ require_once(FCPATH."procesos.php");
 -->
 </table>
 <br></br>
-<table>
+<table style="width: 100%;">
 <tr id="tr_periodos" style="display:none;">
-        <td><h4> Periodos</h4></td>
+        <td style="width: 26%;"><h4>Periodos</h4></td><td align="center" style="width: 15%;"><h4>Básicos</h4></td><td align="center" style="width:15%;"><h4>Progresivos</h4></td><td align="center" style="width:14%;"><h4>Total</h4></td><td align="center" style="width:15%;"><h4>Detalle</h4></td><td align="center" style="width:15%;"><h4>Eliminar</h4></td>
 </tr>
 </table>
 <div id="periodos"> </div>
@@ -158,7 +158,7 @@ function cargarDatos(){
 				
 				document.getElementById("periodos").innerHTML = "";
 	
-				if(acumulado==0){
+				if(acumulado==0 || acumuladoMax ==0){
 					document.getElementById("iniciarSolicitud").style.display = "none";
  	                                document.getElementById("msg").innerHTML = "<h4>El trabajador no tiene dias acumulados</h4>";
 				}
@@ -197,62 +197,71 @@ function cargarDatos(){
                                                         
                                                 var fecha_termino = day + "/"+ month + "/" + date_end.getFullYear();						
 						var fecha = fecha_inicio+' - '+fecha_termino;
-						
-						var row = '<h5><a id="link_historial_'+i+'" onclick="return mostrarHistorial('+i+');" >'+ fecha+' +</a></h5>';
+						var basicos = periodos[i].basicAvailable;
+						var progresivos = periodos[i].progressiveAvailable;
+						var total    = basicos + progresivos;	
 						
 						if(periodos[i].endDate==null){
-							var total    = periodos[i].basicAvailable + periodos[i].progressiveAvailable;
-							 
-							var tabla    = 'A la fecha <br><table><tbody><tr><td>Basicos </td><td></td> <td></td></tr><tr><td style="border-bottom: 1px solid #1a1a1a;"> Progresivos </td><td style="border-bottom: 1px solid #1a1a1a;" ><td><td></td> </tr> <tr><td>total </td><td></td> <td> '+periodos[i].avaible+' <td></tr> </tbody></table>';
-							
-							tabla +='<br>Al finalizar el periodo <br><table><tbody><tr><td>Basicos </td><td></td><td>'+periodos[i].basicAvailable+' </td></tr><tr><td style="border-bottom: 1px solid #1a1a1a;"> Progresivos </td><td style="border-bottom: 1px solid #1a1a1a;"><td><td>'+periodos[i].progressiveAvailable +'</td> </tr> <tr><td>Total </td><td></td> <td> '+ total+' <td></tr> </tbody></table>';
+							basicos 	= json.acumuladoPeriodActualBasic;
+							progresivos 	= json.acumuladoPeriodActualProgressive;
 						}
-						else
-							var tabla    = '<table ><tbody><tr><td>Basicos </td> <td></td><td> '+periodos[i].basicAvailable +' </td></tr><tr><td style="border-bottom: 1px solid #1a1a1a;">Progresivos </td><td></td> <td style="border-bottom: 1px solid #1a1a1a;">'+ (periodos[i].progressiveAvailable)   +'<td></tr> <tr><td>Total </td><td style="border-bottom: 1px solid #1a1a1a;"></td> <td> '+periodos[i].avaible+' <td></tr> </tbody></table>';
-						row    += '<div class="historial_'+i+'" style="display: none;" >'+tabla+' <table class="table"><thead id="rows_'+i+'"></thead></table></div>';
-	
-						document.getElementById("periodos").innerHTML +=row;
+						var total    = basicos + progresivos; 
+						
+						//PERIODOS 
+						var row = '<table style="width: 100%;"><tr><td style="width: 26%;"><h5> '+fecha+' </h5></td><td align="center" style="width:15%;">'+basicos+'</td><td align="center" style="width:15%;">'+progresivos+'</td><td align="center" style="width:14%;">'+ total+'</td><td align="center" style="width:15%;" ><h5> <a  href="#" id="link_historial_'+i+'" onclick="return mostrarHistorial('+i+');" > Ver detalle +</a></h5></td> <td  align="center" style="width:15%;"></td> </tr></table>';						
+						//Ultimo periodo
+						if(periodos[i].endDate==null){
+							var totalFinal    = periodos[i].basicAvailable + periodos[i].progressiveAvailable;
+							 
+							var tabla = '<table style="width: 100%;"><tr><td style="width: 26%;"><h5> Al finalizar el periodo </h5></td><td align="center" style="width:15%;">'+periodos[i].basicAvailable+'</td><td align="center" style="width:15%;">'+periodos[i].progressiveAvailable+'</td><td align="center" style="width:14%;">'+ totalFinal+'</td><td style="width:15%;"></td><td style="width:15%;"></td></tr></table>';
+						}else
+							var tabla = '';
+							
 				
-						var request = periodos[i].vacationRequest;
+						var request 	 = periodos[i].vacationRequest;
 						var size_request = request.length;
-						var row_id= "rows_"+i;
-						if(size_request>0){				
-							document.getElementById(row_id).innerHTML = '<tr><th>F. Básico</th><th>F. Progresivo</th><th>Desde</th><th>Hasta</th><th>Total</th><th>Detalle</th><th>Eliminar</th></tr>';
+						
+						//REQUEST DEL PERIODO	
+						var tabla_request = '';	
+						if(size_request>0){ 
+							var row_p = '';
+							for(var e = size_request -1 ;e >=0;e--){
+                                                                if(request[e].active==true){
+                                                                        var fecha_i= formato_fecha(new Date (request[e].initDate));
+                                                                        var fecha_f= formato_fecha(new Date (request[e].endDate));
+                                                                        var total  = request[e].progressive + request[e].basic; 
+                                                                        
+									row_p+ = "<tr><td align='center' style='width:26%;'>"+ fecha_i+" - "+ fecha_f +"</td><td align='center' style='width:15%;'>"+ request[e].basic +"</td><td align='center' style='width:15%;'>"+ request[e].progressive +"</td><td align='center' style='width:14%;'>"+ total +"</td>";
+                                                                        if(request[e].idTramite){
+                                                                                
+                                                                                dv     = String(rut.split("-")[1]);        
+                                                                                rut_sd = String(rut.split("-")[0]);
+                                                                                if(dv=='K')
+                                                                                        dv = 10;
+                                                                                
+                                                                                check_user(request[e].idTramite,request[e].id);
+                                                                                row_p +="<td align='center' style='width:15%;' id ="+'view_'+request[e].idTramite+'_'+ request[e].id+"><a class='btn btn-info' href='#' onclick =' return detail("+request[e].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
+                                                                                row_p +="<td align='center' style='width:15%;' id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
+                                                                        
+                                                                        }
+                                                                        else
+                                                                                row_p+="<td align='center' style='width:15%;'></td><td align='center' style='width:15%;'></td></tr>";
+                                                                        
+                                                                } 
+
+                                                        }
+							if(row_p!='')	
+								tabla_request = '<table style="width: 100%;">'+row_p+'</table>';
+							else			
+								tabla_request = '<table style="width: 100%;"><tr><h5>No hay solicitudes a la fecha</h5></th></tr></table>';	
 						}
 						else{
-							document.getElementById(row_id).innerHTML = '<tr><th> No hay solicitudes a la fecha</th></tr>';
+							tabla_request = '<table style="width: 100%;"><tr><h5>No hay solicitudes a la fecha</h5></th></tr></table>';
 						}
-
-						//var request = periodos[i].vacationRequest;
-			
-						if(size_request>0){
-							for(var e = size_request -1 ;e >=0;e--){
-
-								if(request[e].active==true){
-									var fecha_i= formato_fecha(new Date (request[e].initDate));
-									var fecha_f= formato_fecha(new Date (request[e].endDate));
-									var total  = request[e].progressive + request[e].basic;	
-									var row_p = "<tr><td>"+ request[e].basic +"</td><td>"+ request[e].progressive +"</td><td>"+ fecha_i +"</td><td>"+ fecha_f +"</td> <td>"+ total +"</td> ";					 
-									if(request[e].idTramite){
-										
-										dv     = String(rut.split("-")[1]);        
-                                                        			rut_sd = String(rut.split("-")[0]);
-                                                        			if(dv=='K')
-											dv = 10;
-										
-                                                        			check_user(request[e].idTramite,request[e].id);
-										row_p +="<td id ="+'view_'+request[e].idTramite+'_'+ request[e].id+"><a class='btn btn-info' href='#' onclick =' return detail("+request[e].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
-										row_p +="<td id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
-									
-									}
-									else
-										row_p+="<td></td><td></td></tr>";
-									document.getElementById(row_id).innerHTML += row_p;
-								}
-
-                                               		} 
-						
-						}	
+						//AGREGAMO A ROW TABLA PERIODOS Y REQUEST
+						row    += '<div class="historial_'+i+'" style="display: none;" >'+tabla+tabla_request+'</div>';
+                                                        
+                                                document.getElementById("periodos").innerHTML +=row;
 					}					
 				}else{
 					document.getElementById("link_historial").style.display = "none";
@@ -279,28 +288,19 @@ function formato_fecha(date ) {
 }
 
 
-//$(".historial").slideToggle(0);
 //mostrar/ocultar historial
 function mostrarHistorial(id) {
 	var h= ".historial_"+id;	
-	$(h).slideToggle('slow', callbackHistorial);
+	//$(h).slideToggle('slow', callbackHistorial);
+	$(h).slideToggle('slow',function(){
+		var l = "#link_historial_"+id;
+        	var $link = $(l);
+        	//$(this).is(":visible") ? $link.text("Ocultar detalle -") : $link.text(Ver detalle +");		
+	});
         return false;
 }
-/*
-
-function mostrarHistorial() {
-        var h= ".historial";        
-        $(h).slideToggle('slow', callbackHistorial);
-        return false;
-}
-
-*/
 //cambia texto del slide
-function callbackHistorial() {
-        //var l = "#link_historial_"+id;
-	//var $link = $(l);
-        //$(this).is(":visible") ? $link.text("Ocultar Periodos «") : $link.text("Mostrar Periodos »");
-}
+function callbackHistorial() {}
 
 //Funcion para eliminar el tramite y el request
 function eliminarTramite(tramiteId,requestId,rut,dv){
@@ -339,7 +339,7 @@ function check_user(tramite, id){
 			}
 		}
 	};
-	xhttp.open("GET", site_url + "/fas/check_user/"+tramite,true);
+	xhttp.open("GET", site_url + "/vacation/check_user/"+tramite,true);
         xhttp.send();
 }
 
