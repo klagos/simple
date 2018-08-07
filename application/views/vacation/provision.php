@@ -2,7 +2,7 @@
     Reporte de Vacaciones
     <!--buscador--> 
 <br></br> 
-
+<!--
 <tr>
         <td><h4> Solicitudes del mes</h4></td>
 </tr> 
@@ -29,7 +29,7 @@
         </div>
 </fieldset>
 </form>
-
+-->
 
 <tr>
         <td><h4> Provisión del mes </h4></td>

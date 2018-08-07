@@ -158,7 +158,7 @@ function cargarDatos(){
 				
 				document.getElementById("periodos").innerHTML = "";
 	
-				if(acumulado==0 || acumuladoMax ==0){
+				if(acumulado==0 && acumuladoMax ==0){
 					document.getElementById("iniciarSolicitud").style.display = "none";
  	                                document.getElementById("msg").innerHTML = "<h4>El trabajador no tiene dias acumulados</h4>";
 				}
@@ -231,7 +231,7 @@ function cargarDatos(){
                                                                         var fecha_f= formato_fecha(new Date (request[e].endDate));
                                                                         var total  = request[e].progressive + request[e].basic; 
                                                                         
-									row_p+ = "<tr><td align='center' style='width:26%;'>"+ fecha_i+" - "+ fecha_f +"</td><td align='center' style='width:15%;'>"+ request[e].basic +"</td><td align='center' style='width:15%;'>"+ request[e].progressive +"</td><td align='center' style='width:14%;'>"+ total +"</td>";
+									row_p+="<tr style='height:23px;'><td align='center' style='width:26%;'>"+ fecha_i+" - "+ fecha_f +"</td><td align='center' style='width:15%;'>"+ request[e].basic +"</td><td align='center' style='width:15%;'>"+ request[e].progressive +"</td><td align='center' style='width:14%;'>"+ total +"</td>";
                                                                         if(request[e].idTramite){
                                                                                 
                                                                                 dv     = String(rut.split("-")[1]);        
@@ -287,16 +287,22 @@ function formato_fecha(date ) {
 	return  fecha;
 }
 
+$(".historial").slideToggle(0);
+//mostrar/ocultar historial
+function mostrarHistorial() {
+        $(".historial").slideToggle('slow', callbackHistorial);
+        return false;
+}
 
 //mostrar/ocultar historial
 function mostrarHistorial(id) {
 	var h= ".historial_"+id;	
-	//$(h).slideToggle('slow', callbackHistorial);
-	$(h).slideToggle('slow',function(){
+	$(h).slideToggle('slow', callbackHistorial);
+	/*$(h).slideToggle('slow',function(){
 		var l = "#link_historial_"+id;
         	var $link = $(l);
         	//$(this).is(":visible") ? $link.text("Ocultar detalle -") : $link.text(Ver detalle +");		
-	});
+	});*/
         return false;
 }
 //cambia texto del slide

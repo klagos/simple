@@ -175,6 +175,263 @@ class Vacation extends MY_Controller {
  }
 
 
+public function reporte(){
+        
+	 //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+	
+	
+	$url = urlapi . "/users/list/vacationperiod";
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                       "Content-Type: application/json"
+                ));
+        $result=curl_exec($ch);
+        curl_close($ch);
+	$json_ws = json_decode($result);
+        
+	$CI =& get_instance();
+        $CI->load->library('Excel');
+        $object = new PHPExcel();
+	
+	$column = 0;
+       	$table_columns = array("","","","","","","","Fecha de ingreso","2003 - 2004","2004 - 2005","2005 - 2006","2006 - 2007","2007 - 2008","2008 - 2009","2009 - 2010","2010 - 2011","2011 - 2012","2012 - 2013","2013 - 2014","2014 - 2015","2015 - 2016","2016 - 2017","2017 - 2018","2018 - 2019");
+	foreach($table_columns as $field){
+                $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+     		if($field == 'Fecha de ingreso'){
+			$object->getActiveSheet()->mergeCells('H1:J1');
+			$column= $column+4;
+		}
+		elseif($field == "2003 - 2004"){
+			$object->getActiveSheet()->mergeCells('L1:M1');
+			$column=$column+2;
+		}
+		elseif($field == "2004 - 2005"){
+                        $object->getActiveSheet()->mergeCells('N1:O1');
+                        $column=$column+2;
+                }
+		elseif($field == "2005 - 2006"){
+                        $object->getActiveSheet()->mergeCells('P1:Q1');
+                        $column=$column+2;
+                }
+		elseif($field == "2006 - 2007"){
+                        $object->getActiveSheet()->mergeCells('R1:S1');
+                        $column=$column+2;
+                }
+		elseif($field == "2007 - 2008"){
+                        $object->getActiveSheet()->mergeCells('T1:U1');
+                        $column=$column+2;
+                }
+		elseif($field == "2008 - 2009"){
+                        $object->getActiveSheet()->mergeCells('V1:W1');
+                        $column=$column+2;
+                }
+		elseif($field == "2009 - 2010"){
+                        $object->getActiveSheet()->mergeCells('X1:Y1');
+                        $column=$column+2;
+                }
+		elseif($field == "2010 - 2011"){
+                        $object->getActiveSheet()->mergeCells('Z1:AA1');
+                        $column=$column+2;
+                }
+		elseif($field == "2011 - 2012"){
+                        $object->getActiveSheet()->mergeCells('AB1:AC1');
+                        $column=$column+2;
+                }
+		elseif($field == "2012 - 2013"){
+                        $object->getActiveSheet()->mergeCells('AD1:AE1');
+                        $column=$column+2;
+                }
+		elseif($field == "2013 - 2014"){
+                        $object->getActiveSheet()->mergeCells('AF1:AG1');
+                        $column=$column+2;
+                }
+		elseif($field == "2014 - 2015"){
+                        $object->getActiveSheet()->mergeCells('AH1:AI1');
+                        $column=$column+2;
+                }
+		elseif($field == "2015 - 2016"){
+                        $object->getActiveSheet()->mergeCells('AJ1:AK1');
+                        $column=$column+2;
+                }
+		elseif($field == "2016 - 2017"){
+                        $object->getActiveSheet()->mergeCells('AL1:AM1');
+                        $column=$column+2;
+                }
+		elseif($field == "2017 - 2018"){
+                        $object->getActiveSheet()->mergeCells('AN1:AO1');
+                        $column=$column+2;
+                }
+		elseif($field == "2018 - 2019"){
+                        $object->getActiveSheet()->mergeCells('AP1:AQ1');
+                        $column=$column+2;
+                }
+		else
+			$column++;
+        }
+	
+		
+	$column = 0;
+	$table_columns = array("Rut","Tipo de contrato","Apellidos","Nombre","Cargo","Area","Localidad","Dia","Mes","Anio","Antiguedad");	
+	foreach($table_columns as $field){
+                $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
+                $column++;
+        }
+
+	//SET PERIOD
+	$cantidad_periodos=16;
+	for($i=0 ; $i<$cantidad_periodos;$i++){
+		$object->getActiveSheet()->setCellValueByColumnAndRow($column,2, "Basico");
+		$column++;
+		$object->getActiveSheet()->setCellValueByColumnAndRow($column,2, "Progresivo");
+                $column++;
+	}
+	
+	//SET TOTAL
+	$table_columns = array("Total Basicos","Total Progresivos","Total");
+	foreach($table_columns as $field){
+                $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
+                $column++;
+        }
+	
+	
+	//ALIGN CENTER TITLE  
+        $object->getActiveSheet()->getStyle('A1:AZ1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+	$object->getActiveSheet()->getStyle('A2:AZ2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+	
+	//BOLD
+	$object->getActiveSheet()->getStyle('A1:AZ1')->getFont()->setBold( true );
+	$object->getActiveSheet()->getStyle('A2:AZ2')->getFont()->setBold( true ); 	
+
+	
+	$excel_row = 3;
+        foreach ($json_ws  as $json){
+		$rut 	= $json->rut;
+		$name 	= $json->name;
+		$lastName 	= $json->lastName;
+		$typeContract 	= ($json->typeContract==1)?'Indefinido':(($json->typeContract==2)?'Plazo fijo':'Reemplazo');
+		$position 	= $json->position;		
+		$area		= $json->area;
+		$localidad	= $json->location;		
+		$fecha_contrato	= date('d-m-Y', ($json->contractDate)/1000); 
+		$antiguedad 	= date("Y") - explode("-", $fecha_contrato)[2]; 		
+		$total_basico	= $json->totalBasic;
+		$total_progresivo=$json->totalProgressive;
+		
+		$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$typeContract);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$lastName);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$position);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$area);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$localidad);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,explode("-", $fecha_contrato)[0]);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row,explode("-", $fecha_contrato)[1]);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(9,$excel_row,explode("-", $fecha_contrato)[2]);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row,$antiguedad);
+		
+		//ANALIZAR PERIODOS
+		foreach ($json->vacationPeriod  as $period){
+			$init_date 	= date('Y', ($period->initDate)/1000);
+			$basic		= $period->basicAvailable;
+			$progressive	= $period->progressiveAvailable;
+			
+			if($init_date=='2003'){
+				$object->getActiveSheet()->setCellValueByColumnAndRow(11,$excel_row,$basic);
+				$object->getActiveSheet()->setCellValueByColumnAndRow(12,$excel_row,$progressive);
+			}
+			elseif($init_date=='2004'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(13,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(14,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2005'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(15,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(16,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2006'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(17,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(18,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2007'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(19,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(20,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2008'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(21,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(22,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2009'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(23,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(24,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2010'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(25,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(26,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2011'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(27,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(28,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2012'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(29,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(30,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2013'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(31,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(32,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2014'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(33,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(34,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2015'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(35,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(36,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2016'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(37,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(38,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2017'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(39,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(40,$excel_row,$progressive);
+                        }
+			elseif($init_date=='2018'){
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(41,$excel_row,$basic);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(42,$excel_row,$progressive);
+                        }		
+		}
+		
+		$object->getActiveSheet()->setCellValueByColumnAndRow(43,$excel_row,$total_basico);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(44,$excel_row,$total_progresivo);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(45,$excel_row,$total_progresivo+$total_basico);	
+
+	
+		$object->getActiveSheet()->getStyle('A'.$excel_row.':AZ'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
+		$excel_row++;
+	}
+
+	$title = date("d-m-Y");
+
+        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="vacation_provision_'.$title.'".xls"');
+        $object_writer->save('php://output');
+
+
+	
+}
+ 
+
+
+
+/*
  public function request_descargar(){
           //Verificamos que el usuario ya se haya logeado 
         if (!UsuarioSesion::usuario()->registrado) {
@@ -239,6 +496,7 @@ class Vacation extends MY_Controller {
         $this->load->view('template', $data);
 
  }
+*/
 
  public function provision_descargar(){
           //Verificamos que el usuario ya se haya logeado 
@@ -332,6 +590,8 @@ class Vacation extends MY_Controller {
 
 }
 
+
+//TODA SOLICITUD NO DESCARGADA
 public function request_all_descargar(){
           //Verificamos que el usuario ya se haya logeado 
         if (!UsuarioSesion::usuario()->registrado) {

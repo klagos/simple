@@ -585,7 +585,7 @@ class Etapas extends MY_Controller {
         $data['etapa'] = $etapa;
         $data['paso'] = $paso;
         $data['secuencia'] = $secuencia;
-
+	$data['ver_sinpermiso'] = false;
         $data['sidebar'] = 'participados';
         $data['title'] = 'Historial - ' . $etapa->Tarea->nombre;
         $data['content'] = 'etapas/ver';

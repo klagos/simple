@@ -31,9 +31,9 @@ class CI_Email {
 	var	$useragent		= "CodeIgniter";
 	var	$mailpath		= "/usr/sbin/sendmail";	// Sendmail path
 	var	$protocol		= "smtp";	// mail/sendmail/smtp
-	var	$smtp_host		= "ssl://smtp.gmail.com";		// SMTP Server.  Example: mail.earthlink.net
-	var	$smtp_user		= "istdevcl@gmail.com";			// SMTP Username
-	var	$smtp_pass		= "eduardo2069";		// SMTP Password
+	var   	$smtp_host              = "ssl://mail.ist.cl";
+	var   	$smtp_user              = "gerencia.personas@ist.cl";                 // SMTP Username
+	var     $smtp_pass              = "";
 	var	$smtp_port		= "465";		// SMTP Port
 	var	$smtp_timeout		= 5;		// SMTP Timeout in seconds
 	var	$smtp_crypto		= "";		// SMTP Encryption. Can be null, tls or ssl.
@@ -1357,7 +1357,6 @@ class CI_Email {
 	 */
 	public function send()
 	{	
-		ChromePhp::log('hola!');
 		if ($this->_replyto_flag == FALSE)
 		{
 			$this->reply_to($this->_headers['From']);
