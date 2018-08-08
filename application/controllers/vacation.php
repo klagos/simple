@@ -175,6 +175,7 @@ class Vacation extends MY_Controller {
  }
 
 
+
 public function reporte(){
         
 	 //Verificamos que el usuario ya se haya logeado 
@@ -185,7 +186,8 @@ public function reporte(){
 	
 	
 	$url = urlapi . "/users/list/vacationperiod";
-        $ch = curl_init($url);
+        //$url = "https://www.api.nexoya.cl/users/list/vacationperiod";
+	$ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL,$url);
@@ -283,6 +285,9 @@ public function reporte(){
                 $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
                 $column++;
         }
+	//DIBUJA LAS LINEAS HORIZONTALES DEL DOCUMENTO
+
+	$object->getDefaultStyle()->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 
 	//SET PERIOD
 	$cantidad_periodos=16;
@@ -300,15 +305,14 @@ public function reporte(){
                 $column++;
         }
 	
-	
 	//ALIGN CENTER TITLE  
         $object->getActiveSheet()->getStyle('A1:AZ1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-	$object->getActiveSheet()->getStyle('A2:AZ2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-	
+	$object->getActiveSheet()->getStyle('A2:G2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+	$object->getActiveSheet()->getStyle('J2:AZ2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
 	//BOLD
 	$object->getActiveSheet()->getStyle('A1:AZ1')->getFont()->setBold( true );
 	$object->getActiveSheet()->getStyle('A2:AZ2')->getFont()->setBold( true ); 	
-
 	
 	$excel_row = 3;
         foreach ($json_ws  as $json){
@@ -323,7 +327,7 @@ public function reporte(){
 		$antiguedad 	= date("Y") - explode("-", $fecha_contrato)[2]; 		
 		$total_basico	= $json->totalBasic;
 		$total_progresivo=$json->totalProgressive;
-		
+			
 		$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$typeContract);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
@@ -331,8 +335,10 @@ public function reporte(){
 		$object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$position);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$area);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$localidad);
-		$object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,explode("-", $fecha_contrato)[0]);
-		$object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row,explode("-", $fecha_contrato)[1]);
+		$day_temp = explode("-", $fecha_contrato)[0];
+		$object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,($day_temp<10)? (int)$day_temp:$day_temp);
+		$month_temp = explode("-", $fecha_contrato)[1];
+		$object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row,($month_temp<10)? (int)$month_temp:$month_temp);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(9,$excel_row,explode("-", $fecha_contrato)[2]);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row,$antiguedad);
 		
@@ -413,12 +419,58 @@ public function reporte(){
 		$object->getActiveSheet()->setCellValueByColumnAndRow(45,$excel_row,$total_progresivo+$total_basico);	
 
 	
-		$object->getActiveSheet()->getStyle('A'.$excel_row.':AZ'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
+		$object->getActiveSheet()->getStyle('H'.$excel_row.':AZ'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+		$object->getActiveSheet()->getStyle('A'.$excel_row.':G'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);	
+		$object->getActiveSheet()->getStyle('A'.$excel_row.':G'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);	
+		$object->getActiveSheet()->getStyle('A'.$excel_row.':A'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
+		
 		$excel_row++;
 	}
+	//DIMENSIONAR LAS CELDAS AUTOMATICAMENTE
+
+	foreach(range('A','D') as $columnID) {
+	    $object->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+	}
+	// SE AJUSTAN COLUMNAS CON TAMAÑO PERSONALIZADO
+	$object->getActiveSheet()->getColumnDimension('E')->setWidth(40);
+	$object->getActiveSheet()->getColumnDimension('F')->setWidth(35);
+	$object->getActiveSheet()->getColumnDimension('G')->setWidth(30);
+	$object->getActiveSheet()->getColumnDimension('AR')->setWidth(13);
+	$object->getActiveSheet()->getColumnDimension('AS')->setWidth(15);
+	$object->getActiveSheet()->getColumnDimension('K')->setWidth(11);
+
+	// ESTILO PARA LOS BORDES DE LOS PERIODOS
+ 	$style_border = array( 
+	  'borders' => array(
+    		'outline' => array(
+	      		'style' => PHPExcel_Style_Border::BORDER_MEDIUM
+   			 )	
+	 	 )
+	);
+ 	// SE DIBUJAN LAS LINEAS ENTRE LOS PERIODOS
+	 $col = 1;
+	 $object->getActiveSheet()->getStyle('L'.$col.':M'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('N'.$col.':O'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('P'.$col.':Q'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('R'.$col.':S'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('T'.$col.':U'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('V'.$col.':W'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('X'.$col.':Y'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('Z'.$col.':AA'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('AB'.$col.':AC'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('AD'.$col.':AE'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('AF'.$col.':AG'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('AH'.$col.':AI'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('AJ'.$col.':AK'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('AL'.$col.':AM'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('AN'.$col.':AO'.$excel_row)->applyFromArray($style_border);
+	 $object->getActiveSheet()->getStyle('AP'.$col.':AQ'.$excel_row)->applyFromArray($style_border);
+
+	// DIBUJO DE LAS LINEAS EN FECHA INGRESO
+ 	 $object->getActiveSheet()->getStyle('H'.$col.':J'.$excel_row)->applyFromArray($style_border);
+
 
 	$title = date("d-m-Y");
-
         $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="vacation_provision_'.$title.'".xls"');
