@@ -24,6 +24,7 @@
 	    <option value="guardar_medico">Guardar Medico</option>
 	    <option value="accion_usuario_personal">Guardar Usuarios D.Pers.</option>
 	    <option value="accion_enviar_vacation">Guardar Vacation</option>	
+	    <option value="accion_guardar_convenio">Guardar Convenio</option>
         </select>
     </form>
 </div>
