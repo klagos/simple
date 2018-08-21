@@ -40,7 +40,7 @@
                 <input type="text" name="email" class="input-xxlarge" value="<?=isset($usuario)?$usuario->email:''?>"/>
                 <label class="checkbox"><input type="checkbox" name="vacaciones" value="1" <?=isset($usuario) && $usuario->vacaciones?'checked':''?> /> ¿Fuera de oficina?</label>    
                 <label>Grupos de Usuarios</label>
-                <select class="chosen" name="grupos_usuarios[]" class="input-xxlarge" data-placeholder="Seleccione los grupos de usuarios" multiple>
+                <select size="35" style="width:380px" class="chosen" name="grupos_usuarios[]" class="input-xxlarge" data-placeholder="Seleccione los grupos de usuarios" multiple>
                     <?php foreach($grupos_usuarios as $g): ?>
                     <option value="<?=$g->id?>" <?=isset($usuario) && $usuario->hasGrupoUsuarios($g->id)?'selected':''?>><?=$g->nombre?></option>
                     <?php endforeach; ?>
