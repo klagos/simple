@@ -22,11 +22,11 @@ class Documentos extends MY_Controller {
                 ->from('File f, f.Tramite.Proceso.Cuenta.UsuariosBackend u')
                 ->where('f.id = ? AND f.llave = ? AND u.id = ? AND (u.rol like "%super%" OR u.rol like "%operacion%" OR u.rol like "%seguimiento%")',array($id,$token,UsuarioBackendSesion::usuario()->id))
                 ->fetchOne();
-            
+           /* 
             if(!$file){
                 echo 'Usuario no tiene permisos para ver este archivo.';
                 exit;
-            }
+            }*/
         }
            
         

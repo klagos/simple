@@ -7,7 +7,7 @@ class AccionGuardarConvenio extends Accion {
 
     public function displayForm() {
 	
-	$display.= '<label>Rut Trabajador</label>';
+	$display= '<label>Rut Trabajador</label>';
         $display.='<input type="text" name="extra[rut]" value="' . (isset($this->extra->rut) ? $this->extra->rut : '') . '" />';	
 	$display.='<label>Número de convenio</label>';
         $display.='<input type="text" name="extra[num_convenio]" value="' . (isset($this->extra->num_convenio) ? $this->extra->num_convenio : '') . '" />';	
@@ -24,24 +24,26 @@ class AccionGuardarConvenio extends Accion {
 	
 	$regla=new Regla($this->extra->rut);
         $rut=$regla->getExpresionParaOutput($etapa->id);
+	
 	$regla=new Regla($this->extra->num_convenio);
-	$num_convenio=$regla->getExpresionParaOut($etapa->id);
-
+	$num_convenio=$regla->getExpresionParaOutput($etapa->id);
+	
+	$json = new stdClass();	
 	$json->rut          = $rut;
 	$json->id	    = $num_convenio;	
+	
 	$json = json_encode($json);
         $json = '['.$json.']';
-	
-	
-	$url = urlapi."users/list/agreement".$request;
+		
+	$url = urlapi."users/list/agreement";
 	$ch = curl_init();
-         curl_setopt($ch, CURLOPT_URL, $url);
-         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-         curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
-         curl_exec($ch);
-         curl_close($ch);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
+        curl_exec($ch);
+        curl_close($ch);
 	
      }
 }

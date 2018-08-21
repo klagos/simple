@@ -447,7 +447,8 @@ public function reporte(){
    			 )	
 	 	 )
 	);
- 	// SE DIBUJAN LAS LINEAS ENTRE LOS PERIODOS
+	
+ 	 // SE DIBUJAN LAS LINEAS ENTRE LOS PERIODOS
 	 $col = 1;
 	 $object->getActiveSheet()->getStyle('L'.$col.':M'.$excel_row)->applyFromArray($style_border);
 	 $object->getActiveSheet()->getStyle('N'.$col.':O'.$excel_row)->applyFromArray($style_border);
@@ -469,22 +470,18 @@ public function reporte(){
 	// DIBUJO DE LAS LINEAS EN FECHA INGRESO
  	 $object->getActiveSheet()->getStyle('H'.$col.':J'.$excel_row)->applyFromArray($style_border);
 
-
 	$title = date("d-m-Y");
         $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="vacation_provision_'.$title.'".xls"');
-        $object_writer->save('php://output');
-
-
-	
+        header('Content-Disposition: attachment;filename="vacation_reporte_'.$title.'".xls"');
+        $object_writer->save('php://output');	
 }
  
 
 
 
-/*
- public function request_descargar(){
+
+ public function request_descargar_asig(){
           //Verificamos que el usuario ya se haya logeado 
         if (!UsuarioSesion::usuario()->registrado) {
                 $this->session->set_flashdata('redirect', current_url());
@@ -548,7 +545,7 @@ public function reporte(){
         $this->load->view('template', $data);
 
  }
-*/
+
 
  public function provision_descargar(){
           //Verificamos que el usuario ya se haya logeado 

@@ -7,7 +7,7 @@ class GrupoUsuariosTable extends Doctrine_Table {
 	const MODULO_INDUCCION	= 3;
 	const MODULO_DIAS_ADMIN	= 4;
 	const MODULO_GUIA_TELEFONO = 5;
-	const MODULO_GUIA_TRABAJADORES = 6;
+	const MODULO_TRABAJADORES = 6;
 	const MODULO_FAS = 7;	
 	const MODULO_VACATION = 8;
 	const MODULO_LICENCIA = 9;
@@ -36,8 +36,8 @@ class GrupoUsuariosTable extends Doctrine_Table {
 				return self::MODULO_DIAS_ADMIN;
 			case "MODULO_GUIA_TELEFONO":
                                 return self::MODULO_GUIA_TELEFONO;
-			case "MODULO_GUIA_TRABAJADORES":
-                                return self::MODULO_GUIA_TRABAJADORES;
+			case "MODULO_TRABAJADORES":
+                                return self::MODULO_TRABAJADORES;
 			case "MODULO_FAS":
                                 return self::MODULO_FAS;
 			case "MODULO_VACATION":

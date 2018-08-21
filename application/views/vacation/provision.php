@@ -2,11 +2,11 @@
     Reporte de Vacaciones
     <!--buscador--> 
 <br></br> 
-<!--
+
 <tr>
         <td><h4> Solicitudes del mes</h4></td>
 </tr> 
-<form  method="GET" action="<?= site_url('vacation/request_descargar')?>">
+<form  method="GET" action="<?= site_url('vacation/request_descargar_asig')?>">
 <fieldset>
         <label>Seleccione el mes</label>
                 <select class="select" name="mes" required>
@@ -29,7 +29,7 @@
         </div>
 </fieldset>
 </form>
--->
+
 
 <tr>
         <td><h4> Provisión del mes </h4></td>
@@ -61,4 +61,16 @@
         </div>
 </fieldset>
 </form>
+
+<tr>
+        <td><h4> Reporte por periodos </h4></td>
+</tr> 
+<form  method="GET" action="<?= site_url('vacation/reporte')?>">
+<fieldset>
+        <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Generar</button>
+        </div>
+</fieldset>
+</form>
+
  

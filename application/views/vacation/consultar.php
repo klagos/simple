@@ -133,7 +133,6 @@ function cargarDatos(){
 	//se rellenan los campos con el valor elegido
 	var valorSelected =  document.getElementById(idCampoRutUser).value.split("*");
 	document.getElementById(idCampoRut).value =  valorSelected[1];
-	console.log(valorSelected[0]);
 	document.getElementById(idCampoName).value	=  valorSelected[0].split("/")[1] +  " " + valorSelected[0].split("/")[0];
 	document.getElementById(idCampoLocation).value  =  valorSelected[2].toUpperCase();
 	
@@ -239,10 +238,14 @@ function cargarDatos(){
                                                                                 if(dv=='K')
                                                                                         dv = 10;
                                                                                 
-                                                                                check_user(request[e].idTramite,request[e].id);
+                                                                               
                                                                                 row_p +="<td align='center' style='width:15%;' id ="+'view_'+request[e].idTramite+'_'+ request[e].id+"><a class='btn btn-info' href='#' onclick =' return detail("+request[e].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
-                                                                                row_p +="<td align='center' style='width:15%;' id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
-                                                                        
+                                                                               	if(request[e].downloaded==false){ 
+											check_user(request[e].idTramite,request[e].id);
+											row_p +="<td align='center' style='width:15%;' id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
+                                                                        	}
+										else
+											row_p +="<td align='center' style='width:15%;'></td>";
                                                                         }
                                                                         else
                                                                                 row_p+="<td align='center' style='width:15%;'></td><td align='center' style='width:15%;'></td></tr>";
@@ -297,12 +300,11 @@ function mostrarHistorial() {
 //mostrar/ocultar historial
 function mostrarHistorial(id) {
 	var h= ".historial_"+id;	
-	$(h).slideToggle('slow', callbackHistorial);
-	/*$(h).slideToggle('slow',function(){
+	$(h).slideToggle('slow',function(){
 		var l = "#link_historial_"+id;
         	var $link = $(l);
-        	//$(this).is(":visible") ? $link.text("Ocultar detalle -") : $link.text(Ver detalle +");		
-	});*/
+        	$(this).is(":visible") ? $link.text("Ocultar detalle -") : $link.text("Ver detalle +");		
+	});
         return false;
 }
 //cambia texto del slide
@@ -322,7 +324,7 @@ function eliminarTramite(tramiteId,requestId,rut,dv){
 
 //detail
 function detail(tramite) {
-	var url = site_url +"fas/detail/"+tramite;
+	var url = site_url +"vacation/detail/"+tramite;
 	window.location.href = url ;
 }
 
@@ -334,14 +336,10 @@ function check_user(tramite, id){
 		if(this.readyState == 4 ){
 			json = this.responseText;
 			json = JSON.parse(json);
-			console.log(json.result);
 			if(!json.result){
 				//Boton borrar
 				if(document.getElementById('b_'+tramite+'_'+id))
-					document.getElementById('b_'+tramite+'_'+id).style.display = "none";
-				//Boton view
-				if(document.getElementById('view_'+tramite+'_'+id))
-                                        document.getElementById('view_'+tramite+'_'+id).style.display = "none"; 	
+					document.getElementById('b_'+tramite+'_'+id).innerHTML = "<td align='center' style='width:15%;'></td>";
 			}
 		}
 	};

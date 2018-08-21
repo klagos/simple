@@ -183,6 +183,8 @@ class AccionGuardarLicencia extends Accion {
 	$json.= '"returnSaldo": '.(isset($return_saldo) ? ($return_saldo == null ? '0' : $return_saldo) : '0').', ';
 	$json.= '"returnObservation": '.(isset($return_observation) ? '"'.$return_observation.'"' : '""').'}';
 	
+	ChromePhp::log($json);
+	
 	$url = urlapi."licenses";
         
 	$ch = curl_init();
