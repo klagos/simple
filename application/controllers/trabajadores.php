@@ -167,9 +167,17 @@ class Trabajadores extends MY_Controller {
 		$json = json_encode($json);
 		$json = '['.$json.']';
 		$this->update_user_api($json);
-		$this->buscar();
-				
-		
+//		$this->buscar();
+
+		$data['name'] = $nombre;
+                $data['apellido']   = $apellido;
+
+	
+		$data['sidebar']='reporte';
+                $data['content'] = 'trabajadores/editado';
+                $data['title'] = 'Cambios Guardados';
+                $this->load->view('template', $data);
+
 	}
 
 	public function update_user_api($json){
