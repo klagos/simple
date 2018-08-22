@@ -25,7 +25,7 @@
 <fieldset>
 
 	<label>Fecha final</label>
-                <input type="text" class="datepicker" name="fecha_inicial" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />
+                <input type="text" class="datepicker" name="fecha_termino" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />
 
 	<input type="hidden" name="downloaded" id="downloaded" value="2">	
         <div class="form-actions">

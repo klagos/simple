@@ -205,17 +205,17 @@ class Vacation extends MY_Controller {
 	}
 	
 	foreach ($rowtramites as $tramite){
-                        $idTramite="";
-                        $rut = "";
-                        $nombre="";
-                        $fecha_inicio="";
-			$fecha_termino="";
-			$cantidad_dias="";
+        	$idTramite="";
+                $rut = "";
+                $nombre="";
+                $fecha_inicio="";
+		$fecha_termino="";
+		$cantidad_dias="";
 
-			$idTramite = $tramite['id'];
-                        $num_etapas = count($tramite["Etapas"]);
-                        for($i = 0; $i< $num_etapas ; $i++){
-                        	foreach ($tramite["Etapas"][$i]["DatosSeguimiento"] as $tra_nro){
+		$idTramite = $tramite['id'];
+                $num_etapas = count($tramite["Etapas"]);
+                for($i = 0; $i< $num_etapas ; $i++){
+                        foreach ($tramite["Etapas"][$i]["DatosSeguimiento"] as $tra_nro){
 					if($tra_nro["nombre"] == 'rut')
                                                 $rut = str_replace('"','',$tra_nro["valor"]);
 					
@@ -233,12 +233,14 @@ class Vacation extends MY_Controller {
 				}	
 			}
 
-			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $idTramite);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $rut);
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $nombre);
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $fecha_inicio);
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $fecha_termino);
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $cantidad_dias);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $idTramite);
+		$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $rut);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $nombre);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $fecha_inicio);
+                $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $fecha_termino);
+               	$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $cantidad_dias);
+	
+		$excel_row++;
 	}
 	
 	$now	= new DateTime();
@@ -724,9 +726,10 @@ public function request_all_descargar(){
                 $this->session->set_flashdata('redirect', current_url());
                 redirect('tramites/disponibles');
         }
+	
+	$fecha_final =trim(($this->input->get('fecha_termino'))?$this->input->get('fecha_termino'):null);
 
-
-        $url = urlapi . "/vacation/vacationrequestdownloaded";
+        $url = urlapi . "/vacation/".$fecha_final."/vacationrequestdownloaded";
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -776,9 +779,6 @@ public function request_all_descargar(){
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="request_all_vacation_'.$fecha.'.xls"');
         $object_writer->save('php://output');
-
-
-
  }
 
 }

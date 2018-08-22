@@ -57,7 +57,7 @@
 <form  method="GET" action="<?= site_url('vacation/request_all_descargar')?>">
 <fieldset>
 	<label>Fecha final</label>
-                <input type="text" class="datepicker" name="fecha_inicial" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />
+                <input type="text" class="datepicker" name="fecha_termino" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />
 
         <div class="form-actions">
                 <button class="btn btn-primary" type="submit">Generar</button>
