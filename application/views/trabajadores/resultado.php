@@ -52,10 +52,6 @@
 	<td><input id="email" type="text" class="input-semi-large" name="email" value="<?php echo $json_usuario->email ?>" ></td>
 </tr>
 <tr style="text-align: right;">
-        <td>Fecha de contrato  &nbsp;&nbsp;&nbsp;&nbsp; </td>
-        <td> <div class="pull-left"> <input id="contract_date" type="text" class="datepicker" name="contract_date" value="<?php echo date('d-m-Y',$json_usuario->contractDate/1000) ?>" required> </div> </td>
-</tr>
-<tr style="text-align: right;">
         <td>Tipo de contrato &nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
                 <select class="select-semi-large" name="contractType" id="contractType" required>
@@ -134,15 +130,6 @@
 <tr >
         <td></td>
         <td> <font color="#A4A4A4">Número con 9 dígitos</font></td>
-</tr>
-<tr style="text-align: right;">
-        <td>Vinculación &nbsp;&nbsp;&nbsp;&nbsp; </td>
-        <td>
-                <select class="select-semi-large" name="vinculacion" id="vinculacion" required>
-                <option value="<?php echo ($json_usuario->active)?'1':'0' ?>"><?php echo ($json_usuario->active)?'Activa':'Desvinculado' ?> </option>
-                <option value='1'>Activa</option>
-                <option value='0'>Desvinculado</option>
-         </td>
 </tr>
 
 <!-- Valores ocultos  type='hidden'  -->
