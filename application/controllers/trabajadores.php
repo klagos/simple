@@ -143,6 +143,7 @@ class Trabajadores extends MY_Controller {
 		
 				
 		//Personales
+		$json   = new stdClass();
 		$json->rut=trim($rut);
 		$json->name=$nombre;
 		$json->gender=$gender;
