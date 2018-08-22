@@ -174,6 +174,83 @@ class Vacation extends MY_Controller {
 
  }
 
+ 
+ public function reporte_masivo(){
+	 //Verificamos que el usuario ya se haya logeado 
+	if (!UsuarioSesion::usuario()->registrado) {
+        	$this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+
+        //Variables de la query
+       	$proceso_id = proceso_vacation;
+       	$contador = 0;
+	$rowtramites = [];
+	
+	$rowtramites = Doctrine::getTable('Tramite')->getDocumentosProcesoEstudios($proceso_id);
+	
+	$CI =& get_instance();
+        $CI->load->library('Excel');
+        $object = new PHPExcel();
+
+	$table_columns = array("TRAMITE","RUT","NOMBRE","FECHA INICIO","FECHA TERMINO","CANTIDAD DIAS");
+
+	$excel_row = 2;
+
+        $column = 0;
+
+        foreach($table_columns as $field){
+        	$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+        	$column++;
+	}
+	
+	foreach ($rowtramites as $tramite){
+                        $idTramite="";
+                        $rut = "";
+                        $nombre="";
+                        $fecha_inicio="";
+			$fecha_termino="";
+			$cantidad_dias="";
+
+			$idTramite = $tramite['id'];
+                        $num_etapas = count($tramite["Etapas"]);
+                        for($i = 0; $i< $num_etapas ; $i++){
+                        	foreach ($tramite["Etapas"][$i]["DatosSeguimiento"] as $tra_nro){
+					if($tra_nro["nombre"] == 'rut')
+                                                $rut = str_replace('"','',$tra_nro["valor"]);
+					
+					if($tra_nro["nombre"] == 'nombre_trabajador')
+                                                $nombre = str_replace('"','',$tra_nro["valor"]);
+					
+					if($tra_nro["nombre"] == 'fecha_inicial')
+                                                $fecha_inicio = str_replace('"','',$tra_nro["valor"]);
+				
+					if($tra_nro["nombre"] == 'fecha_final')
+                                                $fecha_termino = str_replace('"','',$tra_nro["valor"]);
+					
+					if($tra_nro["nombre"] == 'dias_requeridos')
+                                                $cantidad_dias = str_replace('"','',$tra_nro["valor"]);
+				}	
+			}
+
+			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $idTramite);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $rut);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $nombre);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $fecha_inicio);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $fecha_termino);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $cantidad_dias);
+	}
+	
+	$now	= new DateTime();
+        $fecha	= $now->format('d-m-Y');
+
+	$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="request_all_vacation_'.$fecha.'.xls"');
+	header_remove('Set-Cookie');
+        $object_writer->save('php://output');
+ }
+
 
 
 public function reporte(){
