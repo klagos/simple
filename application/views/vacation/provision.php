@@ -2,7 +2,7 @@
     Reporte de Vacaciones
     <!--buscador--> 
 <br></br> 
-
+<!--
 <tr>
         <td><h4> Solicitudes del mes</h4></td>
 </tr> 
@@ -49,13 +49,16 @@
         </div>
 </fieldset>
 </form>
-
+-->
 
 <tr>
         <td><h4> Toda solicitud no descargada </h4></td>
 </tr> 
 <form  method="GET" action="<?= site_url('vacation/request_all_descargar')?>">
 <fieldset>
+	<label>Fecha final</label>
+                <input type="text" class="datepicker" name="fecha_inicial" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />
+
         <div class="form-actions">
                 <button class="btn btn-primary" type="submit">Generar</button>
         </div>
@@ -63,7 +66,18 @@
 </form>
 
 <tr>
-        <td><h4> Reporte por periodos </h4></td>
+        <td><h4> Descarga masiva </h4></td>
+</tr>
+<form  method="GET" action="<?= site_url('vacation/reporte_masivo')?>">
+<fieldset>
+        <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Generar</button>
+        </div>
+</fieldset>
+</form>
+
+
+<!-- <tr>       <td><h4> Reporte por periodos </h4></td> 
 </tr> 
 <form  method="GET" action="<?= site_url('vacation/reporte')?>">
 <fieldset>
@@ -72,5 +86,5 @@
         </div>
 </fieldset>
 </form>
-
+-->
  

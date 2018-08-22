@@ -186,4 +186,23 @@ class Trabajadores extends MY_Controller {
                 curl_close($ch);
 		
 	}
+
+
+
+	public function reporte(){
+                 //Verificamos que el usuario ya se haya logeado
+                if (!UsuarioSesion::usuario()->registrado) {
+                        $this->session->set_flashdata('redirect', current_url());
+                        redirect('tramites/disponibles');
+                }
+
+                $data['sidebar']='reporte';
+                $data['content'] = 'trabajadores/reporte';
+                $data['title'] = 'Reporte de Trabajadores';
+                $this->load->view('template', $data);
+        }
+
+
+
+
 }
