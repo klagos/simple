@@ -359,7 +359,7 @@ public function reporte(){
 	
 		
 	$column = 0;
-	$table_columns = array("Rut","Tipo de contrato","Apellidos","Nombre","Cargo","Area","Localidad","Dia","Mes","Anio","Antiguedad");	
+	$table_columns = array("Rut","Tipo de contrato","Nombre","Apellido","Cargo","Area","Localidad","Dia","Mes","Anio","Antiguedad");	
 	foreach($table_columns as $field){
                 $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
                 $column++;
