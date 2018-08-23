@@ -136,9 +136,17 @@ class TramiteTable extends Doctrine_Table {
 		$query= Doctrine_Query::create()
                         ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
                         ->where('p.activo=1 AND p.id = ?', $proceso_id);
-		//return $query->execute();
-		return $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+		return $query->execute();
 	}
+
+	public function getTramitesById($proceso_id){
+                $query= Doctrine_Query::create()
+                        ->from('Tramite t,t.Proceso p,  t.Etapas e, e.DatosSeguimiento d')
+                        ->where('p.activo=1 AND p.id = ?', $proceso_id);
+                //return $query->execute();
+                return $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        }
+
 
 	public function findLicenciasMasiva($proceso_id,$inicio,$limite){
  		$query= Doctrine_Query::create()

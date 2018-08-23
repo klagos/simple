@@ -187,7 +187,7 @@ class Vacation extends MY_Controller {
        	$contador = 0;
 	$rowtramites = [];
 	
-	$rowtramites = Doctrine::getTable('Tramite')->getDocumentosProcesoEstudios($proceso_id);
+	$rowtramites = Doctrine::getTable('Tramite')->getTramitesById($proceso_id);
 	
 	$CI =& get_instance();
         $CI->load->library('Excel');

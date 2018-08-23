@@ -764,7 +764,7 @@ class Licencias extends MY_Controller {
                                         $registro_auditoria->save();
 					
                                         $respuesta->validacion = TRUE;
-                                        $respuesta->redirect = site_url('licencias/buscador');
+                                        $respuesta->redirect = site_url('licencias/buscador_new');
 
                                 }else{
                                         ChromePhp::log('El usuario no participo en el tramite');
