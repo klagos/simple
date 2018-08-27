@@ -505,7 +505,7 @@ class Licencias extends MY_Controller {
 		$CI->load->library('Excel');
 		$object = new PHPExcel();
 
-		$table_columns = array("idTramite","RUT","NOMBRE","NUMERO","FECHA RECEPCION","ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO","TIPO REPOSO","LUGAR REPOSO","FECHA RETORNO","PAGADO ANT.", "ANTICIPO","MESES ANT.","DIAS NO CUBIERTOS","COMPLEMENTO","OBSERV. PAGO","FECHA RETORNO","MONTO RETORNO","SALDO RETORNO","OBSERV. RETORNO","ESTADO","RUT MEDICO");
+		$table_columns = array("TRAMITE","RUT","NOMBRE","NUMERO","FECHA RECEPCION","ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO","TIPO REPOSO","LUGAR REPOSO","FECHA RETORNO","PAGADO ANT.","ANTICIPO","MESES ANT.","DIAS NO CUBIERTOS","COMPLEMENTO","TOTAL","OBSERV. PAGO","FECHA RETORNO","MONTO RETORNO","SALDO RETORNO","OBSERV. RETORNO","ESTADO","RUT MEDICO");
 		
 		$excel_row = 2;
 
@@ -533,6 +533,8 @@ class Licencias extends MY_Controller {
 			//DATOS PAGO
 			$fecha_pago = "";
 			$pagado_anterior="";
+			$dias_no_cub_ant="";
+			$complemento_ant="";
 			$anticipo = "";
 			$meses_ant = "";
 			$dias_no_cu = "";
@@ -588,6 +590,10 @@ class Licencias extends MY_Controller {
                                                 $fecha_pago = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'pagado_anterior_subsidio')
                                                 $pagado_anterior = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'dias_no_cubiertos_pagados_anteri')
+                                                $dias_no_cub_ant = str_replace('"','',$tra_nro["valor"]);
+					if($tra_nro["nombre"] == 'complemento_anterior_subsidio')
+                                                $complemento_ant = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'anticipo_subsidio')
                                                 $anticipo = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'meses_anteriores_subsidio')
@@ -662,23 +668,26 @@ class Licencias extends MY_Controller {
 			//PAGO
 			$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $fecha_pago);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $pagado_anterior);
+
 			$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $anticipo);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(15, $excel_row, $meses_ant);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(16, $excel_row, $dias_no_cu);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(17, $excel_row, $complemento);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(18, $excel_row, $obs_pago);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(16, $excel_row, $dias_no_cu  +  $dias_no_cub_ant);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(17, $excel_row, $complemento + $complemento_ant);
+			$total = ($pagado_anterior + $anticipo+$meses_ant);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(18, $excel_row, $total);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $obs_pago);
 			
 			//RETORNO
-			$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $fecha_retorno);
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, $monto_retorno);
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(21, $excel_row, $saldo_retorno);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $obs_retorno);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, $fecha_retorno);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(21, $excel_row, $monto_retorno);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $monto_retorno - $total);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $obs_retorno);
 			
 			//ESTADO	
-			$object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $estado);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(24, $excel_row, $estado);
 
 			//RUT MEDICO
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(24, $excel_row, $rut_medico);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(25, $excel_row, $rut_medico);
 			$excel_row++;
 			
 			
