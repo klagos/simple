@@ -626,6 +626,254 @@ public function reporte(){
  }
 
 
+
+public function reporte_solicitudes(){
+
+	    if (!UsuarioSesion::usuario()->registrado) {
+                    $this->session->set_flashdata('redirect', current_url());
+                    redirect('tramites/disponibles');
+            }
+            //$url = "https://www.api.nexoya.cl/users/list/vacationrequest";
+            $url = urlapi . "/users/list/vacationrequest";
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                           "Content-Type: application/json"
+                    ));
+            $result=curl_exec($ch);
+            curl_close($ch);
+            $json_ws = json_decode($result);
+        
+            $CI =& get_instance();
+            $CI->load->library('Excel');
+            $object = new PHPExcel();
+
+	        $objWorkSheet = $object->createSheet(0);
+            $objWorkSheet = $object->setActiveSheetIndex(0);
+		 $objWorkSheet->setTitle("Resumen");
+
+            $column = 0;
+            $table_columns = array("","","","","","","","Fecha de ingreso","","","","","","","","","");
+            foreach($table_columns as $field){
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                    if($field == 'Fecha de ingreso'){
+                            $object->getActiveSheet()->mergeCells('H1:J1');
+                            $column= $column+4;
+                    }
+                    elseif($field == "2010"){
+                            $object->getActiveSheet()->mergeCells('K1');
+                            $column=$column;
+                    }
+                    elseif($field == "2011"){
+                            $object->getActiveSheet()->mergeCells('L1');
+                            $column=$column;
+                    }
+                    elseif($field == "2012"){
+                            $object->getActiveSheet()->mergeCells('M1');
+                            $column=$column;
+                    }
+                    elseif($field == "2013"){
+                            $object->getActiveSheet()->mergeCells('N2');
+                            $column=$column;
+                    }
+                    elseif($field == "2014"){
+                            $object->getActiveSheet()->mergeCells('O1');
+                            $column=$column;
+                    }
+                    elseif($field == "2015"){
+                            $object->getActiveSheet()->mergeCells('P1');
+                            $column=$column;
+                    }
+                    elseif($field == "2016"){
+                            $object->getActiveSheet()->mergeCells('Q1');
+                    }
+                     elseif($field == "2017"){
+                            $object->getActiveSheet()->mergeCells('R1');
+                            $column=$column;
+                    }
+                    elseif($field == "2018"){
+                            $object->getActiveSheet()->mergeCells('S1');
+                            $column=$column;
+                    }
+                   
+                    else
+                            $column++;
+            }
+            $column = 0;
+            $table_columns = array("Rut","Tipo de contrato","Nombre","Apellido","Cargo","Area","Localidad","Dia","Mes","Año","2010","2011","2012","2013","2014","2015","2016","2017","2018","Total","Esperado","Diferencia");
+            foreach($table_columns as $field){
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
+                    $column++;
+            }
+            $excel_row = 3;
+		
+
+	$object->getDefaultStyle()->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		// ALINEACION DE TITULOS
+	$object->getActiveSheet()->getStyle('T2:V2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $object->getActiveSheet()->getStyle('H2:J2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $object->getActiveSheet()->getStyle('H1:J1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+
+        foreach ($json_ws  as $json){
+                  $rut    = $json->rut;
+                  $name   = $json->name;
+                  $lastName       = $json->lastName;
+                  $typeContract   = ($json->typeContract==1)?'Indefinido':(($json->typeContract==2)?'Plazo fijo':'Reemplazo');
+                  $position       = $json->position;
+                  $area           = $json->area;
+                  $localidad      = $json->location;
+                  $fecha_contrato = date('d-m-Y', ($json->contractDate)/1000);
+                  $periodo        = $json->totalRequestForYear;
+
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$typeContract);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$lastName);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$position);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$area);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$localidad);
+                  $day_temp = explode("-", $fecha_contrato)[0];
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,($day_temp<10)? (int)$day_temp:$day_temp);
+                  $month_temp = explode("-", $fecha_contrato)[1];
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row,($month_temp<10)? (int)$month_temp:$month_temp);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(9,$excel_row,explode("-", $fecha_contrato)[2]);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row,($periodo[0]!=-1)?$periodo[0]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(11,$excel_row,($periodo[1]!=-1)?$periodo[1]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(12,$excel_row,($periodo[2]!=-1)?$periodo[2]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(13,$excel_row,($periodo[3]!=-1)?$periodo[3]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(14,$excel_row,($periodo[4]!=-1)?$periodo[4]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(15,$excel_row,($periodo[5]!=-1)?$periodo[5]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(16,$excel_row,($periodo[6]!=-1)?$periodo[6]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(17,$excel_row,($periodo[7]!=-1)?$periodo[7]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(18,$excel_row,($periodo[8]!=-1)?$periodo[8]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(19,$excel_row,($periodo[9]!=-1)?$periodo[9]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(20,$excel_row,($periodo[10]!=-1)?$periodo[10]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(21,$excel_row,($periodo[11]!=-1)?$periodo[11]:"-");
+                
+                  $object->getActiveSheet()->getStyle('H'.$excel_row.':AZ'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel_row++;
+            }
+	
+	//TIPO DE ESTIPO PARA APLICAR BORDES
+	$style_border = array(
+			'borders' => array(
+				'outline' => array(
+				'style' => PHPExcel_Style_Border::BORDER_MEDIUM	
+			)
+		)
+	);
+	$col = 1;
+	// DIBUJO DE LINEAS EN FECHA INGRESO
+	$object->getActiveSheet()->getStyle('H'.$col.':J'.$excel_row)->applyFromArray($style_border);
+	// DIBUJO DE LINEAS solicitudes
+	$object->getActiveSheet()->getStyle('T'.$col.':V'.$excel_row)->applyFromArray($style_border);
+	//DIBUJO DE LAS LINEAS PARA LOS AÑOS
+         $object->getActiveSheet()->getStyle('K'.$col.':L'.$excel_row)->applyFromArray($style_border);
+         $object->getActiveSheet()->getStyle('L'.$col.':M'.$excel_row)->applyFromArray($style_border);
+         $object->getActiveSheet()->getStyle('M'.$col.':N'.$excel_row)->applyFromArray($style_border);
+         $object->getActiveSheet()->getStyle('N'.$col.':O'.$excel_row)->applyFromArray($style_border);
+         $object->getActiveSheet()->getStyle('O'.$col.':P'.$excel_row)->applyFromArray($style_border);	
+         $object->getActiveSheet()->getStyle('P'.$col.':Q'.$excel_row)->applyFromArray($style_border);
+         $object->getActiveSheet()->getStyle('R'.$col.':S'.$excel_row)->applyFromArray($style_border);
+         $object->getActiveSheet()->getStyle('S'.$col.':T'.$excel_row)->applyFromArray($style_border);
+         $object->getActiveSheet()->getStyle('T'.$col.':U'.$excel_row)->applyFromArray($style_border);
+	//BOLD
+  	 $object->getActiveSheet()->getStyle('A1:AZ1')->getFont()->setBold( true );
+         $object->getActiveSheet()->getStyle('A2:AZ2')->getFont()->setBold( true );
+	//TAMAÑO DE LAS CELDAS
+	 $object->getActiveSheet()->getColumnDimension('A')->setWidth(13);
+         $object->getActiveSheet()->getColumnDimension('B')->setWidth(15);
+         $object->getActiveSheet()->getColumnDimension('C')->setWidth(27);
+         $object->getActiveSheet()->getColumnDimension('D')->setWidth(27);
+         $object->getActiveSheet()->getColumnDimension('E')->setWidth(37);
+         $object->getActiveSheet()->getColumnDimension('F')->setWidth(35);
+         $object->getActiveSheet()->getColumnDimension('G')->setWidth(30);
+         $object->getActiveSheet()->getColumnDimension('U')->setWidth(11);
+         $object->getActiveSheet()->getColumnDimension('V')->setWidth(12);
+	
+ //SE GENERA  SEGUNDA HOJA
+	$objWorkSheet = $object->createSheet(1);
+        $objWorkSheet = $object->setActiveSheetIndex(1);
+        $objWorkSheet->setTitle("Detalle");
+
+ 	$column = 0;
+        $table_columns = array("","","","Solicitud","","","","","","","","","");
+        foreach($table_columns as $field){
+           $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+           if($field == 'Solicitud'){
+               $object->getActiveSheet()->mergeCells('D1:F1');
+               $column= $column+4;
+              }else
+                        $column++;
+           }
+             
+
+  	$column = 0;
+        $table_columns = array("Rut","Nombre","Apellido","Fecha inicio","Fecha termino","Total");
+        foreach($table_columns as $field){
+                 $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
+                 $column++;
+            }
+            
+	$excel_row = 3;
+	$object->getActiveSheet()->getStyle('D1:F1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
+	$object->getActiveSheet()->getStyle('D2:F2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        foreach ($json_ws  as $json){
+              	   $rut    = $json->rut;
+                   $name   = $json->name;
+                   $lastName       = $json->lastName;
+                   $array_json = $json->vacationRequest;
+
+                   $object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                   $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$name);
+                   $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$lastName);
+
+		  foreach($array_json as $json_request){
+		
+                            $initDate = date('d-m-Y',($json_request->initDate)/1000);
+                            $endDate = date('d-m-Y',($json_request->endDate)/1000);
+                            $totalRequest = $json_request->totalRequest;
+
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row, $initDate );	
+				$object->getActiveSheet()->getStyle('D'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$endDate);
+				$object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$totalRequest);
+				$object->getActiveSheet()->getStyle('D'.$excel_row.':AZ'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+			$excel_row++;
+                    }              
+                    $excel_row++;
+
+         }
+
+	$col = 1;
+        // DIBUJO DE LINEAS EN FECHA INGRESO
+        $object->getActiveSheet()->getStyle('D'.$col.':F'.$excel_row)->applyFromArray($style_border);
+	
+	//BOLD
+        $object->getActiveSheet()->getStyle('A1:AZ1')->getFont()->setBold( true );
+        $object->getActiveSheet()->getStyle('A2:AZ2')->getFont()->setBold( true );
+        //TAMAÑO DE LAS CELDAS
+        $object->getActiveSheet()->getColumnDimension('A')->setWidth(13);
+        $object->getActiveSheet()->getColumnDimension('B')->setWidth(27);
+        $object->getActiveSheet()->getColumnDimension('C')->setWidth(27);
+        $object->getActiveSheet()->getColumnDimension('D')->setWidth(13);
+        $object->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+        $object->getActiveSheet()->getColumnDimension('F')->setWidth(10);
+
+	$object->removeSheetByIndex(2); //SE REMUEVE UNA 3ERA HOJA
+	$title = date("d-m-Y");
+        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="reporte_solicitudes'.$title.'".xls"');
+        $object_writer->save('php://output');
+
+
+}
  public function provision_descargar(){
           //Verificamos que el usuario ya se haya logeado 
         if (!UsuarioSesion::usuario()->registrado) {

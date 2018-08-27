@@ -79,3 +79,16 @@
         </div>
 </fieldset>
 </form>
+
+	
+<tr>
+        <td><h4> Reporte de Solicitudes </h4></td>
+</tr>
+<form  method="GET" action="<?= site_url('vacation/reporte_solicitudes')?>">
+<fieldset>
+        <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Generar</button>
+        </div>
+</fieldset>
+</form>
+
