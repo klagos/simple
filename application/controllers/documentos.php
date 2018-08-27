@@ -9,14 +9,21 @@ class Documentos extends MY_Controller {
     function get($filename){
         $id=$this->input->get('id');
         $token=$this->input->get('token');
+	
+	if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }	
         
         //Chequeamos permisos del frontend
         $file=Doctrine_Query::create()
                 ->from('File f, f.Tramite t, t.Etapas e, e.Usuario u')
-                ->where('f.id = ? AND f.llave = ? AND u.id = ?',array($id,$token,UsuarioSesion::usuario()->id))
-                ->fetchOne();
-        
+                //->where('f.id = ? AND f.llave = ? AND u.id = ?',array($id,$token,UsuarioSesion::usuario()->id))
+                ->where('f.id = ? AND f.llave = ?',array($id,$token))
+		->fetchOne();
+       
         if(!$file){
+	
             //Chequeamos permisos en el backend
             $file=Doctrine_Query::create()
                 ->from('File f, f.Tramite.Proceso.Cuenta.UsuariosBackend u')
@@ -28,6 +35,8 @@ class Documentos extends MY_Controller {
                 exit;
             }*/
         }
+	
+	
            
         
         $path='uploads/documentos/'.$file->filename;
