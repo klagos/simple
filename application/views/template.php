@@ -204,6 +204,7 @@
                         
 			<?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_consolidado' ? 'active' : '' ?>"><a id="fas_consolidado" href="<?= site_url('fas/consolidado') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consolidado&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-briefcase"></a></li><?php endif ?>
 
+		<?php if($fas): ?><li class="<?= isset($sidebar) && $sidebar == 'fas_add_admin' ? 'active' : '' ?>"><a id="fas_add_admin" href="<?= site_url('tramites/iniciar/'. proceso_fas_guardar_convenio_medico) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar Persona Convenio&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-asterisk"></a></li><?php endif ?>
                         </ul>
 			<!-- MODULO VACATION -->
                         <ul id="sideMenu" class="nav nav-list">

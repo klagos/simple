@@ -24,7 +24,8 @@ class Accion extends Doctrine_Record {
 		'AccionGuardarFiniquito'  => array('tipo' => 'guardar_finiquito'),
 		'AccionGuardarMedico'  => array('tipo' => 'guardar_medico'),
 		'AccionGuardarLicencia'  => array('tipo' => 'guardar_licencia'),
-		'AccionGuardarConvenio' => array('tipo'=> 'accion_guardar_convenio')
+		'AccionGuardarConvenio' => array('tipo'=> 'accion_guardar_convenio'),
+		'AccionGuardarConvenioMedico' => array('tipo'=>'accion_guardar_convenio_medico')
             )
         );
     }
