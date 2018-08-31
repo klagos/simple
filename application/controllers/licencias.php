@@ -93,6 +93,8 @@ class Licencias extends MY_Controller {
 		$json->fecha_inicio  = $fecha_inicial;
 		$json->fecha_termino = $fecha_final;
 		$json->rut	=$trabajador_rut;
+		//$json->name 	=$trabajador_nombre;
+		//$json->lastName =$trabajador_apellido;
 		$json->state	= $licencia_estado;	
 		$json = json_encode($json);
 		$url = urlapi . "licenses/count?";
@@ -125,13 +127,15 @@ class Licencias extends MY_Controller {
 				}
 			}
 			//Values for object
-			
-			$idTramite	= $tr->idTramite;		
+					
+			$idTramite	= 10821;//$tr->idTramite;		
 			$fecha_inicio 	= date('d-m-Y', ($tr->initDate)/1000);
 			$fecha_termino	= date('d-m-Y', ($tr->endDate)/1000);
 			$dias	      	= $tr->days;
 			$numero 	= $tr->number;
-			$rut 		= $tr->rut;		
+			$rut 		= $tr->rut;
+			$nombre		= $tr->name;	
+			$apellido       = $tr->lastName;	
 			$tramite 	= Doctrine::getTable ( 'Tramite' )->find ($idTramite);
 			$etapas 	= $tramite->getEtapasTramites();
 				
@@ -203,7 +207,11 @@ class Licencias extends MY_Controller {
 			//Super admin
 			if($permisoLicencia ==4)	
 				$delete = true;
+			
 
+			// EXTRAER SOLO EL PRIMER NOMBRE Y PRIMER APELLIDO
+			$nombre = explode(" ",$nombre);
+			$apellido = explode(" ", $apellido);
 
 			//Save object
 			$licencia = new Licencia($idTramite); //se crea objeto licencia
@@ -212,6 +220,7 @@ class Licencias extends MY_Controller {
 			$licencia->fecha_inicio_licencia  = $fecha_inicio;
 			$licencia->fecha_termino_licencia = $fecha_termino;
 			$licencia->rut_trabajador_subsidio = $rut;
+			$licencia->nombre_completo_trabajador_subsidio =$nombre[0].' '.$apellido[0];
 			$licencia->dias	= $dias;
 			$licencia->etapas_tramites = $etapas ;
 			$licencia->pendiente= $id_pendiente;

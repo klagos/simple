@@ -62,7 +62,7 @@ function descargarSeleccionados() {
 <table id="mainTable" class="table">
     <thead>
         <tr>
-            <th></th>
+            <th style="width:1%"></th>
             <th><a href="<?=current_url().'?orderby=id&direction='.($direction=='asc'?'desc':'asc')?>">Nro</a></th>
             <th>Ref.</th>
             <th><a href="<?=current_url().'?orderby=proceso_nombre&direction='.($direction=='asc'?'desc':'asc')?>">Nombre</a></th>

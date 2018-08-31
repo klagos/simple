@@ -4,6 +4,7 @@ class Licencia {
 	
     public $id;
     public $rut_trabajador_subsidio;
+    public $nombre_completo_trabajador_subsidio;
     public $numero_licencia;
     public $fecha_inicio_licencia;
     public $fecha_termino_licencia;  

@@ -211,7 +211,9 @@ class Trabajadores extends MY_Controller {
                 $this->load->view('template', $data);
         }
 
+	public function reporte_dias_tomados(){
 
+	}
 
 
 }

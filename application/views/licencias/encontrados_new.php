@@ -2,18 +2,20 @@
     Licencias encontradas   
 </h2>
 <?php if (count($tramites) > 0): ?>
-    <table id="mainTable" class="table" >
+
+    <table id="mainTable" class="table"   >
         <thead>
             <tr>
-                <th>Nro</th>
-                <th width="90">Rut</th>
-                <th width="92">Fecha Inicio</th>
-                <th width="92">Fecha Término</th>
-                <th>Días</th>
-                <th>Estado</th>
-                <th>Realizar</th>
-		<th>Revisar</th>
-		<th>Eliminar</th>
+                <th style="width:16%">Nro</th>
+                <th style="width:21%">Rut</th>
+		<th style="width:30%">Nombre</th>
+                <th style="width:20%">Fecha Inicio</th>
+                <th style="width:20%">Fecha Término</th>
+                <th style="width:10%" >Días</th>
+                <th  style="width:18%">Estado</th>
+                <th style="width:22%">Realizar</th>
+		<th style="width:22%">Revisar</th>
+		<th style="width:15%">Eliminar</th>
             </tr>
         </thead>
         <tbody>		
@@ -30,6 +32,7 @@
 			   if($rut_dv =='K')
 				$rut_dv  = 10;
 			   
+			   $trabajador_nombre = $t->nombre_completo_trabajador_subsidio;
 			   $licencia_fecha_i = $t->fecha_inicio_licencia;
 			   $licencia_fecha_t = $t->fecha_termino_licencia;
 			   $licencia_dia_no_cubierto = false;//$t->dia_no_cubierto;
@@ -54,9 +57,10 @@
                   
                    <?php endif ?>
 			 </td>
-                    <td class="name"> <?php echo $trabajador_rut!=''?$trabajador_rut:'N/A'; ?> </td>
-                    <td class="name"> <?php echo ($licencia_fecha_i !='')?$licencia_fecha_i:'N/A';?> </td>
-                    <td class="name"> <?php echo $licencia_fecha_t!=''?$licencia_fecha_t:'N/A';?> </td>
+                    <td class="name" > <?php echo $trabajador_rut!=''?$trabajador_rut:'N/A'; ?> </td>
+		    <td class="name" > <?php echo $trabajador_nombre ?></td>
+                    <td class="name" > <?php echo ($licencia_fecha_i !='')?$licencia_fecha_i:'N/A';?> </td>
+                    <td class="name" > <?php echo $licencia_fecha_t!=''?$licencia_fecha_t:'N/A';?> </td>
 		    <td class="name"> <?php echo $licencia_cant_d!=0?$licencia_cant_d:'N/A';?> </td>
 		    <td class="name"> <?php echo $estado  ?></td>				
 	            <td class="actions" style="text-align:center;"> 

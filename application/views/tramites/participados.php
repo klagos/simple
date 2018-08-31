@@ -57,7 +57,7 @@ function descargarSeleccionados() {
     <table id="mainTable" class="table">
         <thead>
             <tr>
-                <th></th>
+                <th style="width:1%"></th>
                 <th>Nro</th>
                 <th>Ref.</th>
                 <th>Nombre</th>
