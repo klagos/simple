@@ -128,7 +128,7 @@ class Licencias extends MY_Controller {
 			}
 			//Values for object
 					
-			$idTramite	= 10821;//$tr->idTramite;		
+			$idTramite	= $tr->idTramite;		
 			$fecha_inicio 	= date('d-m-Y', ($tr->initDate)/1000);
 			$fecha_termino	= date('d-m-Y', ($tr->endDate)/1000);
 			$dias	      	= $tr->days;
