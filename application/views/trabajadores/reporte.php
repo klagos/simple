@@ -44,7 +44,7 @@
 -->
 <h2 style="line-height: 28px;">
     Reporte  de Vacaciones
-    <!--buscador-->
+</h2>
 <br></br>
 
 
@@ -82,8 +82,10 @@
 
 	
 <tr>
-        <td><h4> Reporte de Solicitudes </h4></td>
+        <td><h4> Reporte de Solicitudes *</h4></td>
+	<td><h6>Este informe tarda aproximadamente 20 minutos en generarse</h6></td>
 </tr>
+
 <form  method="GET" action="<?= site_url('vacation/reporte_solicitudes')?>">
 <fieldset>
         <div class="form-actions">

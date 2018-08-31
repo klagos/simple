@@ -648,7 +648,11 @@ public function reporte_solicitudes(){
         
             $CI =& get_instance();
             $CI->load->library('Excel');
-            $object = new PHPExcel();
+           //$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+	//	$cacheSettings = array( 'memoryCacheSize' => '1024MB');
+	//PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings); 
+
+	   $object = new PHPExcel();
 
 	        $objWorkSheet = $object->createSheet(0);
             $objWorkSheet = $object->setActiveSheetIndex(0);
@@ -751,7 +755,7 @@ public function reporte_solicitudes(){
                   $object->getActiveSheet()->setCellValueByColumnAndRow(18,$excel_row,($periodo[8]!=-1)?$periodo[8]:"-");
                   $object->getActiveSheet()->setCellValueByColumnAndRow(19,$excel_row,($periodo[9]!=-1)?$periodo[9]:"-");
                   $object->getActiveSheet()->setCellValueByColumnAndRow(20,$excel_row,($periodo[10]!=-1)?$periodo[10]:"-");
-                  $object->getActiveSheet()->setCellValueByColumnAndRow(21,$excel_row,($periodo[11]!=-1)?$periodo[11]:"-");
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(21,$excel_row,$periodo[11]);
                 
                   $object->getActiveSheet()->getStyle('H'.$excel_row.':AZ'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel_row++;
@@ -831,22 +835,24 @@ public function reporte_solicitudes(){
                    $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$name);
                    $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$lastName);
 
-		  foreach($array_json as $json_request){
+		if($array_json!=null && !empty($array_json)){		
+		   	foreach($array_json as $json_request){
 		
-                            $initDate = date('d-m-Y',($json_request->initDate)/1000);
-                            $endDate = date('d-m-Y',($json_request->endDate)/1000);
-                            $totalRequest = $json_request->totalRequest;
+                        	    $initDate = date('d-m-Y',($json_request->initDate)/1000);
+                        	    $endDate = date('d-m-Y',($json_request->endDate)/1000);
+                        	    $totalRequest = $json_request->totalRequest;
 
-                                $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row, $initDate );	
-				$object->getActiveSheet()->getStyle('D'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
-                                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$endDate);
-				$object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
-                                $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$totalRequest);
-				$object->getActiveSheet()->getStyle('D'.$excel_row.':AZ'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                        	        $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row, $initDate );	
+					$object->getActiveSheet()->getStyle('D'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                        	        $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$endDate);
+					$object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                        	        $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$totalRequest);
+					$object->getActiveSheet()->getStyle('D'.$excel_row.':AZ'.$excel_row.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-			$excel_row++;
-                    }              
-                    $excel_row++;
+				$excel_row++;
+                  	}              
+		}
+                  $excel_row++;
 
          }
 
