@@ -211,7 +211,224 @@ class Trabajadores extends MY_Controller {
                 $this->load->view('template', $data);
         }
 
-	public function reporte_dias_tomados(){
+
+	public function maxNum($row, $excel_row, $cont){
+		if($row >= $excel_row && $row >= $cont){
+			return $row;	
+		}elseif ($excel_row >= $row && $excel_row >= $cont){
+			 return $excel_row;
+		}
+		elseif ($cont >= $row && $cont >= $excel_row ){
+			 return $cont;
+		}
+		
+	}
+
+	public function reporte_licencias(){
+		
+	   //Verificamos que el usuario ya se haya logeado
+            if (!UsuarioSesion::usuario()->registrado) {
+                    $this->session->set_flashdata('redirect', current_url());
+                    redirect('tramites/disponibles');
+            }
+
+	    $fecha_inicial   =trim(($this->input->get('fecha_inicial'))?$this->input->get('fecha_inicial'):null);
+            $fecha_final     =trim(($this->input->get('fecha_termino'))?$this->input->get('fecha_termino'):null);
+            $chbox           = $this->input->get('checkBox');
+
+	    $v="false";
+	    $a="false";
+	    $l="false";
+	    $cont = count($chbox);
+	    for($i = 0; $i <$cont ; $i++){
+		if($chbox[$i] == "v"){
+			$v="true";
+		}elseif ($chbox[$i]=="a"){
+			$a="true";
+		}elseif($chbox[$i] == "l"){
+			$l="true";		
+			}
+	    }
+	    $url = "https://www.api.nexoya.cl/request/report?&fi=".$fecha_inicial."&fe=".$fecha_final."&v=".$v."&a=".$a."&l=".$l; 
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                           "Content-Type: application/json"
+                    ));
+            $result=curl_exec($ch);
+            curl_close($ch);
+            $json_ws = json_decode($result);
+
+      	    $CI =& get_instance();
+            $CI->load->library('Excel');
+            $object = new PHPExcel();
+	    	
+	    $objWorkSheet = $object->createSheet(0);
+            $objWorkSheet = $object->setActiveSheetIndex(0);
+            $objWorkSheet->setTitle("Resumen");
+		//LINEAS HORIZONTALES
+	    $object->getDefaultStyle()->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $column = 0;
+            $table_columns = array("", "","","Licencias","Vacaciones","Dias Administrativos");
+            foreach($table_columns as $field){
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                    if($field == 'Licencias'){
+                            $object->getActiveSheet()->mergeCells('D1:H1');
+                            $column= $column+5;
+                    }
+                    elseif($field == 'Vacaciones')  {
+                            $object->getActiveSheet()->mergeCells('I1:L1');
+                            $column= $column+4;
+                    }
+		    elseif($field == 'Dias Administrativos'){
+			    $object->getActiveSheet()->mergeCells('M1:P1');
+                            $column= $column+4;
+		    }
+                    else
+                            $column++;
+            }
+
+            $column = 0;
+     	    $mayor = 0;
+            $table_columns = array("Rut","Apellidos","Nombres","Fecha Inicio","Fecha Termino","Licencia","Total Dias","Utiles","Fecha inicio","Fecha termino","Total","Utiles","Fecha Inicio","Fecha Termino", "Total","Utiles" );
+            foreach($table_columns as $field){
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
+                    $column++;
+            }
+            $excel_row = 3;
+	    $row = 3;
+            $cont= 3;
+       	    foreach ($json_ws  as $json){
+                  $rut    	= $json->rut;
+                  $name   	= $json->name;
+                  $lastName     = $json->lastName;
+		  $array_json  	= $json->listRequestLicenses;
+                  $array_json2 	= $json->listRequestVacation;
+		  $array_json3  = $json->listRequestAdminDay;
+		
+		  $object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);	
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
+		     if($array_json!=null && !empty($array_json) && $l=="true"){
+			$excel_row = $row;
+                        foreach($array_json as $json_request){
+                                    $number = $json_request->number;
+                                    $initDate = date('d-m-Y',($json_request->initDate)/1000);
+                                    $endDate = date('d-m-Y',($json_request->endDate)/1000);
+                                    $days = $json_request->days;
+                                    $utilDays = $json_request->utilDays;
+
+					$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                  			$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);
+			                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row, $initDate );
+                                        $object->getActiveSheet()->getStyle('D'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$endDate);
+                                        $object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$number);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$days);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,$utilDays);
+				$excel_row++;
+                        }
+				
+		}
+		$cont = $this->maxNum($row, $excel_row, $cont); // FUNCION PARA OBTENER EL NUMERO MAYOR
+		     if($array_json2!=null && !empty($array_json2) && $v=="true"){
+			$excel_row = $row;
+                        foreach($array_json2 as $json_request2){
+
+                                    $initDate = date('d-m-Y',($json_request2->initDate)/1000);
+                                    $endDate = date('d-m-Y',($json_request2->endDate)/1000);
+                                    $requestDays = $json_request2->requestDays;
+				    $requestUtilDays = $json_request2->requestUtilDays;	
+
+					$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+			                $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);
+			                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row, $initDate );
+                                        $object->getActiveSheet()->getStyle('I'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(9,$excel_row,$endDate);
+                                        $object->getActiveSheet()->getStyle('J'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row,$requestDays);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(11,$excel_row,$requestUtilDays);
+				$excel_row++;
+                       	}
+		}
+		$cont = $this->maxNum($row, $excel_row, $cont);
+		     if($array_json3!=null && !empty($array_json3) && $a =="true"){
+			$excel_row = $row;
+			 foreach($array_json3 as $json_request3){
+
+                                    $initDate = date('d-m-Y',($json_request3->date)/1000);
+                                    $endDate = ($json_request3->datefinal!=null)?date('d-m-Y',($json_request3->datefinal)/1000) : $initDate;
+                                    $requiredDays = $json_request3->requiredDays;
+                                    $utilRequiredDays = $json_request3->utilRequiredDays;
+
+					$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                			$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);
+			                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(12,$excel_row, $initDate );
+                                        $object->getActiveSheet()->getStyle('M'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(13,$excel_row,$endDate );
+                                        $object->getActiveSheet()->getStyle('N'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(14,$excel_row,$requiredDays);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(15,$excel_row,$utilRequiredDays);
+                                $excel_row++;
+                        }
+			
+		}
+		$cont = $this->maxNum($row, $excel_row, $cont);
+		$row = $cont;
+		$excel_row++;
+	    }
+	// CONFIGURACION DE LA VISTA DE LA HOJA
+		//TIPO DE ESTIPO PARA APLICAR BORDES
+	    $style_border = array(
+                        'borders' => array(
+                                'outline' => array(
+                                	'style' => PHPExcel_Style_Border::BORDER_MEDIUM
+
+                	        )
+            	    )
+            );
+	    $col = 0;
+		//BOLD
+            $object->getActiveSheet()->getStyle('A1:AZ1')->getFont()->setBold( true );
+            $object->getActiveSheet()->getStyle('A2:AZ2')->getFont()->setBold( true );
+		//TAMAÑO DE LAS CELDAS
+            $object->getActiveSheet()->getColumnDimension('A')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('B')->setWidth(22);
+            $object->getActiveSheet()->getColumnDimension('C')->setWidth(27);
+ 	    $object->getActiveSheet()->getColumnDimension('D')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('E')->setWidth(14);
+            $object->getActiveSheet()->getColumnDimension('F')->setWidth(11);
+            $object->getActiveSheet()->getColumnDimension('G')->setWidth(10);
+            $object->getActiveSheet()->getColumnDimension('H')->setWidth(10);
+            $object->getActiveSheet()->getColumnDimension('I')->setWidth(13);
+	    $object->getActiveSheet()->getColumnDimension('J')->setWidth(14);
+            $object->getActiveSheet()->getColumnDimension('K')->setWidth(10);
+            $object->getActiveSheet()->getColumnDimension('L')->setWidth(10);
+            $object->getActiveSheet()->getColumnDimension('M')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('N')->setWidth(14);
+            $object->getActiveSheet()->getColumnDimension('O')->setWidth(10);
+            $object->getActiveSheet()->getColumnDimension('P')->setWidth(10);
+
+		//ALINEACION DE TITULOS
+	    $object->getActiveSheet()->getStyle('A1:Z1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+	    $object->getActiveSheet()->getStyle('A2:Z2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		 //DIBUJO DE LAS LINEAS PARA LOS AÑOS
+            $object->getActiveSheet()->getStyle('D'.$col.':H'.($excel_row+3))->applyFromArray($style_border);
+            $object->getActiveSheet()->getStyle('I'.$col.':L'.($excel_row+3))->applyFromArray($style_border);
+            $object->getActiveSheet()->getStyle('M'.$col.':P'.($excel_row+3))->applyFromArray($style_border);
+	    
+	    $object->removeSheetByIndex(1);
+	    $title = date("d-m-Y");
+            $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="reporteX'.$title.'".xls"');
+            $object_writer->save('php://output');
 
 	}
 

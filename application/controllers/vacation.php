@@ -648,15 +648,12 @@ public function reporte_solicitudes(){
         
             $CI =& get_instance();
             $CI->load->library('Excel');
-           //$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
-	//	$cacheSettings = array( 'memoryCacheSize' => '1024MB');
-	//PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings); 
 
 	   $object = new PHPExcel();
 
-	        $objWorkSheet = $object->createSheet(0);
+	    $objWorkSheet = $object->createSheet(0);
             $objWorkSheet = $object->setActiveSheetIndex(0);
-		 $objWorkSheet->setTitle("Resumen");
+	    $objWorkSheet->setTitle("Resumen");
 
             $column = 0;
             $table_columns = array("","","","","","","","Fecha de ingreso","","","","","","","","","");
