@@ -265,25 +265,25 @@ class Trabajadores extends MY_Controller {
             $CI->load->library('Excel');
             $object = new PHPExcel();
 	    	
-	    $objWorkSheet = $object->createSheet(0);
-            $objWorkSheet = $object->setActiveSheetIndex(0);
-            $objWorkSheet->setTitle("Resumen");
+	    $objWorkSheet = $object->createSheet(1);
+            $objWorkSheet = $object->setActiveSheetIndex(1);
+            $objWorkSheet->setTitle("Detalle");
 		//LINEAS HORIZONTALES
 	    $object->getDefaultStyle()->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    $column = 0;
-            $table_columns = array("", "","","Licencias","Vacaciones","Dias Administrativos");
+            $table_columns = array("", "","","","","Licencias","Vacaciones","Dias Administrativos");
             foreach($table_columns as $field){
                     $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
                     if($field == 'Licencias'){
-                            $object->getActiveSheet()->mergeCells('D1:H1');
+                            $object->getActiveSheet()->mergeCells('F1:J1');
                             $column= $column+5;
                     }
                     elseif($field == 'Vacaciones')  {
-                            $object->getActiveSheet()->mergeCells('I1:L1');
+                            $object->getActiveSheet()->mergeCells('K1:N1');
                             $column= $column+4;
                     }
 		    elseif($field == 'Dias Administrativos'){
-			    $object->getActiveSheet()->mergeCells('M1:P1');
+			    $object->getActiveSheet()->mergeCells('O1:R1');
                             $column= $column+4;
 		    }
                     else
@@ -292,7 +292,7 @@ class Trabajadores extends MY_Controller {
 
             $column = 0;
      	    $mayor = 0;
-            $table_columns = array("Rut","Apellidos","Nombres","Fecha Inicio","Fecha Termino","Licencia","Total Dias","Utiles","Fecha inicio","Fecha termino","Total","Utiles","Fecha Inicio","Fecha Termino", "Total","Utiles" );
+            $table_columns = array("Rut","Apellidos","Nombres","Centro Costo","Localizacion","Fecha Inicio","Fecha Termino","Licencia","Total Dias","Utiles","Fecha inicio","Fecha termino","Total","Utiles","Fecha Inicio","Fecha Termino", "Total","Utiles" );
             foreach($table_columns as $field){
                     $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
                     $column++;
@@ -304,13 +304,17 @@ class Trabajadores extends MY_Controller {
                   $rut    	= $json->rut;
                   $name   	= $json->name;
                   $lastName     = $json->lastName;
+		  $costCenter   = $json->costCenter;
+		  $location     = $json->location;
 		  $array_json  	= $json->listRequestLicenses;
                   $array_json2 	= $json->listRequestVacation;
 		  $array_json3  = $json->listRequestAdminDay;
-		
+	       	
 		  $object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
                   $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);	
                   $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$costCenter);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$location);
 		     if($array_json!=null && !empty($array_json) && $l=="true"){
 			$excel_row = $row;
                         foreach($array_json as $json_request){
@@ -319,17 +323,20 @@ class Trabajadores extends MY_Controller {
                                     $endDate = date('d-m-Y',($json_request->endDate)/1000);
                                     $days = $json_request->days;
                                     $utilDays = $json_request->utilDays;
+				   
 
 					$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
                   			$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);
 			                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row, $initDate );
+					$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$costCenter);
+			                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$location);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row, $initDate );
                                         $object->getActiveSheet()->getStyle('D'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$endDate);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$endDate);
                                         $object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$number);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$days);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,$utilDays);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,$number);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row,$days);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(9,$excel_row,$utilDays);
 				$excel_row++;
                         }
 				
@@ -347,12 +354,14 @@ class Trabajadores extends MY_Controller {
 					$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
 			                $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);
 			                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row, $initDate );
+					$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$costCenter);
+			                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$location);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row, $initDate );
                                         $object->getActiveSheet()->getStyle('I'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(9,$excel_row,$endDate);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(11,$excel_row,$endDate);
                                         $object->getActiveSheet()->getStyle('J'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row,$requestDays);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(11,$excel_row,$requestUtilDays);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(12,$excel_row,$requestDays);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(13,$excel_row,$requestUtilDays);
 				$excel_row++;
                        	}
 		}
@@ -369,19 +378,21 @@ class Trabajadores extends MY_Controller {
 					$object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
                 			$object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);
 			                $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(12,$excel_row, $initDate );
+					$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$costCenter);
+                  			$object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$location);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(14,$excel_row, $initDate );
                                         $object->getActiveSheet()->getStyle('M'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(13,$excel_row,$endDate );
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(15,$excel_row,$endDate );
                                         $object->getActiveSheet()->getStyle('N'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(14,$excel_row,$requiredDays);
-                                        $object->getActiveSheet()->setCellValueByColumnAndRow(15,$excel_row,$utilRequiredDays);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(16,$excel_row,$requiredDays);
+                                        $object->getActiveSheet()->setCellValueByColumnAndRow(17,$excel_row,$utilRequiredDays);
                                 $excel_row++;
                         }
 			
 		}
 		$cont = $this->maxNum($row, $excel_row, $cont);
 		$row = $cont;
-		$excel_row++;
+	//	$excel_row++;
 	    }
 	// CONFIGURACION DE LA VISTA DE LA HOJA
 		//TIPO DE ESTIPO PARA APLICAR BORDES
@@ -401,29 +412,121 @@ class Trabajadores extends MY_Controller {
             $object->getActiveSheet()->getColumnDimension('A')->setWidth(13);
             $object->getActiveSheet()->getColumnDimension('B')->setWidth(22);
             $object->getActiveSheet()->getColumnDimension('C')->setWidth(27);
- 	    $object->getActiveSheet()->getColumnDimension('D')->setWidth(13);
-            $object->getActiveSheet()->getColumnDimension('E')->setWidth(14);
-            $object->getActiveSheet()->getColumnDimension('F')->setWidth(11);
-            $object->getActiveSheet()->getColumnDimension('G')->setWidth(10);
-            $object->getActiveSheet()->getColumnDimension('H')->setWidth(10);
+	    $object->getActiveSheet()->getColumnDimension('D')->setWidth(32);
+            $object->getActiveSheet()->getColumnDimension('E')->setWidth(30);
+            $object->getActiveSheet()->getColumnDimension('F')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('G')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('H')->setWidth(13);
             $object->getActiveSheet()->getColumnDimension('I')->setWidth(13);
-	    $object->getActiveSheet()->getColumnDimension('J')->setWidth(14);
-            $object->getActiveSheet()->getColumnDimension('K')->setWidth(10);
-            $object->getActiveSheet()->getColumnDimension('L')->setWidth(10);
+	    $object->getActiveSheet()->getColumnDimension('J')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('K')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('L')->setWidth(13);
             $object->getActiveSheet()->getColumnDimension('M')->setWidth(13);
-            $object->getActiveSheet()->getColumnDimension('N')->setWidth(14);
-            $object->getActiveSheet()->getColumnDimension('O')->setWidth(10);
-            $object->getActiveSheet()->getColumnDimension('P')->setWidth(10);
+            $object->getActiveSheet()->getColumnDimension('N')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('O')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('P')->setWidth(13);
 
 		//ALINEACION DE TITULOS
 	    $object->getActiveSheet()->getStyle('A1:Z1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 	    $object->getActiveSheet()->getStyle('A2:Z2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		 //DIBUJO DE LAS LINEAS PARA LOS AÑOS
-            $object->getActiveSheet()->getStyle('D'.$col.':H'.($excel_row+3))->applyFromArray($style_border);
-            $object->getActiveSheet()->getStyle('I'.$col.':L'.($excel_row+3))->applyFromArray($style_border);
-            $object->getActiveSheet()->getStyle('M'.$col.':P'.($excel_row+3))->applyFromArray($style_border);
-	    
-	    $object->removeSheetByIndex(1);
+            $object->getActiveSheet()->getStyle('F'.$col.':J'.($excel_row+3))->applyFromArray($style_border);
+            $object->getActiveSheet()->getStyle('K'.$col.':N'.($excel_row+3))->applyFromArray($style_border);
+            $object->getActiveSheet()->getStyle('O'.$col.':R'.($excel_row+3))->applyFromArray($style_border);
+	   
+	    //SEGUNDA HOJA
+            $objWorkSheet = $object->createSheet(0);
+            $objWorkSheet = $object->setActiveSheetIndex(0);
+            $objWorkSheet->setTitle("Resumen");
+                //LINEAS HORIZONTALES
+            $object->getDefaultStyle()->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+ 	    $column = 0;
+            $table_columns = array("", "","","","","Licencias","Vacaciones","Dias Administrativos");
+            foreach($table_columns as $field){
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                    if($field == 'Licencias'){
+                            $object->getActiveSheet()->mergeCells('F1:H1');
+                            $column= $column+3;
+                    }
+                    elseif($field == 'Vacaciones')  {
+                            $object->getActiveSheet()->mergeCells('I1:J1');
+                            $column= $column+2;
+                    }
+                    elseif($field == 'Dias Administrativos'){
+                            $object->getActiveSheet()->mergeCells('K1:L1');
+                            $column= $column+2;
+                    }
+                    else
+                            $column++;
+            }
+            $column = 0;
+            $table_columns = array("Rut","Apellidos","Nombres","Centro costo","Localizacion","Total","Util","Habiles","Total","Util","Total","Util");
+            foreach($table_columns as $field){
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
+                    $column++;
+            }
+           $excel_row = 3;
+	   foreach ($json_ws  as $json){
+                  $rut             = $json->rut;
+                  $name            = $json->name;
+                  $lastName        = $json->lastName;
+		  $costCenter      = $json->costCenter;
+                  $location 	   = $json->location;			
+		  $summaryLicense  = $json->summaryLicense;
+		  $summaryVacation = $json->summaryVacation;				
+		  $summaryAdminDay = $json->summaryAdminDay;	
+
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(0,$excel_row,$rut);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(1,$excel_row,$lastName);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(2,$excel_row,$name);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$costCenter);
+                  $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$location);
+
+		
+                if($summaryLicense!=null && !empty($summaryLicense) && $l=="true"){
+                      $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row,$summaryLicense[0]);
+                      $object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$summaryLicense[1]);
+                      $object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,$summaryLicense[2]);
+                 }
+		if($summaryVacation!=null && !empty($summaryVacation) && $v=="true"){
+                      $object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row,$summaryVacation[0]);
+                      $object->getActiveSheet()->setCellValueByColumnAndRow(9,$excel_row,$summaryVacation[1]);
+                 }
+		if($summaryAdminDay!=null && !empty($summaryAdminDay) && $a=="true"){
+                      $object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row,$summaryAdminDay[0]);
+                      $object->getActiveSheet()->setCellValueByColumnAndRow(11,$excel_row,$summaryAdminDay[1]);
+                 }
+               $excel_row++;
+            }
+	//PERSONALIZACION DE 2DA HOJA
+
+			    //BOLD
+            $object->getActiveSheet()->getStyle('A1:AZ1')->getFont()->setBold( true );
+            $object->getActiveSheet()->getStyle('A2:AZ2')->getFont()->setBold( true );
+                //TAMAÑO DE LAS CELDAS
+            $object->getActiveSheet()->getColumnDimension('A')->setWidth(13);
+            $object->getActiveSheet()->getColumnDimension('B')->setWidth(22);
+            $object->getActiveSheet()->getColumnDimension('C')->setWidth(27);
+            $object->getActiveSheet()->getColumnDimension('D')->setWidth(32);
+            $object->getActiveSheet()->getColumnDimension('E')->setWidth(30);
+            $object->getActiveSheet()->getColumnDimension('F')->setWidth(11);
+            $object->getActiveSheet()->getColumnDimension('G')->setWidth(11);
+            $object->getActiveSheet()->getColumnDimension('H')->setWidth(11);
+            $object->getActiveSheet()->getColumnDimension('I')->setWidth(11);
+            $object->getActiveSheet()->getColumnDimension('J')->setWidth(11);
+            $object->getActiveSheet()->getColumnDimension('K')->setWidth(11);
+            $object->getActiveSheet()->getColumnDimension('L')->setWidth(11);
+
+                //ALINEACION DE TITULOS
+            $object->getActiveSheet()->getStyle('A1:Z1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $object->getActiveSheet()->getStyle('A2:Z2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                 //DIBUJO DE LAS LINEAS PARA LOS AÑOS
+            $object->getActiveSheet()->getStyle('F'.$col.':H'.($excel_row+3))->applyFromArray($style_border);
+            $object->getActiveSheet()->getStyle('I'.$col.':J'.($excel_row+3))->applyFromArray($style_border);
+            $object->getActiveSheet()->getStyle('K'.$col.':L'.($excel_row+3))->applyFromArray($style_border);
+
+	    $object->removeSheetByIndex(1); // ESTA LINEA SE USA PARA ELIMINAR LA HOJA QUE SE GENERA AUTOMATICAMENTE, FUNCIONAN COMO ARREGLOS. AHORA EXISTEN LAS HOJAS [0] Y [2] Y BORRO [1]
+	    // SE GENERAL EXCEL 
 	    $title = date("d-m-Y");
             $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
             header('Content-Type: application/vnd.ms-excel');

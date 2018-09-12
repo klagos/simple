@@ -1,7 +1,39 @@
 <h2 style="line-height: 28px;">
-    Reportes de Licencias
+    Reporte General
     <!--buscador--> 
 <br></br>
+
+
+
+<tr>
+        <td><h4> Descarga Reporte de Solicitudes </h4></td>
+</tr>
+<form  method="GET" action="<?= site_url('trabajadores/reporte_licencias')?>">
+<fieldset>
+        	<label>Fecha inicial</label>
+                <input type="text" class="datepicker" id="start_date" name="fecha_inicial" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />
+        	<label>Fecha final</label>
+                <input type="text" class="datepicker" id="end_date" name="fecha_termino" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />
+<br>
+
+	 <div class="form-group">
+	     <label><input class="myCheckBox" name="checkBox[]" type="checkbox" value="v"  > Vacaciones</label>
+	</div>
+	<div class="form-group">
+	     <label><input class="myCheckBox" name="checkBox[]" type="checkbox" value="a"> Dias Administrativos</label>
+	</div>
+	<div class="form-group">
+	     <label><input class="myCheckBox" name="checkBox[]" type="checkbox"  value="l"> Licencias</label>
+	</div>
+
+
+        <div class="form-actions">
+                <button class="btn btn-primary" id="generar" type="submit"  disabled="disabled" >Generar</button>
+        </div>
+</fieldset>
+</form>
+
+
 <tr>
         <td><h4> Descarga de licencias por criterios </h4></td>
 </tr>  
@@ -12,7 +44,7 @@
         <label>Fecha final</label>
 		<input type="text" class="datepicker" name="fecha_termino" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />
 	<div class="form-actions">
-		<button class="btn btn-primary" type="submit">Generar</button>
+		<button class="btn btn-primary" type="submit"  >Generar</button>
         </div>
 </fieldset>
 </form>
@@ -93,4 +125,34 @@
         </div>
 </fieldset>
 </form>
+
+
+
+<script type="text/javascript" >
+var myinput = document.querySelectorAll('input[type="date"]');
+	for(var i=0; i<myinput.length; i++)
+	  myinput[i].addEventListener('change', validateForm);
+
+function validateForm(){
+	  var sbm = document.querySelectorAll('input[type="submit"]')[0];
+	  var df = document.getElementById('start_date').value;
+	  var dt = document.getElementById('end_date').value;
+	  (df==="" || dt==="")?(sbm.disabled = true):(sbm.disabled = false);
+}
+</script>
+
+
+
+
+
+
+<!--SCRIPT PARA VALIDAR LAS CASILLAS -->
+<script  type="text/javascript">
+
+	var boxes = $('.myCheckBox');
+	boxes.on('change', function () {
+    		$('#generar').prop('disabled', !boxes.filter(':checked').length);
+	}).trigger('change');
+</script>
+
 
