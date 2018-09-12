@@ -293,7 +293,7 @@ class Trabajadores extends MY_Controller {
 
             $column = 0;
      	    $mayor = 0;
-            $table_columns = array("Rut","Apellidos","Nombres","Centro Costo","Localizacion","Fecha Inicio","Fecha Termino","Licencia","Total Dias","Utiles","Fecha inicio","Fecha termino","Total","Utiles","Fecha Inicio","Fecha Termino", "Total","Utiles" );
+            $table_columns = array("Rut","Apellidos","Nombres","Centro Costo","Localidad","Fecha Inicio","Fecha Termino","Licencia","Total Dias","Utiles","Fecha inicio","Fecha termino","Total","Utiles","Fecha Inicio","Fecha Termino", "Total","Utiles" );
             foreach($table_columns as $field){
                     $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
                     $column++;
@@ -461,7 +461,7 @@ class Trabajadores extends MY_Controller {
                             $column++;
             }
             $column = 0;
-            $table_columns = array("Rut","Apellidos","Nombres","Centro costo","Localizacion","Total","Util","Habiles","Total","Util","Total","Util");
+            $table_columns = array("Rut","Apellidos","Nombres","Centro Costo","Localidad","Total","Util","Habiles","Total","Util","Total","Util");
             foreach($table_columns as $field){
                     $object->getActiveSheet()->setCellValueByColumnAndRow($column,2, $field);
                     $column++;
