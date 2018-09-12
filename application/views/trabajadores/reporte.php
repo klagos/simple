@@ -8,7 +8,7 @@
 <tr>
         <td><h4> Descarga Reporte de Solicitudes </h4></td>
 </tr>
-<form  method="GET" action="<?= site_url('trabajadores/reporte_licencias')?>">
+<form  method="GET" action="<?= site_url('trabajadores/reporte_requerimientos')?>">
 <fieldset>
         	<label>Fecha inicial</label>
                 <input type="text" class="datepicker" id="start_date" name="fecha_inicial" value=""  autocomplete="off" placeholder="dd-mm-aaaa" />

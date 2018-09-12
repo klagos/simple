@@ -224,7 +224,7 @@ class Trabajadores extends MY_Controller {
 		
 	}
 
-	public function reporte_licencias(){
+	public function reporte_requerimientos(){
 		
 	   //Verificamos que el usuario ya se haya logeado
             if (!UsuarioSesion::usuario()->registrado) {
@@ -249,7 +249,8 @@ class Trabajadores extends MY_Controller {
 			$l="true";		
 			}
 	    }
-	    $url = "https://www.api.nexoya.cl/request/report?&fi=".$fecha_inicial."&fe=".$fecha_final."&v=".$v."&a=".$a."&l=".$l; 
+	    $url = urlapi."request/report?&fi=".$fecha_inicial."&fe=".$fecha_final."&v=".$v."&a=".$a."&l=".$l;
+
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
