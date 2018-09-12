@@ -332,9 +332,9 @@ class Trabajadores extends MY_Controller {
 					$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$costCenter);
 			                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$location);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(5,$excel_row, $initDate );
-                                        $object->getActiveSheet()->getStyle('D'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->getStyle('F'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(6,$excel_row,$endDate);
-                                        $object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->getStyle('G'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(7,$excel_row,$number);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(8,$excel_row,$days);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(9,$excel_row,$utilDays);
@@ -358,9 +358,9 @@ class Trabajadores extends MY_Controller {
 					$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$costCenter);
 			                $object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$location);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(10,$excel_row, $initDate );
-                                        $object->getActiveSheet()->getStyle('I'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->getStyle('K'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(11,$excel_row,$endDate);
-                                        $object->getActiveSheet()->getStyle('J'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->getStyle('L'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(12,$excel_row,$requestDays);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(13,$excel_row,$requestUtilDays);
 				$excel_row++;
@@ -382,9 +382,9 @@ class Trabajadores extends MY_Controller {
 					$object->getActiveSheet()->setCellValueByColumnAndRow(3,$excel_row,$costCenter);
                   			$object->getActiveSheet()->setCellValueByColumnAndRow(4,$excel_row,$location);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(14,$excel_row, $initDate );
-                                        $object->getActiveSheet()->getStyle('M'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->getStyle('O'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(15,$excel_row,$endDate );
-                                        $object->getActiveSheet()->getStyle('N'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                                        $object->getActiveSheet()->getStyle('P'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(16,$excel_row,$requiredDays);
                                         $object->getActiveSheet()->setCellValueByColumnAndRow(17,$excel_row,$utilRequiredDays);
                                 $excel_row++;
@@ -531,7 +531,7 @@ class Trabajadores extends MY_Controller {
 	    $title = date("d-m-Y");
             $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
             header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment;filename="reporteX'.$title.'".xls"');
+            header('Content-Disposition: attachment;filename="reporte_solicitudes_'.$title.'".xls"');
             $object_writer->save('php://output');
 
 	}
