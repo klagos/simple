@@ -665,17 +665,25 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $rut);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $nombre);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $numero);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $fecha_rec);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, (str_replace("-","/",$fecha_rec)));
+			$object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+
 			$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $org_salud);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $inicio);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $termino);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, (str_replace("-","/",$inicio)));
+			$object->getActiveSheet()->getStyle('G'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+
+			$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, (str_replace("-","/",$termino)));
+			$object->getActiveSheet()->getStyle('H'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+
 			$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $dias);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $tipo);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $tipo_reposo);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $lugar_reposo);				
 
 			//PAGO
-			$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $fecha_pago);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, (str_replace("-","/",$fecha_pago)));
+			$object->getActiveSheet()->getStyle('M'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+
 			$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $pagado_anterior);
 
 			$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $anticipo);
@@ -687,7 +695,9 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $obs_pago);
 			
 			//RETORNO
-			$object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, $fecha_retorno);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, (str_replace("-","/",$fecha_retorno)));
+			$object->getActiveSheet()->getStyle('U'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+
                         $object->getActiveSheet()->setCellValueByColumnAndRow(21, $excel_row, $monto_retorno);
                         $object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $monto_retorno - $total);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $obs_retorno);
