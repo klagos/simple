@@ -166,9 +166,6 @@ document.getElementById(idCampoRutUser).onchange = function(){
 	cargarDatos();
 	}
 
-
-
-
 //funcion para rellenar campos con un trabajador seleccionado
 function cargarDatos(){
 	//se rellenan los campos con el valor elegido
@@ -178,17 +175,11 @@ function cargarDatos(){
 	document.getElementById(idCampoLocation).value =  valorSelected[2].toUpperCase();
 	document.getElementById(idCampoDiasAsig).value =  valorSelected[3];
 	document.getElementById(idCampoMedJor).value =  valorSelected[4];
-//	document.getElementById(active).value =  valorSelected[6]; //MOD
-
-
 
         document.getElementById("mensaje_finiquitado").style.display = "none";
-	console.log(valorSelected);	
-	console.log(document.getElementById(idCampoRutUser).value.split("*"));	
 	var json = '';
 	var rut = document.getElementById(idCampoRut).value;
 
-	
 	if(valorSelected[5]=='si'){	
 			
 		//Desplegar la tabla
@@ -242,21 +233,6 @@ function cargarDatos(){
 	        	}
 		
 
-
-				//lista auxiliar para ordenar los dias
-				/*
-				var days = [];
-			
-       				for (var i=0; i < json.history.length; i ++){
-
-                			var date = new Date(json.history[i].date);
-					var day = date.getDate();
-					
-					days.push(date);
-				}
-				//ordenar los dias por la mas reciente
-				days = days.sort(function(a,b){return a<b});
-				*/
 				//rellenar tabla historial con fechas ordenadas
 
 				var sizeHistory = json.history.length;
@@ -330,9 +306,6 @@ function cargarDatos(){
 		document.getElementById("rows").innerHTML = '';	
 	}
 
-	
-
-
 }
 
 
@@ -353,9 +326,7 @@ function eliminarTramite(tramiteId,requestId,rut,dv){
 	if(dv==10)
 		dv='K'
 	rut = rut + '-' + dv;
-	//console.log(site_url + "admindays/ajax_auditar_eliminar_tramite_adminday/" + tramiteId + "/"+requestId +"/"+rut);	
 	$("#modal").load(site_url + "admindays/ajax_auditar_eliminar_tramite_adminday/" + tramiteId + "/"+requestId +"/"+rut );
-        //$("#modal").load(site_url + "licencias/ajax_auditar_eliminar_tramite_licencias/" + tramiteId + "/"+requestId );
 	$("#modal").modal();
         return false;
 }
