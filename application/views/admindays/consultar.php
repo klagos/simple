@@ -48,16 +48,6 @@ require_once(FCPATH."procesos.php");
 	<td><input id="localidad_trabajador" type="text" class="input-semi-large" name="localidad_trabajador"  readonly></td>
 
 </tr>
-
-
-<tr style="text-align: right;" >
-
-       <td>Activo  &nbsp;&nbsp;&nbsp;&nbsp; </td>
-        <td><input id="activex" type="text" class="input-semi-large" name="activex"  readonly></td>
-
-</tr>
-
-
 </table>
 <table id="table_dias" style="display:none">
 	<tr>
@@ -188,8 +178,10 @@ function cargarDatos(){
 	document.getElementById(idCampoLocation).value =  valorSelected[2].toUpperCase();
 	document.getElementById(idCampoDiasAsig).value =  valorSelected[3];
 	document.getElementById(idCampoMedJor).value =  valorSelected[4];
-	document.getElementById(active).value =  valorSelected[6]; //MOD
-    
+//	document.getElementById(active).value =  valorSelected[6]; //MOD
+
+
+
         document.getElementById("mensaje_finiquitado").style.display = "none";
 	console.log(valorSelected);	
 	console.log(document.getElementById(idCampoRutUser).value.split("*"));	
