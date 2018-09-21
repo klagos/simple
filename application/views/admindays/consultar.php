@@ -17,12 +17,12 @@ require_once(FCPATH."procesos.php");
 			//seleccionar trabajador cuando se vuelve a consulta luego de pedir un dia admin
 			if ($json->rut == explode("=",$_SERVER['REQUEST_URI'])[1]){ 
         ?>                
-<option selected value = '<?php echo $json->lastName."/".$json->name.'*'.$json->rut.'*'.$json->location .'*'.(($json->day)?$json->day:'0').'*'.(($json->halfDay)?$json->halfDay:'0').(isset($json->takenDays)?'*'.$json->takenDays:'').(isset($json->pendingDays)?'*'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'*'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'*'.json_encode($json->adminDayRequest):'').'*'.(($json->hasDay)?'si' :'no'). (isset($json->service)? '*'.$json->service : '').(isset($json->email)?'*'.$json->email:'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
+<option selected value = '<?php echo $json->lastName."/".$json->name.'*'.$json->rut.'*'.$json->location .'*'.(($json->day)?$json->day:'0').'*'.(($json->halfDay)?$json->halfDay:'0').(isset($json->takenDays)?'*'.$json->takenDays:'').(isset($json->pendingDays)?'*'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'*'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'*'.json_encode($json->adminDayRequest):'').'*'.(($json->hasDay)?'si' :'no'). (isset($json->service)? '*'.$json->service : '').(isset($json->email)?'*'.$json->email:'').'*'.(($json->active)?'si': 'no' )  ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
         <?php   	} else {	?>
-<option value = '<?php echo $json->lastName."/".$json->name.'*'.$json->rut.'*'.$json->location .'*'.(($json->day)?$json->day:'0').'*'.(($json->halfDay)?$json->halfDay:'0').(isset($json->takenDays)?'*'.$json->takenDays:'').(isset($json->pendingDays)?'*'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'*'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'*'.json_encode($json->adminDayRequest):'').'*'.(($json->hasDay)?'si' :'no'). (isset($json->service)? '*'.$json->service : '').(isset($json->email)?'*'.$json->email:'') ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
-
-	<?php		}             
-		}  
+<option value = '<?php echo $json->lastName."/".$json->name.'*'.$json->rut.'*'.$json->location .'*'.(($json->day)?$json->day:'0').'*'.(($json->halfDay)?$json->halfDay:'0').(isset($json->takenDays)?'*'.$json->takenDays:'').(isset($json->pendingDays)?'*'.$json->pendingDays:'').(isset($json->pendingHalfDays)?'*'.$json->pendingHalfDays:''). (isset($json->adminDayRequest)?'*'.json_encode($json->adminDayRequest):'').'*'.(($json->hasDay)?'si' :'no'). (isset($json->service)? '*'.$json->service : '').(isset($json->email)?'*'.$json->email:'').'*'.(($json->active)?'si': 'no' )  ?>'> <?php echo explode(" ",$json->name)[0].' '.$json->lastName.' - '.$json->rut ?> </option>
+	<?php 
+			}
+		}
 	 ?>
         </select>
 
@@ -48,9 +48,19 @@ require_once(FCPATH."procesos.php");
 	<td><input id="localidad_trabajador" type="text" class="input-semi-large" name="localidad_trabajador"  readonly></td>
 
 </tr>
+
+
+<tr style="text-align: right;" >
+
+       <td>Activo  &nbsp;&nbsp;&nbsp;&nbsp; </td>
+        <td><input id="activex" type="text" class="input-semi-large" name="activex"  readonly></td>
+
+</tr>
+
+
 </table>
 <table id="table_dias" style="display:none">
-<tr>
+	<tr>
 	<td><h4> Asignados </h4> </td>
 </tr>
 <tr style="text-align: right;">
@@ -98,7 +108,7 @@ require_once(FCPATH."procesos.php");
 
 <br></br>
 
-<table id="iniciarSolicitud" class="table">
+<table id="iniciarSolicitud" class="table" >
     <tbody>
         <?php foreach ($procesos as $p): ?>
 	    <?php if ($p->nombre == "Solicitud de días administrativos"){?>
@@ -122,6 +132,12 @@ require_once(FCPATH."procesos.php");
     </tbody>
 </table>
 
+<table id="mensaje_finiquitado" class="table">
+	<tr style="text-align: right;">
+	        <td><h4>Trabajador Finiquitado* &nbsp;&nbsp;&nbsp;&nbsp; <h4> </td>
+	</tr>
+</table>
+
 <div id ="msg"> </div>
 <div id="modal" class="modal hide fade" > </div>
 
@@ -137,6 +153,7 @@ var idCampoMedJor = "medias_jornadas_asignadas";
 var idCampoDiasTom = "dias_tomados";
 var idCampoDiasDis = "dias_disponibles";
 var idCampoMedJorDis = "medias_jornadas_disponibles";
+var active = "activex";
 var urlapi = '<?php echo urlapi?>';
 
 //permitir un match de mas de 1 palabra (por 2 apellidos por ej)
@@ -148,6 +165,7 @@ document.getElementById("link_historial").style.display = "none";
 //ocultar boton para iniciar solicitud de dias administrativos
 document.getElementById("iniciarSolicitud").style.display = "none";
 
+document.getElementById("mensaje_finiquitado").style.display = "none";
 //rellenar campos con el trabajador seleccionado
 //cuando se vuelve a consulta luego de pedir un dia admin
 if (document.getElementById(idCampoRutUser).value) {
@@ -158,6 +176,9 @@ document.getElementById(idCampoRutUser).onchange = function(){
 	cargarDatos();
 	}
 
+
+
+
 //funcion para rellenar campos con un trabajador seleccionado
 function cargarDatos(){
 	//se rellenan los campos con el valor elegido
@@ -167,13 +188,17 @@ function cargarDatos(){
 	document.getElementById(idCampoLocation).value =  valorSelected[2].toUpperCase();
 	document.getElementById(idCampoDiasAsig).value =  valorSelected[3];
 	document.getElementById(idCampoMedJor).value =  valorSelected[4];
-	
+	document.getElementById(active).value =  valorSelected[6]; //MOD
+    
+        document.getElementById("mensaje_finiquitado").style.display = "none";
+	console.log(valorSelected);	
 	console.log(document.getElementById(idCampoRutUser).value.split("*"));	
 	var json = '';
 	var rut = document.getElementById(idCampoRut).value;
+
 	
 	if(valorSelected[5]=='si'){	
-		
+			
 		//Desplegar la tabla
 		var lTable = document.getElementById("table_dias");
 		lTable.style.display =  "table";
@@ -204,6 +229,13 @@ function cargarDatos(){
 				document.getElementById("adicional").style.display = (rotativeTurn!=0)?"inline":"none";
                 		document.getElementById("msg").innerHTML = "";
         		}
+			//VERIFICAR ACTIVE
+			if( valorSelected[6] == "no"){
+
+				document.getElementById("iniciarSolicitud").style.display = "none";
+				document.getElementById("mensaje_finiquitado").style.display = ""; //MUESTRA TABLE
+	
+			}
 	
 			//mostrar historial si existe más de un valor, sino se oculta	
 			if (json.history.length > 0){
@@ -216,6 +248,8 @@ function cargarDatos(){
 	        	         document.getElementById("link_historial").style.display = "none";
 	        	         document.getElementById("rows").innerHTML = '';
 	        	}
+		
+
 
 				//lista auxiliar para ordenar los dias
 				/*
@@ -287,6 +321,7 @@ function cargarDatos(){
 						else
                 					document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td></td><td></td></tr>";
 					}
+
         			}//End for 
 	  		}
 		};
@@ -302,6 +337,9 @@ function cargarDatos(){
 		document.getElementById("msg").innerHTML = "<h4>El trabajador no tiene asignado dias administrativos.</h4>";
 		document.getElementById("rows").innerHTML = '';	
 	}
+
+	
+
 
 }
 
