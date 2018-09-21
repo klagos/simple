@@ -14,7 +14,8 @@
             <option value="enviar_correo">Enviar correo</option>
             <option value="enviar_admin_days">Enviar Admin Days</option>
 	    <option value="webservice">Consultar Webservice</option>
-            <option value="variable">Generar Variable</option>
+           <option value="webservice_put">PUT Webservice</option>
+	    <option value="variable">Generar Variable</option>
 	    <option value="excel_licencia">Excel Licencia</option>
 	    <option value="validar_excel_licencia">Validar Excel Licencia</option>
 	    <option value="editar_licencia">Editar Licencia</option>

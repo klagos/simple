@@ -82,7 +82,9 @@ class Acciones extends MY_BackendController {
             $accion=new AccionEnviarAdminDays();
         else if($tipo=='webservice')
             $accion=new AccionWebservice();
-        else if($tipo=='variable')
+       else if($tipo=='webservice_put')
+            $accion=new AccionWebservicePut();
+	else if($tipo=='variable')
             $accion=new AccionVariable();
 	else if($tipo=='excel_licencia')
             $accion=new AccionExcelLicencia();
@@ -147,6 +149,8 @@ class Acciones extends MY_BackendController {
                 $accion=new AccionEnviarAdminDays();
             else if($this->input->post('tipo')=='webservice')
                 $accion=new AccionWebservice();
+	    else if($this->input->post('tipo')=='webservice_put')
+                $accion=new AccionWebservicePut();
             else if($this->input->post('tipo')=='variable')
                 $accion=new AccionVariable();
 	    else if($this->input->post('tipo')=='excel_licencia')
