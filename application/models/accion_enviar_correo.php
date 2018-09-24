@@ -59,10 +59,16 @@ class AccionEnviarCorreo extends Accion {
             foreach ($attachments as $a) {
                 $regla=new Regla($a);
                 $filename=$regla->getExpresionParaOutput($etapa->id);
-                $file=Doctrine_Query::create()
+		$dato = Doctrine::getTable('file')->findOneByTipoAndTramite('documento',$etapa->Tramite->id);
+		$filename = $dato[0]->filename;
+		$file = $dato[0];
+                /*
+		$file=Doctrine_Query::create()
                     ->from('File f, f.Tramite t')
                     ->where('f.filename = ? AND t.id = ?',array($filename,$etapa->Tramite->id))
                     ->fetchOne();
+		ChromePhp::log($file);
+		*/
                 if($file){
                     $folder = $file->tipo=='dato' ? 'datos' : 'documentos';
                     if(file_exists('uploads/'.$folder.'/'.$filename)){
