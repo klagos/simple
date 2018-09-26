@@ -62,12 +62,12 @@ function descargarSeleccionados() {
 <table id="mainTable" class="table">
     <thead>
         <tr>
-            <th style="width:1%"></th>
+            <th style="width: 10px"></th>
             <th style="width: 40px;"><a href="<?=current_url().'?orderby=id&direction='.($direction=='asc'?'desc':'asc')?>" style="width:9px">Nro</a></th>
             <th>Ref.</th>
             <th><a href="<?=current_url().'?orderby=proceso_nombre&direction='.($direction=='asc'?'desc':'asc')?>">Nombre</a></th>
-            <th><a href="<?=current_url().'?orderby=tarea_nombre&direction='.($direction=='asc'?'desc':'asc')?>">Etapa</a></th>
-            <th><a href="<?=current_url().'?orderby=updated_at&direction='.($direction=='asc'?'desc':'asc')?>">Modificación</a></th>
+            <th style="width: 100px"><a href="<?=current_url().'?orderby=tarea_nombre&direction='.($direction=='asc'?'desc':'asc')?>">Etapa</a></th>
+            <th style="width: 100px"><a href="<?=current_url().'?orderby=updated_at&direction='.($direction=='asc'?'desc':'asc')?>">Modificación</a></th>
 <!--        <th><a href="//<//?=current_url().'?orderby=vencimiento_at&direction='.($direction=='asc'?'desc':'asc')?> -->
             <th>Acciones</th>
         </tr>
