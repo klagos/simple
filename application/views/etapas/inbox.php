@@ -63,12 +63,12 @@ function descargarSeleccionados() {
     <thead>
         <tr>
             <th style="width:1%"></th>
-            <th><a href="<?=current_url().'?orderby=id&direction='.($direction=='asc'?'desc':'asc')?>">Nro</a></th>
+            <th style="width: 40px;"><a href="<?=current_url().'?orderby=id&direction='.($direction=='asc'?'desc':'asc')?>" style="width:9px">Nro</a></th>
             <th>Ref.</th>
             <th><a href="<?=current_url().'?orderby=proceso_nombre&direction='.($direction=='asc'?'desc':'asc')?>">Nombre</a></th>
             <th><a href="<?=current_url().'?orderby=tarea_nombre&direction='.($direction=='asc'?'desc':'asc')?>">Etapa</a></th>
             <th><a href="<?=current_url().'?orderby=updated_at&direction='.($direction=='asc'?'desc':'asc')?>">Modificación</a></th>
-            <th><a href="<?=current_url().'?orderby=vencimiento_at&direction='.($direction=='asc'?'desc':'asc')?>">Vencimiento</a></th>
+<!--        <th><a href="//<//?=current_url().'?orderby=vencimiento_at&direction='.($direction=='asc'?'desc':'asc')?> -->
             <th>Acciones</th>
         </tr>
     </thead>
@@ -122,7 +122,7 @@ function descargarSeleccionados() {
                 </a></td><!--Tramites-->                
                 <td><?=$e->tarea_nombre?></td>
                 <td class="time"><?= strftime('%d.%b.%Y',mysql_to_unix($e->updated_at))?><br /><?= strftime('%H:%M:%S',mysql_to_unix($e->updated_at))?></td>
-                <td><?=$e->vencimiento_at?strftime('%c',strtotime($e->vencimiento_at)):'N/A'?></td>
+           <!--     <td>//<//?=$e->vencimiento_at?strftime('%c',strtotime($e->vencimiento_at)):'N/A'?></td>-->
                 <td class="actions">
                     <a href="<?=site_url('etapas/ejecutar/'.$e->id)?>" class="btn btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i> Realizar</a>
                     <?php if($descarga_masiva): ?>
