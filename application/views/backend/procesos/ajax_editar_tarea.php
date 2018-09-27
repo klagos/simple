@@ -294,25 +294,25 @@
                 </div>
                 <div class="tab-pasos tab-pane" id="tab4">
 
-                    <table class="table">
+                    <table class="table" style="width: 100%">
                         <thead>
                             <tr class="form-agregar-paso">
-                                <td></td>
+                                <td style="width: 5%"></td>
                                 <td>
-                                    <select class="pasoFormulario">
+                                    <select class="pasoFormulario"  style="width:110%">
                                         <?php foreach ($formularios as $f): ?>
                                             <option value="<?= $f->id ?>"><?= $f->nombre ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
-                                    <input class="pasoRegla" type="text" placeholder="Escribir regla condición aquí" />
+                                    <input class="pasoRegla" type="text" placeholder="Escribir regla condición aquí" style="width:100%" />
                                     <a href="/assets/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html" target="_blank">
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
                                 </td>
                                 <td>
-                                    <select class="pasoModo input-small">
+                                    <select class="pasoModo input-small"  style="width:100%">
                                         <option value="edicion">Edición</option>
                                         <option value="visualizacion">Visualización</option>
                                     </select>
@@ -354,22 +354,23 @@
                     </label>
                 </div>
                 <div class="tab-eventos tab-pane" id="tab5">
-                    <table class="table">
+
+                    <table class="table" style="width: 100%" align="center">
                         <thead>
                             <tr class="form-agregar-evento">
-                                <td></td>
+                                <td style="width: 5%"></td>
                                 <td>
-                                    <select class="eventoAccion input-medium">
+                                    <select class="eventoAccion input-medium"  style="width:110%">
                                         <?php foreach ($acciones as $f): ?>
                                             <option value="<?= $f->id ?>"><?= $f->nombre ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
-                                    <input class="eventoRegla input-medium" type="text" placeholder="Escribir regla condición" />
+                                    <input class="eventoRegla input-medium" type="text" placeholder="Escribir regla condición"  style="width:100%" />
                                 </td>
                                 <td>
-                                    <select class="eventoInstante input-small">
+                                    <select class="eventoInstante input-small" style="width:100%">
                                         <option value="antes">Antes</option>
                                         <option value="despues">Después</option>
                                     </select>
@@ -390,12 +391,12 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>#</th>
-                                <th>Accion</th>
-                                <th>Condición</th>
-                                <th>Instante</th>
-                                <th>Momento</th>
-                                <th></th>
+                                <th style="width:10%;">#</th>
+                                <th style="width:10%">Accion</th>
+                                <th style="width:35%; ">Condición</th>
+                                <th style="width:25%">Instante</th>
+                                <th style="width:20%">Momento</th>
+                                <th  style="width:40%"></th>
                             </tr>
                         </thead>
                         <tbody>
