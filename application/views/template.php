@@ -185,12 +185,14 @@
                         <ul id="sideMenu" class="nav nav-list">  
 			 <?php if($trabajadores): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['trabajadores_add','trabajadores_edit','trabajadores_add_admin'])">&nbsp;&nbsp;&nbsp; Colaboradores<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-large"></span></a></li><?php endif ?>
 
-
-
                          <!--ADD-->
 			 <?php if(false): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add' ? 'active' : '' ?>"><a id="trabajadores_add" href="<?= site_url('tramites/iniciar/'. proceso_agregar_colaboradores) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
 			<!--ADD ADMIM-->
 			<?php if($trabajadores): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add_admin' ? 'active' : '' ?>"><a id="trabajadores_add_admin" href="<?= site_url('tramites/iniciar/'. proceso_guardar_convenio) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar Convenio&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-asterisk"></a></li><?php endif ?>
+
+			<!--ADD CONV YEAR-->
+                        <?php if($trabajadores): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_add_admin' ? 'active' : '' ?>"><a id="trabajadores_add_admin" href="<?= site_url('tramites/iniciar/'. proceso_convalidar_anio) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convalidar A&ntildeos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-asterisk"></a></li><?php endif ?>
+
 			<!--EDIT -->
 			<?php if($trabajadores): ?><li class="<?= isset($sidebar) && $sidebar == 'trabajadores_edit' ? 'active' : '' ?>"><a id="trabajadores_edit" href="<?= site_url('trabajadores/buscar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-cog"></a></li><?php endif ?>
 			<!--REPORT-->
