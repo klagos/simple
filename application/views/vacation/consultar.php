@@ -166,14 +166,20 @@ function cargarDatos(){
 					document.getElementById("msg").innerHTML = "";
 				}
 				var size = periodos.length;
+
+				var parts = fecha.split('/');
+				var fecha_contrato = new Date(parts[2], parts[1] -1, parts[0]); 
 				
+
 				if(size > 0){
 					document.getElementById("tr_periodos").style.display="";
 					
 					for(var i=size -1; i >=0; i--){
 						var date_init = new Date (periodos[i].initDate);
-
-                                                var day = date_init.getDate();
+					
+						if((date_init == fecha_contrato) || (date_init > fecha_contrato)){
+                                                
+						var day = date_init.getDate();
                                                 if (day < 10) day = "0" + day;
 
                                                 var month = date_init.getMonth() + 1;
@@ -265,7 +271,9 @@ function cargarDatos(){
 						row    += '<div class="historial_'+i+'" style="display: none;" >'+tabla+tabla_request+'</div>';
                                                         
                                                 document.getElementById("periodos").innerHTML +=row;
-					}					
+						}//End if verify dates	
+					}//Endfor
+									
 				}else{
 					document.getElementById("link_historial").style.display = "none";
                                         document.getElementById("rows").innerHTML = '';
