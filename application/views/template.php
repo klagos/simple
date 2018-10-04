@@ -178,7 +178,10 @@
 			<!-- MODULO GUIA TELEFONO -->
                         <ul id="sideMenu" class="nav nav-list">
                            <?php if($guiaTelefono): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['guia_telefono'])">&nbsp;&nbsp;&nbsp;Guía de Teléfonos<span style="font-size:20px;top:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-phone-alt"></span></a></li><?php endif ?>
-                           <?php if($guiaTelefono): ?><li class="<?= isset($sidebar) && $sidebar == 'guia_telefono' ? 'active' : '' ?>"><a id="guia_telefono" href="<?= site_url('guiatelefono/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-earphone"></a></li><?php endif ?>
+                        <!--GUIA -->   
+			<?php if($guiaTelefono): ?><li class="<?= isset($sidebar) && $sidebar == 'guia_telefono' ? 'active' : '' ?>"><a id="guia_telefono" href="<?= site_url('guiatelefono/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-earphone"></a></li><?php endif ?>	
+			<!--MAIL -->	
+			<?php if($guiaTelefono==2): ?><li class="<?= isset($sidebar) && $sidebar == 'guia_telefono_mail' ? 'active' : '' ?>"><a id="guia_telefono_mail" href="<?= site_url('guiatelefono/email') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-earphone"></a></li><?php endif ?>
                         </ul>	
 
 			  <!-- MODULO TRABAJADORES -->
