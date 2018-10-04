@@ -30,14 +30,15 @@ class GuiaTelefono extends MY_Controller {
 	
 	public function email(){
         	$this->verifyLogin();	
-		$data['sidebar']='guia_telefono_email';
+		$data['sidebar'] ='guia_telefono_mail';
                 $data['content'] = 'guiaTelefono/email';
                 $this->load->view('template', $data);
 	}
 	
 	public function email_report(){
                 $this->verifyLogin();
-		$url = urlapi . "report/email";
+		$url = urlapi . "email/report";
+		ChromePhp::log($url);
 		$json_ws = $this->conectUrl($url);
 		
 		$CI =& get_instance();
