@@ -18,7 +18,7 @@
 	<dt>  Fecha </dt>
 	<dd> <?= $registro->fecha?></dd>
 	<dt>  Motivo </dt>
-	<dd> <?= $registro->motivo != '' ? $registro->motivo : ' '?> </dd>
+	<dd> <?= $registro->motivo != '' ? $registro->motivo : ''?> </dd>
 	
 </dl>
 </div>

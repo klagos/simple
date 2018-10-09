@@ -7,15 +7,15 @@
 
 <?= $this->pagination->create_links() ?>
 
-<table class="table">
+<table class="table" style="width: 100%">
     <thead>
         <tr>
-            <th><a href="<?= current_url().'?order=fecha&direction='.($direction == 'ASC'? 'DESC':'ASC')?>">Fecha <?= $order == 'fecha' ? $direction == 'ASC' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>'  : '' ?></a></th>
-            <th><a href="<?= current_url().'?order=proceso&direction='.($direction == 'ASC'? 'DESC':'ASC')?>">Proceso <?= $order == 'proceso' ? $direction == 'ASC' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>'  : '' ?></a></th>
-            <th><a href="<?= current_url().'?order=operacion&direction='.($direction == 'ASC'? 'DESC':'ASC')?>">Operacion <?= $order == 'operacion' ? $direction == 'ASC' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>'  : '' ?></a></th>
-            <th><a href="<?= current_url().'?order=usuario&direction='.($direction == 'ASC'? 'DESC':'ASC')?>">Usuario <?= $order == 'usuario' ? $direction == 'ASC' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>'  : '' ?></a></th>
-            <th>Motivo</th>
-            <th></th>
+            <th style="width: 10%"><a href="<?= current_url().'?order=fecha&direction='.($direction == 'ASC'? 'DESC':'ASC')?>">Fecha <?= $order == 'fecha' ? $direction == 'ASC' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>'  : '' ?></a></th>
+            <th style="width: 10%"><a href="<?= current_url().'?order=proceso&direction='.($direction == 'ASC'? 'DESC':'ASC')?>">Proceso <?= $order == 'proceso' ? $direction == 'ASC' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>'  : '' ?></a></th>
+            <th style="width: 30%"><a href="<?= current_url().'?order=operacion&direction='.($direction == 'ASC'? 'DESC':'ASC')?>">Operacion <?= $order == 'operacion' ? $direction == 'ASC' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>'  : '' ?></a></th>
+            <th style="width: 20%"><a href="<?= current_url().'?order=usuario&direction='.($direction == 'ASC'? 'DESC':'ASC')?>">Usuario <?= $order == 'usuario' ? $direction == 'ASC' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>'  : '' ?></a></th>
+            <th style="width: 10%">Motivo</th>
+            <th ></th>
         </tr>
     </thead>
     <tbody>

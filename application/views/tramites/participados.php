@@ -54,17 +54,17 @@ function descargarSeleccionados() {
     </div>-->
 </h2>
 <?php if (count($tramites) > 0): ?>
-    <table id="mainTable" class="table">
+    <table id="mainTable" class="table" style="width: 100%">
         <thead>
             <tr>
-                <th style="width:1%"></th>
-                <th>Nro</th>
-                <th>Ref.</th>
-                <th>Nombre</th>
-                <th>Etapa</th>
-                <th>Fecha Modificación</th>
-                <th>Estado</th>
-                <th>Acciones</th>
+                <th style="width:5%"></th>
+                <th style="width:9%">Nro</th>
+                <th style="width:13%">Ref.</th>
+                <th style="width:13%">Nombre</th>
+                <th style="width:13%">Etapa</th>
+                <th style="width:15%">Fecha Modificación</th>
+                <th style="width:12%">Estado</th>
+                <th style="width:15%">Acciones</th>
             </tr>
         </thead>
         <tbody>

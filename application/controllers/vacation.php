@@ -66,6 +66,24 @@ class Vacation extends MY_Controller {
                 if ($this->form_validation->run () == TRUE){
 
                         $tramite = Doctrine::getTable ( 'Tramite' )->find ( $tramite_id );
+			
+			$etapas         = $tramite->getEtapasTramites();
+                        $countEtapas    = count($etapas); 
+                        for($i = $countEtapas -1; $i >= 0; $i--){
+                            $id = $etapas[$i]->id;
+                            $d = Doctrine::getTable('DatoSeguimiento')->findByNombreEtapa("fecha_inicial",$id);
+                            if($d!=false){
+                            	$fi = $d["valor"];
+				
+
+                            }
+                            $d = Doctrine::getTable('DatoSeguimiento')->findByNombreEtapa("fecha_final",$id);
+                            if($d!=false){
+                                $ff = $d["valor"]; 
+			
+
+                            }                
+                        }
 
                         if($tramite!=null){
                                 $user_id = UsuarioSesion::usuario()->id;
@@ -76,9 +94,9 @@ class Vacation extends MY_Controller {
                                         // Auditar
                                         $registro_auditoria = new AuditoriaOperaciones ();
                                         $registro_auditoria->fecha = $fecha->format ( "Y-m-d H:i:s" );
-                                        $registro_auditoria->operacion = 'Eliminación vacaciones con id request '.$request_id ;
+                                        $registro_auditoria->operacion = 'Eliminación Request: '.$request_id.', Tramite: '.$tramite_id.', del Usuario: '.$rut .', Fecha Ini: '.$fi.', Fecha fin:'.$ff;
                                         $registro_auditoria->motivo = $this->input->post('descripcion');
-
+						
                                         $registro_auditoria->usuario= UsuarioSesion::usuario()->nombres .' '. UsuarioSesion::usuario()->apellido_paterno.' '.UsuarioSesion::usuario()->apellido_materno.' '.UsuarioSesion::usuario()->email;
 
                                         $registro_auditoria->proceso = $proceso->nombre;
