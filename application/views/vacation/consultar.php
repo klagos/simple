@@ -170,14 +170,14 @@ function cargarDatos(){
 				var parts = fecha.split('/');
 				var fecha_contrato = new Date(parts[2], parts[1] -1, parts[0]); 
 				
-
 				if(size > 0){
 					document.getElementById("tr_periodos").style.display="";
 					
 					for(var i=size -1; i >=0; i--){
 						var date_init = new Date (periodos[i].initDate);
-					
-						if((date_init == fecha_contrato) || (date_init > fecha_contrato)){
+							
+						if((date_init.getTime() == fecha_contrato.getTime()) 
+							|| (date_init.getTime() > fecha_contrato.getTime())){
                                                 
 						var day = date_init.getDate();
                                                 if (day < 10) day = "0" + day;
