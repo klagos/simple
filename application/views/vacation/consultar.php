@@ -246,12 +246,12 @@ function cargarDatos(){
                                                                                 
                                                                                
                                                                                 row_p +="<td align='center' style='width:15%;' id ="+'view_'+request[e].idTramite+'_'+ request[e].id+"><a class='btn btn-info' href='#' onclick =' return detail("+request[e].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
-                                                                               	if(request[e].downloaded==false){ 
+                                                                               	//if(request[e].downloaded==false){ 
 											check_user(request[e].idTramite,request[e].id);
 											row_p +="<td align='center' style='width:15%;' id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
-                                                                        	}
-										else
-											row_p +="<td align='center' style='width:15%;'></td>";
+                                                                        	//}
+										//else
+										//	row_p +="<td align='center' style='width:15%;'></td>";
                                                                         }
                                                                         else
                                                                                 row_p+="<td align='center' style='width:15%;'></td><td align='center' style='width:15%;'></td></tr>";

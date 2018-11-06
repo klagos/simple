@@ -166,7 +166,9 @@ class Vacation extends MY_Controller {
   public function check_user($tramite_id){
 	$tramite = Doctrine::getTable ( 'Tramite' )->find ( $tramite_id );
  	$user_id = UsuarioSesion::usuario()->id;
-	if($tramite->usuarioHaParticipado($user_id)) 
+	$super_user = Doctrine::getTable('GrupoUsuarios')->hasUserGrupo(UsuarioSesion::usuario()->id,"vacation_super_admin");
+	
+	if($tramite->usuarioHaParticipado($user_id)  || $super_user)
 		$data['result']=true;
 	else{	
 		$permisoLicencia = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_VACATION");

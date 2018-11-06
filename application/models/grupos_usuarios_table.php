@@ -46,5 +46,10 @@ class GrupoUsuariosTable extends Doctrine_Table {
                                 return self::MODULO_LICENCIA;	
     			
 		}
-	}	
+	}
+
+	public function hasUserGrupo($user_id,$name_group){
+        	return Doctrine_Query::create()->from('Usuario u, u.GruposUsuarios g')->where('g.nombre=? AND u.id=?',array($name_group,$user_id))->count();
+    	}
+	
 }
