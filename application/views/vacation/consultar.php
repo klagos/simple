@@ -69,7 +69,7 @@ require_once(FCPATH."procesos.php");
 <br></br>
 <table style="width: 100%;">
 <tr id="tr_periodos" style="display:none;">
-        <td style="width: 26%;"><h4>Periodos</h4></td><td align="center" style="width: 15%;"><h4>Básicos</h4></td><td align="center" style="width:15%;"><h4>Progresivos</h4></td><td align="center" style="width:14%;"><h4>Total</h4></td><td align="center" style="width:15%;"><h4>Detalle</h4></td><td align="center" style="width:15%;"><h4>Eliminar</h4></td>
+        <td style="width: 26%;"><h4>Periodos</h4></td><td align="center" style="width:14%;"><h4>Básicos</h4></td><td align="center" style="width:15%;"><h4>Progresivos</h4></td><td align="center" style="width:10%;"><h4>Total</h4></td> <td align="center" style="width:15%;"><h4>Detalle</h4> <td align="center" style="width:10%;"><h4>Descargar</h4></td><td align="center" style="width:10%;"><h4>Eliminar</h4></td>
 </tr>
 </table>
 <div id="periodos"> </div>
@@ -213,12 +213,12 @@ function cargarDatos(){
 						var total    = basicos + progresivos; 
 						
 						//PERIODOS 
-						var row = '<table style="width: 100%;"><tr><td style="width: 26%;"><h5> '+fecha+' </h5></td><td align="center" style="width:15%;">'+basicos+'</td><td align="center" style="width:15%;">'+progresivos+'</td><td align="center" style="width:14%;">'+ total+'</td><td align="center" style="width:15%;" ><h5> <a  href="#" id="link_historial_'+i+'" onclick="return mostrarHistorial('+i+');" > Ver detalle +</a></h5></td> <td  align="center" style="width:15%;"></td> </tr></table>';						
+						var row = '<table style="width: 100%;"><tr><td style="width: 26%;"><h5> '+fecha+' </h5></td><td align="center" style="width:14%;">'+basicos+'</td><td align="center" style="width:15%;">'+progresivos+'</td><td align="center" style="width:10%;">'+ total+'</td> <td align="center" style="width:15%;"><h5> <a  href="#" id="link_historial_'+i+'" onclick="return mostrarHistorial('+i+');" > Ver detalle +</a></h5></td> <td  align="center" style="width:10%;"></td> <td  align="center" style="width:10%;"></td> </tr></table>';						
 						//Ultimo periodo
 						if(periodos[i].endDate==null){
 							var totalFinal    = periodos[i].basicAvailable + periodos[i].progressiveAvailable;
 							 
-							var tabla = '<table style="width: 100%;"><tr><td style="width: 26%;"><h5> Al finalizar el periodo </h5></td><td align="center" style="width:15%;">'+periodos[i].basicAvailable+'</td><td align="center" style="width:15%;">'+periodos[i].progressiveAvailable+'</td><td align="center" style="width:14%;">'+ totalFinal+'</td><td style="width:15%;"></td><td style="width:15%;"></td></tr></table>';
+							var tabla = '<table style="width: 100%;"><tr><td style="width: 26%;"><h5> Al finalizar el periodo </h5></td><td align="center" style="width:14%;">'+periodos[i].basicAvailable+'</td><td align="center" style="width:15%;">'+periodos[i].progressiveAvailable+'</td><td align="center" style="width:10%;">'+ totalFinal+'</td><td style="width:15%;"></td><td style="width:10%;"></td><td style="width:10%;"></td> </tr></table>';
 						}else
 							var tabla = '';
 							
@@ -236,22 +236,21 @@ function cargarDatos(){
                                                                         var fecha_f= formato_fecha(new Date (request[e].endDate));
                                                                         var total  = request[e].progressive + request[e].basic; 
                                                                         
-									row_p+="<tr style='height:23px;'><td align='center' style='width:26%;'>"+ fecha_i+" - "+ fecha_f +"</td><td align='center' style='width:15%;'>"+ request[e].basic +"</td><td align='center' style='width:15%;'>"+ request[e].progressive +"</td><td align='center' style='width:14%;'>"+ total +"</td>";
+									row_p+="<tr style='height:23px;'><td align='center' style='width:26%;'>"+ fecha_i+" - "+ fecha_f +"</td><td align='center' style='width:14%;'>"+ request[e].basic +"</td><td align='center' style='width:15%;'>"+ request[e].progressive +"</td><td align='center' style='width:10%;'>"+ total +"</td>";
                                                                         if(request[e].idTramite){
                                                                                 
                                                                                 dv     = String(rut.split("-")[1]);        
                                                                                 rut_sd = String(rut.split("-")[0]);
                                                                                 if(dv=='K')
                                                                                         dv = 10;
-                                                                                
-                                                                               
+										//DETALLE
                                                                                 row_p +="<td align='center' style='width:15%;' id ="+'view_'+request[e].idTramite+'_'+ request[e].id+"><a class='btn btn-info' href='#' onclick =' return detail("+request[e].idTramite+");' ><i class='icon-eye-open icon-white'></i></a></td>";
-                                                                               	//if(request[e].downloaded==false){ 
-											check_user(request[e].idTramite,request[e].id);
-											row_p +="<td align='center' style='width:15%;' id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
-                                                                        	//}
-										//else
-										//	row_p +="<td align='center' style='width:15%;'></td>";
+										
+										//IMPRIMIR
+										row_p +="<td align='center' style='width:10%;' id ="+'print_'+request[e].idTramite+'_'+ request[e].id+"><a class='btn btn-success' href='#' onclick =' return print_tramite("+request[e].idTramite+");' ><i class='icon-download-alt icon-white'></i></a></td>";                                        
+                                                                        	//Se revisa si el usuario puede eliminar el tramite       	 
+										check_user(request[e].idTramite,request[e].id);
+										row_p +="<td align='center' style='width:10%;' id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
                                                                         }
                                                                         else
                                                                                 row_p+="<td align='center' style='width:15%;'></td><td align='center' style='width:15%;'></td></tr>";
@@ -336,6 +335,10 @@ function detail(tramite) {
 	window.location.href = url ;
 }
 
+function print_tramite(tramite){
+	var url = site_url +"vacation/print_tramite/"+tramite;
+        window.location.href = url ;
+}
 
 //Chequea si el usuario participo en el tramite
 function check_user(tramite, id){
