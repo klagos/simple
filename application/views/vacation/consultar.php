@@ -253,7 +253,7 @@ function cargarDatos(){
 										row_p +="<td align='center' style='width:10%;' id = "+'b_' +request[e].idTramite +'_'+ request[e].id+"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+request[e].idTramite +","+request[e].id+","+ rut_sd +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
                                                                         }
                                                                         else
-                                                                                row_p+="<td align='center' style='width:15%;'></td><td align='center' style='width:15%;'></td></tr>";
+                                                                                row_p+="<td align='center' style='width:15%;'></td><td align='center' style='width:10%;'></td> <td align='center' style='width:10%;'></td></tr>";
                                                                         
                                                                 } 
 
