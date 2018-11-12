@@ -111,7 +111,7 @@ class Vacation extends MY_Controller {
                                         $registro_auditoria->detalles = json_encode($tramite_array);
 
                                         $data = array();
-                                        $url = urlapi."vacation/".$tramite_id."/deletevacationrequest";
+                                        $url = urlapi."vacation/".$tramite_id."/deletevacationrequestbytramite";
                                         $ch = curl_init($url);
                                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
