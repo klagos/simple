@@ -496,12 +496,40 @@ class Licencias extends MY_Controller {
                 $object_writer->save('php://output');	
 	}
 	
+	/*
+	* DESCARGA MASIVA	
+	*/	
 	public function reporte_masivo(){
 		//Verificamos que el usuario ya se haya logeado 
                 if (!UsuarioSesion::usuario()->registrado) {
                         $this->session->set_flashdata('redirect', current_url());
                         redirect('tramites/disponibles');
                 }
+		
+		//GET list workers
+		$json_ws = apcu_fetch('json_list_users_vacation');
+                if(!$json_ws){
+                        //Obtener data de usuarios
+                        $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
+                        $ch = curl_init($url);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_URL,$url);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                               "Content-Type: application/json"
+                        ));
+                        $result=curl_exec($ch);
+                        curl_close($ch);
+
+                        $json_ws = json_decode($result);
+                        apcu_add('json_list_users_vacation',$json_ws,1800);
+                }	
+		$lista_user =  array();
+		
+		foreach ($json_ws as $json) {
+			 $lista_user[$json->rut]=$json->lastName.' '.$json->name;
+		}
+		//ChromePhp::log(var_dump($lista_user));
 
 		//Variables de la query
 		$proceso_id = proceso_subsidio_id;
@@ -568,11 +596,18 @@ class Licencias extends MY_Controller {
 				foreach ($tramite["Etapas"][$i]["DatosSeguimiento"] as $tra_nro){
                         	       
 					//DATOS LICENCIA
-					if($tra_nro["nombre"] == 'rut_trabajador_subsidio')
+					if($tra_nro["nombre"] == 'rut_trabajador_subsidio'){
                         	                $rut = str_replace('"','',$tra_nro["valor"]);
-                                	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio')
-                                	        $nombre = str_replace('"','',$tra_nro["valor"]);
-                                	if($tra_nro["nombre"] == 'numero_licencia')
+						//ChromePhp::log($rut);
+						//$nombre = (isset($lista_user["'".$rut."'"]))? $lista_user["'".$rut."'"]:'XXX'  ;
+					
+					}	
+                                	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio'){
+						//$nom = $lista_user($rut_tmp);
+                                	        
+						$nombre =str_replace('"','',$tra_nro["valor"]);
+                                	}
+					if($tra_nro["nombre"] == 'numero_licencia')
                                                 $numero = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'fecha_recepcion_licencia')
                                                 $fecha_rec = str_replace('"','',$tra_nro["valor"]);
@@ -665,15 +700,17 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $rut);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $nombre);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $numero);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, (str_replace("-","/",$fecha_rec)));
-			$object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, (PHPExcel_Shared_Date::PHPToExcel($fecha_rec) ));
+			$object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
 
 			$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $org_salud);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, (str_replace("-","/",$inicio)));
-			$object->getActiveSheet()->getStyle('G'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+			
+			$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, PHPExcel_Shared_Date::PHPToExcel($inicio));
+			
+			$object->getActiveSheet()->getStyle('G'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
 
-			$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, (str_replace("-","/",$termino)));
-			$object->getActiveSheet()->getStyle('H'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, (PHPExcel_Shared_Date::PHPToExcel($termino)));
+			$object->getActiveSheet()->getStyle('H'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
 
 			$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $dias);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $tipo);
@@ -681,8 +718,8 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $lugar_reposo);				
 
 			//PAGO
-			$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, (str_replace("-","/",$fecha_pago)));
-			$object->getActiveSheet()->getStyle('M'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, (PHPExcel_Shared_Date::PHPToExcel($fecha_pago)));
+			$object->getActiveSheet()->getStyle('M'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
 
 			$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $pagado_anterior);
 
@@ -695,8 +732,8 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $obs_pago);
 			
 			//RETORNO
-			$object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, (str_replace("-","/",$fecha_retorno)));
-			$object->getActiveSheet()->getStyle('U'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, (PHPExcel_Shared_Date::PHPToExcel($fecha_retorno)));
+			$object->getActiveSheet()->getStyle('U'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
 
                         $object->getActiveSheet()->setCellValueByColumnAndRow(21, $excel_row, $monto_retorno);
                         $object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $monto_retorno - $total);
@@ -711,10 +748,10 @@ class Licencias extends MY_Controller {
 			
 			
 		}
-	
+		//ChromePhp::log($rut);
 		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         	header('Content-Type: application/vnd.ms-excel');
-        	header('Content-Disposition: attachment;filename="masiva_licencias".xls"');
+        	header('Content-Disposition: attachment;filename="descarga_masiva_licencias".xls"');
 		header_remove('Set-Cookie');
         	$object_writer->save('php://output');
 
