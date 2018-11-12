@@ -527,10 +527,9 @@ class Licencias extends MY_Controller {
 		$lista_user =  array();
 		
 		foreach ($json_ws as $json) {
-			 $lista_user[$json->rut]=$json->lastName.' '.$json->name;
+			 $lista_user[strval($json->rut)]=$json->lastName.' '.$json->name;
 		}
-		//ChromePhp::log(var_dump($lista_user));
-
+		
 		//Variables de la query
 		$proceso_id = proceso_subsidio_id;
 		$contador = 0;
@@ -598,13 +597,11 @@ class Licencias extends MY_Controller {
 					//DATOS LICENCIA
 					if($tra_nro["nombre"] == 'rut_trabajador_subsidio'){
                         	                $rut = str_replace('"','',$tra_nro["valor"]);
-						//ChromePhp::log($rut);
-						//$nombre = (isset($lista_user["'".$rut."'"]))? $lista_user["'".$rut."'"]:'XXX'  ;
-					
+						//Name from dictionary	
+						if(isset($lista_user[$rut]))
+							$nombre = $lista_user[$rut];
 					}	
-                                	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio'){
-						//$nom = $lista_user($rut_tmp);
-                                	        
+                                	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio' && $nombre==""){
 						$nombre =str_replace('"','',$tra_nro["valor"]);
                                 	}
 					if($tra_nro["nombre"] == 'numero_licencia')
