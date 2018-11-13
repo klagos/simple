@@ -597,9 +597,14 @@ class Licencias extends MY_Controller {
 					//DATOS LICENCIA
 					if($tra_nro["nombre"] == 'rut_trabajador_subsidio'){
                         	                $rut = str_replace('"','',$tra_nro["valor"]);
+						$dv  = explode("-", $rut)[1];
+						if($dv=='k')
+							$rut = explode("-", $rut)[0].'-K';
 						//Name from dictionary	
 						if(isset($lista_user[$rut]))
 							$nombre = $lista_user[$rut];
+						else
+							$nombre = "-";
 					}	
                                 	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio' && $nombre==""){
 						$nombre =str_replace('"','',$tra_nro["valor"]);
