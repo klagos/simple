@@ -541,7 +541,7 @@ class Licencias extends MY_Controller {
 		$CI->load->library('Excel');
 		$object = new PHPExcel();
 
-		$table_columns = array("TRAMITE","RUT","NOMBRE","NUMERO","FECHA RECEPCION","ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO","TIPO REPOSO","LUGAR REPOSO","FECHA RETORNO","PAGADO ANT.","ANTICIPO","MESES ANT.","DIAS NO CUBIERTOS","COMPLEMENTO","TOTAL","OBSERV. PAGO","FECHA RETORNO","MONTO RETORNO","SALDO RETORNO","OBSERV. RETORNO","ESTADO","RUT MEDICO");
+		$table_columns = array("TRAMITE","RUT","NOMBRE","NUMERO","FECHA RECEPCION","ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO","TIPO REPOSO","LUGAR REPOSO","FECHA PAGO","ANTICIPO","MESES ANT.","TOTAL RECUPERABLE", "DIAS NO CUBIERTOS","COMPLEMENTO","TOTAL NO RECUPERABLE","TOTAL FINAL","OBSERV. PAGO","FECHA RETORNO","MONTO RETORNO","SALDO RETORNO","OBSERV. RETORNO","ESTADO","RUT MEDICO");
 		
 		$excel_row = 2;
 
@@ -571,10 +571,10 @@ class Licencias extends MY_Controller {
 			$pagado_anterior="";
 			$dias_no_cub_ant="";
 			$complemento_ant="";
-			$anticipo = "";
-			$meses_ant = "";
-			$dias_no_cu = "";
-			$complemento = "";
+			$anticipo = 0;
+			$meses_ant = 0;
+			$dias_no_cu = 0;
+			$complemento = 0;
 			$obs_pago = "";
 			
 			//DATOS RETORNO
@@ -634,20 +634,32 @@ class Licencias extends MY_Controller {
 					//DATOS PAGO
 					if($tra_nro["nombre"] == 'fecha_pago_subsidio')
                                                 $fecha_pago = str_replace('"','',$tra_nro["valor"]);
-					if($tra_nro["nombre"] == 'pagado_anterior_subsidio')
+					/*if($tra_nro["nombre"] == 'pagado_anterior_subsidio')
                                                 $pagado_anterior = str_replace('"','',$tra_nro["valor"]);
+					
 					if($tra_nro["nombre"] == 'dias_no_cubiertos_pagados_anteri')
                                                 $dias_no_cub_ant = str_replace('"','',$tra_nro["valor"]);
+					
 					if($tra_nro["nombre"] == 'complemento_anterior_subsidio')
                                                 $complemento_ant = str_replace('"','',$tra_nro["valor"]);
-					if($tra_nro["nombre"] == 'anticipo_subsidio')
-                                                $anticipo = str_replace('"','',$tra_nro["valor"]);
-					if($tra_nro["nombre"] == 'meses_anteriores_subsidio')
-                                                $meses_ant = str_replace('"','',$tra_nro["valor"]);
-					if($tra_nro["nombre"] == 'dias_no_cubiertos_subsidio')
-                                                $dias_no_cu = str_replace('"','',$tra_nro["valor"]);
-					if($tra_nro["nombre"] == 'complemento_subsidio')
-                                               	$complemento = str_replace('"','',$tra_nro["valor"]);
+					*/
+					if($tra_nro["nombre"] == 'anticipo_subsidio'){
+                                                $anticipo_tmp = str_replace('"','',$tra_nro["valor"]);
+						$anticipo = $anticipo + $anticipo_tmp;	
+					}
+					if($tra_nro["nombre"] == 'meses_anteriores_subsidio'){
+                                                $meses_ant_tmp = str_replace('"','',$tra_nro["valor"]);
+						$meses_ant = $meses_ant + $meses_ant_tmp;
+					}
+					
+					if($tra_nro["nombre"] == 'dias_no_cubiertos_subsidio'){
+                                                $dias_no_cu_tmp = str_replace('"','',$tra_nro["valor"]);
+						$dias_no_cu = $dias_no_cu + $dias_no_cu_tmp;
+					}
+					if($tra_nro["nombre"] == 'complemento_subsidio'){
+                                               	$complemento_tmp = str_replace('"','',$tra_nro["valor"]);
+						$complemento = $complemento + $complemento_tmp;
+					}
 					if($tra_nro["nombre"] == 'observacion_pago_sub')
                                                 $obs_pago = str_replace('"','',$tra_nro["valor"]);
 					
@@ -702,13 +714,13 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $rut);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $nombre);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $numero);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, (PHPExcel_Shared_Date::PHPToExcel($fecha_rec) ));
-			$object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, ($fecha_rec!="")?PHPExcel_Shared_Date::PHPToExcel($fecha_rec):"");
+			if($fecha_rec!="")
+				$object->getActiveSheet()->getStyle('E'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
 
 			$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $org_salud);
 			
 			$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, PHPExcel_Shared_Date::PHPToExcel($inicio));
-			
 			$object->getActiveSheet()->getStyle('G'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
 
 			$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, (PHPExcel_Shared_Date::PHPToExcel($termino)));
@@ -720,37 +732,62 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $lugar_reposo);				
 
 			//PAGO
-			$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, (PHPExcel_Shared_Date::PHPToExcel($fecha_pago)));
-			$object->getActiveSheet()->getStyle('M'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
-
+			$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row,  ($fecha_pago!="")?PHPExcel_Shared_Date::PHPToExcel($fecha_pago):"");
+			if($fecha_pago!="")
+				$object->getActiveSheet()->getStyle('M'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
+			/*
 			$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $pagado_anterior);
-
-			$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $anticipo);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(15, $excel_row, $meses_ant);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(16, $excel_row, $dias_no_cu  +  $dias_no_cub_ant);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(17, $excel_row, $complemento + $complemento_ant);
-			$total = ($pagado_anterior + $anticipo+$meses_ant);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(18, $excel_row, $total);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $obs_pago);
+			$object->getActiveSheet()->getStyle('N'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);			
+			*/
 			
-			//RETORNO
-			$object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, (PHPExcel_Shared_Date::PHPToExcel($fecha_retorno)));
-			$object->getActiveSheet()->getStyle('U'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $anticipo);
+			$object->getActiveSheet()->getStyle('N'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+				
+			$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $meses_ant);
+			$object->getActiveSheet()->getStyle('O'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);			
+			//TOTAL RECUPERABLE
+			$object->getActiveSheet()->setCellValueByColumnAndRow(15, $excel_row, $meses_ant + $anticipo);
+                        $object->getActiveSheet()->getStyle('P'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
 
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(21, $excel_row, $monto_retorno);
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $monto_retorno - $total);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $obs_retorno);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(16, $excel_row, $dias_no_cu);
+			$object->getActiveSheet()->getStyle('Q'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);			
+	
+			
+			$object->getActiveSheet()->setCellValueByColumnAndRow(17, $excel_row, $complemento );
+			$object->getActiveSheet()->getStyle('R'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+			
+			//TOTAL NO RECUPERABLE
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(18, $excel_row, $dias_no_cu + $complemento );
+                        $object->getActiveSheet()->getStyle('S'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+
+			$total = ( $anticipo + $meses_ant + $dias_no_cu + $complemento );
+			$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $total);
+			$object->getActiveSheet()->getStyle('T'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);			
+
+
+			$object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, $obs_pago);
+		
+			//RETORNO
+			$object->getActiveSheet()->setCellValueByColumnAndRow(21, $excel_row, ($fecha_retorno!="")?PHPExcel_Shared_Date::PHPToExcel($fecha_retorno):"");
+			if($fecha_retorno!="")
+				$object->getActiveSheet()->getStyle('V'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
+
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $monto_retorno);
+			$object->getActiveSheet()->getStyle('W'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);			
+
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $monto_retorno - $anticipo - $meses_ant);
+			$object->getActiveSheet()->getStyle('X'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(24, $excel_row, $obs_retorno);
 			
 			//ESTADO	
-			$object->getActiveSheet()->setCellValueByColumnAndRow(24, $excel_row, $estado);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(25, $excel_row, $estado);
 
 			//RUT MEDICO
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(25, $excel_row, $rut_medico);
+                        $object->getActiveSheet()->setCellValueByColumnAndRow(26, $excel_row, $rut_medico);
 			$excel_row++;
 			
 			
 		}
-		//ChromePhp::log($rut);
 		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         	header('Content-Type: application/vnd.ms-excel');
         	header('Content-Disposition: attachment;filename="descarga_masiva_licencias".xls"');

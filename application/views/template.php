@@ -92,7 +92,7 @@
 			if (UsuarioSesion::usuario()->registrado): ?>
 			<?php
 			$npendientes=count(Doctrine::getTable('Etapa')->findPendientes(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio()));
-			$nsinasignar=Doctrine::getTable('Etapa')->findSinAsignar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
+			$nsinasignar=0;//Doctrine::getTable('Etapa')->findSinAsignar(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio())->count();
 			$nparticipados=count(Doctrine::getTable('Tramite')->findParticipadosALL(UsuarioSesion::usuario()->id, Cuenta::cuentaSegunDominio()));
 			
 			//$revisarLicencia=Doctrine::getTable('Proceso')->canRevisarLicencia(UsuarioSesion::usuario()->id);
