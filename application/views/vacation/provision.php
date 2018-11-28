@@ -2,7 +2,7 @@
     Reporte de Vacaciones
     <!--buscador--> 
 <br></br> 
-<!--
+
 <tr>
         <td><h4> Solicitudes del mes</h4></td>
 </tr> 
@@ -43,13 +43,15 @@
                         <option value=4>Mayo</option>
                         <option value=5>Junio</option>
                         <option value=6>Julio</option>
+			<option value=7>Agosto</option>
+			<option value=8>Septiembre</option>
+			<option value=9>Octubre</option>
                 </select>
         <div class="form-actions">
                 <button class="btn btn-primary" type="submit">Generar</button>
         </div>
 </fieldset>
 </form>
--->
 
 <tr>
         <td><h4> Toda solicitud no descargada </h4></td>

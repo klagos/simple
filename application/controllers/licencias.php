@@ -541,7 +541,7 @@ class Licencias extends MY_Controller {
 		$CI->load->library('Excel');
 		$object = new PHPExcel();
 
-		$table_columns = array("TRAMITE","RUT","NOMBRE","NUMERO","FECHA RECEPCION","ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO","TIPO REPOSO","LUGAR REPOSO","FECHA PAGO","ANTICIPO","MESES ANT.","TOTAL RECUPERABLE", "DIAS NO CUBIERTOS","COMPLEMENTO","TOTAL NO RECUPERABLE","TOTAL FINAL","OBSERV. PAGO","FECHA RETORNO","MONTO RETORNO","SALDO RETORNO","OBSERV. RETORNO","ESTADO","RUT MEDICO");
+		$table_columns = array("TRAMITE","RUT","NOMBRE","NUMERO","FECHA RECEPCION","ORG SALUD", "INICIO", "TERMINO","DIAS","TIPO","TIPO REPOSO","LUGAR REPOSO","FECHA PAGO","ANTICIPO","MESES ANT.","TOTAL RECUPERABLE", "DIAS NO CUBIERTOS","COMPLEMENTO","TOTAL NO RECUPERABLE","TOTAL FINAL","OBSERV. PAGO","FECHA RETORNO","MONTO RETORNO","SALDO RETORNO","OBSERV. RETORNO","ESTADO","RUT MEDICO","REVISAR");
 		
 		$excel_row = 2;
 
@@ -568,6 +568,7 @@ class Licencias extends MY_Controller {
 					
 			//DATOS PAGO
 			$fecha_pago = "";
+			$fecha_paga_array = array();
 			$pagado_anterior="";
 			$dias_no_cub_ant="";
 			$complemento_ant="";
@@ -588,6 +589,9 @@ class Licencias extends MY_Controller {
 
 			//RUT
 			$rut_medico="";
+
+			//REVISAR
+			$flag_revisar="";
 
 			$idTramite = $tramite['id'];
 			$num_etapas = count($tramite["Etapas"]);
@@ -621,8 +625,26 @@ class Licencias extends MY_Controller {
                                 	        $termino = str_replace('"','',$tra_nro["valor"]);
                                 	if($tra_nro["nombre"] == 'dias_licencia')
                                 	        $dias = str_replace('"','',$tra_nro["valor"]);
-					if($tra_nro["nombre"] == 'tipo_licencia')
+					if($tra_nro["nombre"] == 'tipo_licencia'){
                                 	        $tipo = str_replace('"','',$tra_nro["valor"]);
+						if ($tipo == 1) {
+							$tipo = 'Enfermedad o accidente comun';
+						}elseif($tipo == 2){
+							$tipo = 'Medicina preventiva';
+						}elseif($tipo == 3){
+                                                        $tipo = 'Pre y postnatal';
+                                                }elseif($tipo == 4){
+                                                        $tipo = 'Enfermedad grave del ninio menor del anio';
+                                                }elseif($tipo == 5){
+                                                        $tipo = 'Accidente del trabajo o del trayecto';
+                                                }elseif($tipo == 6){
+                                                        $tipo = 'Enfermedad profesional';
+                                                }elseif($tipo == 7){
+                                                        $tipo = 'Patologias del embarazo';
+                                                }elseif($tipo == 8){
+                                                        $tipo = 'Permiso post natal parental';
+                                                }
+					}
                         		if($tra_nro["nombre"] == 'tipo_reposo_licencia')
                                                 $tipo_reposo = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'lugar_reposo_licencia'){
@@ -632,8 +654,13 @@ class Licencias extends MY_Controller {
 					}
 					
 					//DATOS PAGO
-					if($tra_nro["nombre"] == 'fecha_pago_subsidio')
+					if($tra_nro["nombre"] == 'fecha_pago_subsidio'){
                                                 $fecha_pago = str_replace('"','',$tra_nro["valor"]);
+						if(in_array($fecha_pago,$fecha_paga_array))
+							$flag_revisar = "REVISAR";
+						$fecha_paga_array[]= $fecha_pago;
+						 
+					}
 					/*if($tra_nro["nombre"] == 'pagado_anterior_subsidio')
                                                 $pagado_anterior = str_replace('"','',$tra_nro["valor"]);
 					
@@ -784,6 +811,9 @@ class Licencias extends MY_Controller {
 
 			//RUT MEDICO
                         $object->getActiveSheet()->setCellValueByColumnAndRow(26, $excel_row, $rut_medico);
+
+			//REVISAR
+			$object->getActiveSheet()->setCellValueByColumnAndRow(27, $excel_row, $flag_revisar);
 			$excel_row++;
 			
 			
