@@ -18,7 +18,7 @@ class AccionGuardarLicencia extends Accion {
         $display.='<input type="text" name="extra[fecha_termino]" value="'.(isset($this->extra->fecha_termino) ? $this->extra->fecha_termino : '') . '" />';	
 	$display.='<label>Dias</label>';
         $display.='<input type="text" name="extra[days]" value="'.(isset($this->extra->days) ? $this->extra->days : '') . '" />';
-	 $display.='<label>Tipo</label>';
+	$display.='<label>Tipo</label>';
         $display.='<input type="text" name="extra[tipo]" value="'.(isset($this->extra->tipo) ? $this->extra->tipo : '') . '" />';
 	$display.='<label>Tipo de reposo</label>';
         $display.='<input type="text" name="extra[tipo_reposo]" value="'.(isset($this->extra->tipo_reposo) ? $this->extra->tipo_reposo : '') . '" />';
@@ -38,14 +38,20 @@ class AccionGuardarLicencia extends Accion {
         $display.='<input type="text" name="extra[pay_month_earlier]" value="'.(isset($this->extra->pay_month_earlier) ? $this->extra->pay_month_earlier : '') . '" />';
         $display.= '<label>Dias No Cubiertos</label>';
         $display.='<input type="text" name="extra[pay_days_not_covered]" value="'.(isset($this->extra->pay_days_not_covered) ? $this->extra->pay_days_not_covered : '') . '" />';
+	$display.= '<label>Dias No Cubiertos Anterior</label>';
+        $display.='<input type="text" name="extra[pay_days_not_covered_ant]" value="'.(isset($this->extra->pay_days_not_covered_ant) ? $this->extra->pay_days_not_covered_ant : '') . '" />';
 	$display.= '<label>Complemento</label>';
         $display.='<input type="text" name="extra[pay_complement]" value="'.(isset($this->extra->pay_complement) ? $this->extra->pay_complement : '') . '" />';
+	$display.= '<label>Complemento anterior</label>';
+        $display.='<input type="text" name="extra[pay_complement_ant]" value="'.(isset($this->extra->pay_complement_ant) ? $this->extra->pay_complement_ant : '') . '" />';
 	$display.= '<label>Observación</label>';
         $display.='<input type="text" name="extra[pay_observation]" value="' . (isset($this->extra->pay_observation) ? $this->extra->pay_observation : '') . '" />';
 	$display.= '<label>Fecha Retorno</label>';
         $display.='<input type="text" name="extra[return_date]" value="' . (isset($this->extra->return_date) ? $this->extra->return_date : '') . '" />';
-	$display.= '<label>Monto</label>';
+	$display.= '<label>Monto Retorno</label>';
         $display.='<input type="text" name="extra[return_value]" value="' . (isset($this->extra->return_value) ? $this->extra->return_value : '') . '" />';
+	$display.= '<label>Monto Actual Retorno</label>';
+        $display.='<input type="text" name="extra[return_value_act]" value="' . (isset($this->extra->return_value_act) ? $this->extra->return_value_act : '') . '" />';
 	$display.= '<label>Rut Medico</label>';
         $display.='<input type="text" name="extra[rut_medico]" value="'.(isset($this->extra->rut_medico) ? $this->extra->rut_medico : '') . '" />';	
 
@@ -126,14 +132,33 @@ class AccionGuardarLicencia extends Accion {
             $regla=new Regla($this->extra->pay_month_earlier);
             $pay_month_earlier=$regla->getExpresionParaOutput($etapa->id);
         }
+	
+	//PAGADO ANTERIORMENTE
+	$pay_earlier = $pay_earlier + $pay_advance + $pay_month_earlier;
+	
+		
+	
 	if(isset($this->extra->pay_days_not_covered)){
             $regla=new Regla($this->extra->pay_days_not_covered);
             $pay_days_not_covered=$regla->getExpresionParaOutput($etapa->id);
         }
+	if(isset($this->extra->pay_days_not_covered_ant)){
+            $regla=new Regla($this->extra->pay_days_not_covered_ant);
+            $pay_days_not_covered_ant=$regla->getExpresionParaOutput($etapa->id);
+        }
+
+	$pay_days_not_covered_ant = $pay_days_not_covered_ant + $pay_days_not_covered;
+
 	if(isset($this->extra->pay_complement)){
             $regla=new Regla($this->extra->pay_complement);
             $pay_complement=$regla->getExpresionParaOutput($etapa->id);
         }
+	if(isset($this->extra->pay_complement_ant)){
+            $regla=new Regla($this->extra->pay_complement_ant);
+            $pay_complement_ant=$regla->getExpresionParaOutput($etapa->id);
+        }
+	$pay_complement_ant = $pay_complement_ant + $pay_complement;	
+
 	if(isset($this->extra->pay_observation)){
             $regla=new Regla($this->extra->pay_observation);
             $pay_observation=$regla->getExpresionParaOutput($etapa->id);
@@ -146,6 +171,13 @@ class AccionGuardarLicencia extends Accion {
             $regla=new Regla($this->extra->return_value);
             $return_value=$regla->getExpresionParaOutput($etapa->id);
         }
+	if(isset($this->extra->return_value_act)){
+            $regla=new Regla($this->extra->return_value_act);
+            $return_value_act=$regla->getExpresionParaOutput($etapa->id);
+        }
+	//Return value 
+	$return_value = $return_value + $return_value_act;
+		
 	if(isset($this->extra->return_saldo)){
             $regla=new Regla($this->extra->return_saldo);
             $return_saldo=$regla->getExpresionParaOutput($etapa->id);
@@ -175,15 +207,13 @@ class AccionGuardarLicencia extends Accion {
 	$json.= '"payEarlier": '.(isset($pay_earlier) ? ($pay_earlier == null ? '0' : $pay_earlier) : '0').', ';
 	$json.= '"payAdvance": '.(isset($pay_advance) ? ($pay_advance == null ? '0' : $pay_advance) : '0').', ';
 	$json.= '"payMonthEarlier": '.(isset($pay_month_earlier) ? ($pay_month_earlier == null ? '0' : $pay_month_earlier) : '0').', ';
-	$json.= '"payDaysNotCovered": '.(isset($pay_days_not_covered) ? ($pay_days_not_covered == null ? '0' : $pay_days_not_covered) : '0').', ';
-	$json.= '"payComplement": '.(isset($pay_complement) ? ($pay_complement == null ? '0' : $pay_complement) : '0').', ';
+	$json.= '"payDaysNotCovered": '.(isset($pay_days_not_covered_ant) ? ($pay_days_not_covered_ant == null ? '0' : $pay_days_not_covered_ant) : '0').', ';
+	$json.= '"payComplement": '.(isset($pay_complement_ant) ? ($pay_complement_ant == null ? '0' : $pay_complement_ant) : '0').', ';
 	$json.= '"payObservation": '.(isset($pay_observation) ? '"'.$pay_observation.'"' : '""').', ';
 	$json.= '"fecha_retorno": '.(isset($return_date) ? '"'.$return_date.'"' : '""').', ';
 	$json.= '"returnValue": '.(isset($return_value) ? ($return_value == null ? '0' : $return_value) : '0').', ';
 	$json.= '"returnSaldo": '.(isset($return_saldo) ? ($return_saldo == null ? '0' : $return_saldo) : '0').', ';
 	$json.= '"returnObservation": '.(isset($return_observation) ? '"'.$return_observation.'"' : '""').'}';
-	
-	ChromePhp::log($json);
 	
 	$url = urlapi."licenses";
         

@@ -10,9 +10,32 @@
         </tr>
     </thead>
     <tbody>
-	<?php $validProcesos=explode('-',array_procesos_solicitud_doc); ?>
-        <?php foreach ($procesos as $p): ?>
-	  <?php if (in_array($p->id,$validProcesos)): ?> 
+	<?php 
+		$validProcesos=explode('-',array_procesos_solicitud_doc); 
+		$procesos_solic_doc = [13];
+		foreach ($procesos as $p){
+			if (in_array($p->id,$validProcesos)){
+				if(strpos($p->nombre, 'ENERO')) $procesos_solic_doc[0]=$p;
+				if(strpos($p->nombre, 'FEBRERO')) $procesos_solic_doc[1]=$p;
+				if(strpos($p->nombre, 'MARZO')) $procesos_solic_doc[2]=$p;
+				if(strpos($p->nombre, 'ABRIL')) $procesos_solic_doc[3]=$p;
+				if(strpos($p->nombre, 'MAYO')) $procesos_solic_doc[4]=$p;
+				if(strpos($p->nombre, 'JUNIO')) $procesos_solic_doc[5]=$p;
+				if(strpos($p->nombre, 'JULIO')) $procesos_solic_doc[6]=$p;
+				if(strpos($p->nombre, 'AGOSTO')) $procesos_solic_doc[7]=$p;
+				if(strpos($p->nombre, 'SEPTIEMBRE')) $procesos_solic_doc[8]=$p;
+				if(strpos($p->nombre, 'OCTUBRE')) $procesos_solic_doc[9]=$p;
+				if(strpos($p->nombre, 'NOVIEMBRE')) $procesos_solic_doc[10]=$p;
+				if(strpos($p->nombre, 'DICIEMBRE')) $procesos_solic_doc[11]=$p;
+				if(strpos($p->nombre, 'PSICOSOCIALES')) $procesos_solic_doc[12]=$p;
+			}
+		}
+
+	?>
+        <?php for ($i = 0 ; $i<13 ;$i++):
+		$p = $procesos_solic_doc[$i];
+	 ?>
+	  <?php ?> 
             <tr>
                 <td class="name">
                     <?php if($p->canUsuarioIniciarlo(UsuarioSesion::usuario()->id)):?>
@@ -37,8 +60,8 @@
                     <?php endif ?>
                 </td>
             </tr>
-	  <?php endif; ?>
-        <?php endforeach; ?>
+	  <?php  ?>
+        <?php endfor; ?>
     </tbody>
 </table>
 

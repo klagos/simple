@@ -54,7 +54,7 @@ class AccionEnviarCorreo extends Accion {
         if(isset($cc))$CI->email->cc($cc);
         if(isset($bcc))$CI->email->bcc($bcc);
 
-        if(isset($this->extra->adjunto)){
+        if(isset($this->extra->adjunto) &&  $this->extra->adjunto!=""){
             $attachments = explode(",",trim($this->extra->adjunto));
             foreach ($attachments as $a) {
                 $regla=new Regla($a);

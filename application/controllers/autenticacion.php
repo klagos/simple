@@ -201,11 +201,11 @@ class Autenticacion extends MY_Controller {
         $data['title'] = 'Login';
         $this->load->view('autenticacion/login', $data);
     }
-
+	/*
     public function registrar() {
         $data['title'] = 'Registro';
         $this->load->view('autenticacion/registrar', $data);
-    }
+    }*/
 
     public function registrar_form() {
         $this->form_validation->set_rules('usuario', 'Nombre de Usuario', 'required|alpha_dash|callback_check_usuario');
