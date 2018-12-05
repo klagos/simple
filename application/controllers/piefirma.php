@@ -96,7 +96,8 @@ class PieFirma extends MY_Controller {
                 $rut        =($this->input->get('rut'))?$this->input->get('rut'):null;		
 		if($rut){
 			$rut = trim($rut);
-			$json = '[{"rut":"'.$rut.'", "phone":"'.$celular.'","annexPhone":"'.$anexo.'","areaCode":"'.$codigo.'"}]';
+			$json = '{"rut":"'.$rut.'", "phone":"'.$celular.'","annexPhone":"'.$anexo.'","areaCode":"'.$codigo.'"}';
+
 			$this->update_user_api($json);
 		}
 		$this->descargar($nombre.' '.$apellido,$gerencia,$cargo, $celular, $anexo, $codigo);
@@ -123,11 +124,12 @@ class PieFirma extends MY_Controller {
 		$rut_trabajador		=($this->input->get('rut_trabajador'))?$this->input->get('rut_trabajador'):null;		
 		
 		if($rut_trabajador){
-                	$json = '[{"name":"'.$nombre_trabajador.'","lastName":"'.$apellido_trabajador.'","rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
-                	$json=$json.'"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}]';
-		
+                	$json = '{"name":"'.$nombre_trabajador.'","lastName":"'.$apellido_trabajador.'","rut":"'.$rut_trabajador.'","management":"'.$gerencia_trabajador.'","position":"'.$cargo_trabajador.'","phone":"'.$celular_trabajador.'",';
+                	$json=$json.'"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}';
+			
+	
 			$this->update_user_api($json);
-
+			
 			//Los datos actualizados del usuario
 			$rut 	= $rut_trabajador;
 			$url    = urlapi."/users/footSignature/".$rut;
@@ -155,13 +157,12 @@ class PieFirma extends MY_Controller {
 
 	public function update_user_api($json){
 		
-		//$url = "http://private-120a8-apisimpleist.apiary-mock.com/users";
-                $url  = urlapi."users/list";
+                $url  = urlapi."users";
 
 		$ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
                 curl_exec($ch);
