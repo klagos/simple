@@ -27,6 +27,7 @@
 	    <option value="accion_enviar_vacation">Guardar Vacation</option>	
 	    <option value="accion_guardar_convenio">Guardar Convenio</option>		
 	    <option value="accion_guardar_convenio_medico">Guardar Convenio Medico</option>
+	    <option value="guardar_trabajador">Guardar Trabajador</option>
         </select>
     </form>
 </div>

@@ -108,6 +108,8 @@ class Acciones extends MY_BackendController {
 	    $accion=new AccionGuardarConvenio();
 	else if ($tipo=='accion_guardar_convenio_medico')
 	    $accion=new AccionGuardarConvenioMedico();
+	else if ($tipo=='guardar_trabajador')
+	    $accion=new AccionGuardarTrabajador();
         
         $data['edit']=FALSE;
         $data['proceso']=$proceso;
@@ -182,6 +184,9 @@ class Acciones extends MY_BackendController {
 
 	   else if($this->input->post('tipo')=='accion_guardar_convenio_medico')
 		$accion=new AccionGuardarConvenioMedico();
+
+	   else if($this->input->post('tipo')=='guardar_trabajador')
+	        $accion=new AccionGuardarTrabajador();
 
             $accion->proceso_id=$this->input->post('proceso_id');
             $accion->tipo=$this->input->post('tipo');
