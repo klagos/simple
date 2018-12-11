@@ -47,7 +47,7 @@ class AccionEnviarVacation extends Accion {
 
 		$json = json_encode($json);
 		
-		$url = urlapi."/users/".$rut."/vacationrequest";
+		$url = urlapi."users/".$rut."/vacationrequest";
 
 		$ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -56,9 +56,18 @@ class AccionEnviarVacation extends Accion {
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
+        
+        $httpCodeResponse = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
         $result = curl_exec($ch);
         $httpCodeResponse = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         curl_close($ch);
+        $header = substr($result, 0, $header_size);
+        $body = substr($result, $header_size);
+      
 		
 		//Save http code
         $http_code = Doctrine::getTable("DatoSeguimiento")->findOneByNombreAndEtapaId("http_code", $etapa->id);
@@ -67,7 +76,8 @@ class AccionEnviarVacation extends Accion {
             $http_code->save();
         }
 
-		$result = json_decode($result); 
+		$result = json_decode($body); 
+
 		if($result!=null && $result!=null){
 		
 			//PERIODS BEFORE
