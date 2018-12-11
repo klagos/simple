@@ -28,6 +28,7 @@
 	    <option value="accion_guardar_convenio">Guardar Convenio</option>		
 	    <option value="accion_guardar_convenio_medico">Guardar Convenio Medico</option>
 	    <option value="guardar_trabajador">Guardar Trabajador</option>
+        <option value="guardar_rut_annos">Guardar Rut Años</option>
         </select>
     </form>
 </div>
