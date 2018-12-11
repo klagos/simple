@@ -41,14 +41,11 @@ class AccionGuardarRutAnnos extends Accion {
        
 
         $url = urlapi."users/".$rut."/validatedYears/".$years;	
-        ChromePhp::log($url);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        //curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json"));
         $result = curl_exec($ch);
         $httpCodeResponse = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -70,10 +67,8 @@ class AccionGuardarRutAnnos extends Accion {
             $dato->save();
         }
         
-        
-
         //set @@http_code
-        $dato2 = Doctrine::getTable("DatoSeguimiento")->findOneByNombreAndEtapaId("http_code2", $etapa->id);
+        $dato2 = Doctrine::getTable("DatoSeguimiento")->findOneByNombreAndEtapaId("http_code", $etapa->id);
         if($dato2){
             $dato2->valor = ($httpCodeResponse);
             $dato2->save();

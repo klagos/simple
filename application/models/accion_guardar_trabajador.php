@@ -41,6 +41,8 @@ class AccionGuardarTrabajador extends Accion {
         $display.='<input type="text" name="extra[ubicacion]" value="' . (isset($this->extra->ubicacion) ? $this->extra->ubicacion : '') . '" />';
         $display.= '<label>Centro de Costo</label>';
         $display.='<input type="text" name="extra[centroCosto]" value="' . (isset($this->extra->centroCosto) ? $this->extra->centroCosto : '') . '" />';
+	$display.= '<label>Jornada</label>';
+        $display.='<input type="text" name="extra[jornada]" value="' . (isset($this->extra->jornada) ? $this->extra->jornada : '') . '" />';
         $display.= '<label>Gerencia</label>';
         $display.='<input type="text" name="extra[gerencia]" value="' . (isset($this->extra->gerencia) ? $this->extra->gerencia : '') . '" />';
         $display.= '<label>Celular IST</label>';
@@ -134,6 +136,9 @@ class AccionGuardarTrabajador extends Accion {
         $regla=new Regla($this->extra->centroCosto);
         $centerCost=$regla->getExpresionParaOutput($etapa->id);
 
+	$regla=new Regla($this->extra->jornada);
+        $jornada=$regla->getExpresionParaOutput($etapa->id);
+
         $regla=new Regla($this->extra->gerencia);
         $management=$regla->getExpresionParaOutput($etapa->id);
 
@@ -169,6 +174,7 @@ class AccionGuardarTrabajador extends Accion {
         $jsonCD->positionCode = explode(" - ",$position)[1];//split(" - ",$position)[1];
         $jsonCD->init_date = $contract_date;
         $jsonCD->end_date = $contract_end_date;
+	$jsonCD->workdayCode = $jornada;
 
         // Principal Json 
         $json->rut = $rut ;
@@ -185,7 +191,6 @@ class AccionGuardarTrabajador extends Accion {
         $json->personalDataDTO = $jsonPD;
         $json->contractualDataDTO = $jsonCD;
         
-        
         $json->annexPhone = intval($annexPhone) ;
         $json->areaCode = intval($areaCode);
         $json->phone = intval($cellPhoneIST);    
@@ -201,7 +206,7 @@ class AccionGuardarTrabajador extends Accion {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json"       ));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json"));
         $result = curl_exec($ch);
         $httpCodeResponse = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

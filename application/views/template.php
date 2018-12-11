@@ -121,9 +121,12 @@
 			//Modulo Vacation
 			$vacation = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_VACATION");
 			
-			//Modulo Vacaciones
+			//Modulo Licencia
 			$revisarLicencia = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_LICENCIA");
-			
+		
+			//Modulo matriz de ingreso
+			$matriz_ingreso  = Doctrine::getTable('GrupoUsuarios')->cantGruposUsuaros(UsuarioSesion::usuario()->id,"MODULO_MATRIZ_INGRESO");
+				
 			?>
 			<ul id="sideMenu" class="nav nav-list">
 				<li class="iniciar"><a  href="#" onclick="Slide(['Inicio1','Inicio2','Inicio3'])">&nbsp;&nbsp;&nbsp;Inicio<span style="font-size:20px;top:3px" class="pull-left hidden-xs showopacity glyphicon glyphicon-home"></a></li>
@@ -182,7 +185,16 @@
 			<?php if($guiaTelefono): ?><li class="<?= isset($sidebar) && $sidebar == 'guia_telefono' ? 'active' : '' ?>"><a id="guia_telefono" href="<?= site_url('guiatelefono/consultar') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consultar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-earphone"></a></li><?php endif ?>	
 			<!--MAIL -->	
 			<?php if($guiaTelefono==2): ?><li class="<?= isset($sidebar) && $sidebar == 'guia_telefono_mail' ? 'active' : '' ?>"><a id="guia_telefono_mail" href="<?= site_url('guiatelefono/email') ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reporte&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-download-alt"></a></li><?php endif ?>
-                        </ul>	
+                        </ul>
+				
+			<!-- MODULO MATRIZ DE INGRESO -->
+                        <ul id="sideMenu" class="nav nav-list">
+                           <?php if($matriz_ingreso): $cont_menu++; ?><li class="iniciar"><a  href="#" onclick="Slide(['matriz_ingreso_add'])">&nbsp;&nbsp;&nbsp;Matriz de Ingreso<span style="font-size:20px;tt
+op:8px" class="pull-left hidden-xs showopacity glyphicon glyphicon-th-large"></span></a></li><?php endif ?>
+                        <!-- AGREGAR -->
+                        <?php if($matriz_ingreso): ?><li class="<?= isset($sidebar) && $sidebar == 'matriz_ingreso_add' ? 'active' : '' ?>"><a id="matriz_ingreso_add" href="<?= site_url('tramites/iniciar/'.proceso_matriz_ingreso_add) ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style="font-size:13px;top:3px;left:28px" class="pull-ccenter hidden-xs showopacity glyphicon glyphicon-plus"></a></li><?php endif ?>
+                        </ul>
+
 
 			  <!-- MODULO TRABAJADORES -->
                         <ul id="sideMenu" class="nav nav-list">  
