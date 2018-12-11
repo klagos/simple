@@ -66,18 +66,12 @@ class AccionGuardarRutAnnos extends Accion {
         if($dato){
             if ($httpCodeResponse == 200) {
                 $dato->valor = $body;
-            }else{
-                $dato->valor = "Hubo un error en el sistema.
-                                <p>Comunicarse con el administrador
-                                <b>eduardo.barra@ist.cl</b><p>";
-            }
-            
+            }            
             $dato->save();
         }
         
         
-        
-/*
+
         //set @@http_code
         $dato2 = Doctrine::getTable("DatoSeguimiento")->findOneByNombreAndEtapaId("http_code2", $etapa->id);
         if($dato2){
@@ -85,7 +79,6 @@ class AccionGuardarRutAnnos extends Accion {
             $dato2->save();
         }
 
-*/
 
     }
 
