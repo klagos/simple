@@ -146,8 +146,30 @@ class Admindays extends MY_Controller {
 	redirect($url);
   }	
 
+    public function print_tramite($tramite_id){
+         //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+                $this->session->set_flashdata('redirect', current_url());
+                redirect('tramites/disponibles');
+        }
+
+        $tramite = Doctrine::getTable("Tramite")->find($tramite_id);
+    if($tramite!=null){
+            $dato = Doctrine::getTable('file')->findOneByTipoAndTramite('documento',$tramite_id);
+                $filename = $dato[0]->filename;
+        $path = 'uploads/documentos/'.$filename;
+    
+        if(file_exists($path)){
+            $this->load->helper('download');
+            $data = file_get_contents ( $path );
+            force_download ( $path, $data );    
+        }else
+             ChromePhp::log("ERROR PATH");
+        }
+    }
+
   public function check_user($tramite_id){
-	ChromePhp::log($tramite_id);
+	
 	$tramite = Doctrine::getTable ( 'Tramite' )->find ( $tramite_id );
  	$user_id = UsuarioSesion::usuario()->id;
 	if($tramite->usuarioHaParticipado($user_id)) 

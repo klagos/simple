@@ -224,7 +224,7 @@ function cargarDatos(){
 			if (json.history.length > 0){
 	        	         document.getElementById("link_historial").style.display = "inline";
 				 if(rotativeTurn!=0)
-					document.getElementById("rows").innerHTML = '<tr><th>Fechas</th><th>Dias solicitados</th><th >Ver detalle</th> <th>Eliminar</th></tr>';
+					document.getElementById("rows").innerHTML = '<tr><th>Fechas</th><th>Dias solicitados</th><th >Ver detalle</th><th>Descargar</th><th>Eliminar</th></tr>';
 				 else
 	        	         	document.getElementById("rows").innerHTML = '<tr><th>Fecha</th><th>Tipo solicitud</th><th >Ver detalle</th><th>Eliminar</th></tr>';
 	        	}else{
@@ -253,38 +253,41 @@ function cargarDatos(){
 
 					var fecha = day + "-"+ month + "-" + date.getFullYear();
 
-                                	
-                                	if(rotativeTurn!=0){
-                                        	date= new Date (json.history[i].datefinal);
-                                        	
+                    var btnGuardar ="";            	
+					if(rotativeTurn!=0){
+						date= new Date (json.history[i].datefinal);
+
 						day = date.getDate() ;
-                                        	if (day < 10) day = "0" + day; 
+						if (day < 10) day = "0" + day; 
 
 						month = date.getMonth() + 1;
-                                        	if (month < 10) month = "0" + month;
-                                        	
+						if (month < 10) month = "0" + month;
+
 						fecha = fecha +" - " + day + "-"+ month + "-" + date.getFullYear();
-                                		type  = json.history[i].requiredDays;
+						type  = json.history[i].requiredDays;
+
+
+					btnGuardar = "<td align='center' style='width:10%;' id ="+'print_'+json.history[i].idTramite+'_'+ json.history[i].id+"><a class='btn btn-success' href='#' onclick =' return print_tramite("+json.history[i].idTramite+");' ><i class='icon-download-alt icon-white'></i></a></td>";
 					}
 					
+
+
 					if(i==(sizeHistory-1) && json.history[i].idTramite!=0 ){
 						dv  = String(rut.split("-")[1]);	
 						rut = String(rut.split("-")[0]);		
 							
-						check_user(json.history[i].idTramite);
+						//check_user(json.history[i].idTramite);
 
 						if(dv=='K')
 							dv = 10;
 
-						document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +" ><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td> <td id = "+'b_' +json.history[i].idTramite +"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+json.history[i].idTramite +","+json.history[i].id+","+ rut +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
-						
-
+						document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +" ><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td>"+ btnGuardar+ "<td id = "+'b_' +json.history[i].idTramite +"><a class='btn btn-danger' href='#' onclick = 'return eliminarTramite("+json.history[i].idTramite +","+json.history[i].id+","+ rut +","+dv+");'><i class='icon-white icon-trash'></i></a> </td></tr>";
 					}
 					else{
 
 						if(json.history[i].idTramite!=0){
-							check_user(json.history[i].idTramite);
-							document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +"><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td><td></td></tr>";
+						//	check_user(json.history[i].idTramite);
+							document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td id ="+json.history[i].idTramite +"><a class='btn btn-info' href='#' onclick =' return detail("+json.history[i].idTramite+");' ><i class='icon-eye-open icon-white'></i></a> </td>"+btnGuardar+ "<td></td></tr>";
 						}
 						else
                 					document.getElementById("rows").innerHTML += "<tr><td>"+ fecha +"</td><td>"+type+"</td><td></td><td></td></tr>";
@@ -336,6 +339,12 @@ function detail(tramite) {
 	var url = site_url +"admindays/detail/"+tramite;
 	window.location.href = url ;
 }
+
+function print_tramite(tramite){
+	var url = site_url +"admindays/print_tramite/"+tramite;
+        window.location.href = url ;
+}
+
 
 //Chequea si el usuario participo en el tramite
 function check_user(tramite){
