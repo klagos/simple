@@ -53,9 +53,10 @@ class AccionGuardarLicencia extends Accion {
         $display.='<input type="text" name="extra[return_value]" value="' . (isset($this->extra->return_value) ? $this->extra->return_value : '') . '" />';
 	$display.= '<label>Monto Actual Retorno</label>';
         $display.='<input type="text" name="extra[return_value_act]" value="' . (isset($this->extra->return_value_act) ? $this->extra->return_value_act : '') . '" />';
+	$display.= '<label>Formato</label>';
+        $display.='<input type="text" name="extra[formato]" value="' . (isset($this->extra->formato) ? $this->extra->formato : '') . '" />';
 	$display.= '<label>Rut Medico</label>';
         $display.='<input type="text" name="extra[rut_medico]" value="'.(isset($this->extra->rut_medico) ? $this->extra->rut_medico : '') . '" />';	
-
 	$display.= '<label>Saldo</label>';
         $display.='<input type="text" name="extra[return_saldo]" value="' . (isset($this->extra->return_saldo) ? $this->extra->return_saldo : '') . '" />';
 	$display.= '<label>Observacion</label>';
@@ -101,6 +102,13 @@ class AccionGuardarLicencia extends Accion {
 	if(isset($this->extra->organismo_de_salud)){
             $regla=new Regla($this->extra->organismo_de_salud);
             $organismo_de_salud=$regla->getExpresionParaOutput($etapa->id);
+        }
+	
+	//FORMATO
+	$formato = 0;
+	if(isset($this->extra->formato)){
+            $regla=new Regla($this->extra->formato);
+            $formato=$regla->getExpresionParaOutput($etapa->id);
         }
 
 	$regla=new Regla($this->extra->tipo_reposo);
@@ -198,7 +206,8 @@ class AccionGuardarLicencia extends Accion {
  	$json.= '"state": '.(isset($estado) ? '"'.$estado.'"' : '""').', ';
 	$json.= '"days": '.(isset($days) ? ($days == null ? '0' : $days) : '0').', ';	
 	$json.= '"type": '.(isset($tipo) ? ($tipo == null ? '0' : $tipo) : '0').', ';
-	
+	$json.= '"formate": '.(isset($formato) ? ($formato == null ? '0' : $formato) : '0').', ';	
+
 	//rutMedico
 	if(isset($rut_medico) && $rut_medico!=null )
 		$json.= '"rutMedico": '.(isset($rut_medico) ? '"'.$rut_medico.'"' : '""').', ';	

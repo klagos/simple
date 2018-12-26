@@ -38,7 +38,9 @@ class AccionGuardarTrabajador extends Accion {
         $display.='<input type="text" name="extra[emailIST]" value="' . (isset($this->extra->emailIST) ? $this->extra->emailIST : '') . '" />';
         $display.= '<label>Fecha Contrato</label>';
         $display.='<input type="text" name="extra[fContrato]" value="' . (isset($this->extra->fContrato) ? $this->extra->fContrato : '') . '" />';
-        $display.= '<label>Ubicación</label>';
+        $display.= '<label>Empresa</label>';
+        $display.='<input type="text" name="extra[empresa]" value="' . (isset($this->extra->empresa) ? $this->extra->empresa : '') . '" />';
+	$display.= '<label>Ubicación</label>';
         $display.='<input type="text" name="extra[ubicacion]" value="' . (isset($this->extra->ubicacion) ? $this->extra->ubicacion : '') . '" />';
         $display.= '<label>Centro de Costo</label>';
         $display.='<input type="text" name="extra[centroCosto]" value="' . (isset($this->extra->centroCosto) ? $this->extra->centroCosto : '') . '" />';
@@ -82,7 +84,7 @@ class AccionGuardarTrabajador extends Accion {
         $CI->form_validation->set_rules('extra[gerencia]','Gerencia', 'required');
         $CI->form_validation->set_rules('extra[celularIST]','Celular IST', 'required');
         $CI->form_validation->set_rules('extra[anexo]','Anexo', 'required');
-        $CI->form_validation->set_rules('extra[codigoArea]','Código de Área', 'required');
+        $CI->form_validation->set_rules('extra[codigoArea]','Código de Area', 'required');
         $CI->form_validation->set_rules('extra[tipoContrato]','Tipo de Contrato', 'required');
         $CI->form_validation->set_rules('extra[fTerminoContrato]','Fecha Término de Contrato', 'required');
     }
@@ -158,7 +160,8 @@ class AccionGuardarTrabajador extends Accion {
         $regla=new Regla($this->extra->fTerminoContrato);
         $contract_end_date=$regla->getExpresionParaOutput($etapa->id);
 
-
+	$regla=new Regla($this->extra->empresa);
+        $empresa=$regla->getExpresionParaOutput($etapa->id);
         
         // create json principal and 2 'sub-json'
         $json = new stdClass();
@@ -176,6 +179,7 @@ class AccionGuardarTrabajador extends Accion {
         $jsonCD->init_date = $contract_date;
         $jsonCD->end_date = $contract_end_date;
 	$jsonCD->workdayCode = $jornada;
+	$jsonCD->companyCode = $empresa;	
 
         // Principal Json 
         $json->rut = $rut ;
