@@ -1,5 +1,7 @@
 <?php
 require_once(FCPATH."procesos.php");
+require_once('authorization.php');
+
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -49,15 +51,20 @@ class PieFirma extends MY_Controller {
 
 
 	public function conectUrl($url){
+
+		$oa = new Authorization();
+        $token = $oa->getToken();
+
 		$ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        "Content-Type: application/json"
-                 ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+       		"Authorization: Bearer ".$token
+         ));
 		$result=curl_exec($ch);
-                curl_close($ch);
+        curl_close($ch);
 		return json_decode($result);
 	}
 	
@@ -88,12 +95,12 @@ class PieFirma extends MY_Controller {
 	public function update_half(){
 		$nombre     =($this->input->get('nombre'))?$this->input->get('nombre'):null;
 		$apellido   =($this->input->get('apellido'))?$this->input->get('apellido'):null;
-                $gerencia   =($this->input->get('gerencia'))?$this->input->get('gerencia'):null;
-                $cargo      =($this->input->get('cargo'))?$this->input->get('cargo'):null;
-                $celular    =($this->input->get('celular'))?$this->input->get('celular'):0;
-                $anexo      =($this->input->get('anexo'))?$this->input->get('anexo'):0;
-                $codigo     =($this->input->get('codigo'))?$this->input->get('codigo'):0;
-                $rut        =($this->input->get('rut'))?$this->input->get('rut'):null;		
+        $gerencia   =($this->input->get('gerencia'))?$this->input->get('gerencia'):null;
+        $cargo      =($this->input->get('cargo'))?$this->input->get('cargo'):null;
+        $celular    =($this->input->get('celular'))?$this->input->get('celular'):0;
+        $anexo      =($this->input->get('anexo'))?$this->input->get('anexo'):0;
+        $codigo     =($this->input->get('codigo'))?$this->input->get('codigo'):0;
+        $rut        =($this->input->get('rut'))?$this->input->get('rut'):null;		
 		if($rut){
 			$rut = trim($rut);
 			$json = '{"rut":"'.$rut.'", "phone":"'.$celular.'","annexPhone":"'.$anexo.'","areaCode":"'.$codigo.'"}';
@@ -157,16 +164,22 @@ class PieFirma extends MY_Controller {
 
 	public function update_user_api($json){
 		
-                $url  = urlapi."users";
+		$oa = new Authorization();
+        $token = $oa->getToken();
+
+        $url  = urlapi."users";
 
 		$ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
-                curl_exec($ch);
-                curl_close($ch);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json",
+              
+              "Authorization: Bearer ".$token 
+        ));
+        curl_exec($ch);
+        curl_close($ch);
 		
 	}
 
@@ -174,7 +187,7 @@ class PieFirma extends MY_Controller {
 
 	/* GENERA Y DESCARGA IMAGEN DEL USUARIO  */
 	public function descargar($nombre_trabajador,$gerencia_trabajador, $cargo_trabajador, $celular_trabajador, $anexo_trabajador, $codigo_trabajador ){ 
-		
+			
 		$file 	  = 'uploads/resources/piefirma/plantilla.png';
 		
 		if(strlen($nombre_trabajador)<24 && strlen($gerencia_trabajador)<40 && strlen($cargo_trabajador)<40){

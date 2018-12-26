@@ -2,6 +2,7 @@
 require_once(FCPATH."procesos.php");
 require_once('accion.php');
 require_once('ChromePhp.php');
+require_once('/var/www/html/simple/application/controllers/authorization.php');
 
 class AccionEnviarVacation extends Accion {
 
@@ -23,6 +24,7 @@ class AccionEnviarVacation extends Accion {
     }
 
     public function ejecutar(Etapa $etapa) {
+
 		$regla=new Regla($this->extra->date_init);
 		$date_init=$regla->getExpresionParaOutput($etapa->id);
 
@@ -46,6 +48,9 @@ class AccionEnviarVacation extends Accion {
 		$json->requestDays   = $cantidad;
 
 		$json = json_encode($json);
+
+		$oa = new Authorization();
+        $token = $oa->getToken();
 		
 		$url = urlapi."users/".$rut."/vacationrequest";
 
@@ -55,7 +60,8 @@ class AccionEnviarVacation extends Accion {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json",
+               "Authorization: Bearer ".$token ));
         
         $httpCodeResponse = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 

@@ -1,5 +1,6 @@
 <?php
 
+require_once('authorization.php');
 use InoOicClient\Flow\Basic;
 use InoOicClient\Http;
 use InoOicClient\Client;
@@ -138,6 +139,12 @@ class Autenticacion extends MY_Controller {
         } catch (Exception $err) {
             log_message('error', '{"method" : "login_correcto", "location" : "END", "status" : "ERROR", "exception" : "' . $err .'"}');
         }
+
+        //Pedir Token por primera vez
+        $oa = new Authorization();
+        $oa->newToken(); 
+        
+      
     }
 
     private function login_incorrecto($usuario_o_email) {
@@ -371,6 +378,11 @@ class Autenticacion extends MY_Controller {
 
         UsuarioSesion::logout();
         redirect('');
+
+    //Quitar Token 
+    $oa = new Authorization();
+    $oa->revokeToken();
+
     }
 
     function check_password($password) {

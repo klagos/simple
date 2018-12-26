@@ -1,5 +1,6 @@
 <?php
 require_once(FCPATH."procesos.php");
+require_once('authorization.php');
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -41,13 +42,17 @@ class Trabajadores extends MY_Controller {
 
 
 	public function conectUrl($url){
+		$oa = new Authorization();
+        $token = $oa->getToken();
+
 		$ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        "Content-Type: application/json"
-                 ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+       		"Authorization: Bearer ".$token
+         ));
 		$result=curl_exec($ch);
                 curl_close($ch);
 		return json_decode($result);
@@ -182,17 +187,20 @@ class Trabajadores extends MY_Controller {
 
 	public function update_user_api($json){
 		
+		$oa = new Authorization();
+        $token = $oa->getToken();
 		//$url = "http://private-120a8-apisimpleist.apiary-mock.com/users";
-                $url  = urlapi."users/list";
+        $url  = urlapi."users/list";
 
 		$ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
-                curl_exec($ch);
-                curl_close($ch);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json",
+           "Authorization: Bearer ".$token ));
+        curl_exec($ch);
+        curl_close($ch);
 		
 	}
 
@@ -249,22 +257,27 @@ class Trabajadores extends MY_Controller {
 			$l="true";		
 			}
 	    }
+
+	    $oa = new Authorization();
+        $token = $oa->getToken();
+
 	    $url = urlapi."request/report?&fi=".$fecha_inicial."&fe=".$fecha_final."&v=".$v."&a=".$a."&l=".$l;
 
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_URL,$url);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                           "Content-Type: application/json"
-                    ));
-            $result=curl_exec($ch);
-            curl_close($ch);
-            $json_ws = json_decode($result);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+           "Content-Type: application/json",
+           "Authorization: Bearer ".$token
+                ));
+        $result=curl_exec($ch);
+        curl_close($ch);
+        $json_ws = json_decode($result);
 
-      	    $CI =& get_instance();
-            $CI->load->library('Excel');
-            $object = new PHPExcel();
+  	    $CI =& get_instance();
+        $CI->load->library('Excel');
+        $object = new PHPExcel();
 	    	
 	    $objWorkSheet = $object->createSheet(1);
             $objWorkSheet = $object->setActiveSheetIndex(1);

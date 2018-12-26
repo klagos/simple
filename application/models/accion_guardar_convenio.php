@@ -2,6 +2,7 @@
 require_once(FCPATH."procesos.php");
 require_once('accion.php');
 require_once('ChromePhp.php');
+require_once('/var/www/html/simple/application/controllers/authorization.php');
 
 class AccionGuardarConvenio extends Accion {
 
@@ -33,15 +34,20 @@ class AccionGuardarConvenio extends Accion {
 	$json->id	    = $num_convenio;	
 	
 	$json = json_encode($json);
-        $json = '['.$json.']';
+    $json = '['.$json.']';
 		
+	$oa = new Authorization();
+    $token = $oa->getToken();	
+
 	$url = urlapi."users/list/agreement";
 	$ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json", 
+        	"Authorization: Bearer ".$token
+        ));
         curl_exec($ch);
         curl_close($ch);
 	

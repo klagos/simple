@@ -1,5 +1,6 @@
 <?php
 require_once(FCPATH."procesos.php");
+require_once('authorization.php');
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -20,17 +21,20 @@ class FAS extends MY_Controller {
 	
 	$json_ws = apcu_fetch('json_list_users_fas');
         if (!$json_ws){
+            $oa = new Authorization();
+            $token = $oa->getToken();
                 //Obtener data de usuarios
-                $url = urlapi . "/users/list/smallfas?parameter=name,hasBCI,lastname,location,rut&bci=0";
+            $url = urlapi . "/users/list/smallfas?parameter=name,hasBCI,lastname,location,rut&bci=0";
 	        $ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
-                ));
-                $result=curl_exec($ch);
-                curl_close($ch);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+               "Content-Type: application/json",
+               "Authorization: Bearer ".$token
+            ));
+            $result=curl_exec($ch);
+            curl_close($ch);
 
                 $json_ws = json_decode($result);
                 apcu_add('json_list_users_fas',$json_ws,60);
@@ -76,6 +80,9 @@ class FAS extends MY_Controller {
                                 $user_id = UsuarioSesion::usuario()->id;
 
                                 if($tramite->usuarioHaParticipado($user_id)){
+                                        $oa = new Authorization();
+                                        $token = $oa->getToken();
+
                                         $fecha = new DateTime ();
                                         $proceso = $tramite->Proceso;
                                         // Auditar
@@ -98,12 +105,16 @@ class FAS extends MY_Controller {
                                         $registro_auditoria->detalles = json_encode($tramite_array);
 
                                         $data = array();
-					$tipo = ($tipo=='social')?'deletesocialrequest':'deletemedicalrequest';	
+					                    $tipo = ($tipo=='social')?'deletesocialrequest':'deletemedicalrequest';	
                                         $url = urlapi."fas/".$request_id."/".$tipo;
-					$ch = curl_init($url);
+					                    $ch = curl_init($url);
                                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                                         curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
+                                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                                            "cache-control: no-cache",
+                                           "Authorization: Bearer ".$token
+                                        ));
 
                                         $response = curl_exec($ch);
 
@@ -172,24 +183,28 @@ class FAS extends MY_Controller {
  }
 
 public function generarconsolidado(){
-	 $fecha_inicial =($this->input->get('fecha_inicial'))?$this->input->get('fecha_inicial'):null;
-         $fecha_final   =($this->input->get('fecha_final'))?$this->input->get('fecha_final'):null;
+    $fecha_inicial =($this->input->get('fecha_inicial'))?$this->input->get('fecha_inicial'):null;
+    $fecha_final   =($this->input->get('fecha_final'))?$this->input->get('fecha_final'):null;
 
-	$url = urlapi . "/fas/".$fecha_inicial."/".$fecha_final."/benefitrequest";
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
-                ));
-        $result=curl_exec($ch);
-        curl_close($ch);
+    $oa = new Authorization();
+    $token = $oa->getToken();
 
-        $json_ws = json_decode($result);
-        $CI =& get_instance();
-        $CI->load->library('Excel');
-        $object = new PHPExcel();
+    $url = urlapi . "/fas/".$fecha_inicial."/".$fecha_final."/benefitrequest";
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL,$url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+           "Content-Type: application/json",
+           "Authorization: Bearer ".$token
+        ));
+    $result=curl_exec($ch);
+    curl_close($ch);
+
+    $json_ws = json_decode($result);
+    $CI =& get_instance();
+    $CI->load->library('Excel');
+    $object = new PHPExcel();
 
 	$table_columns = array("Rut","Fecha","Monto","Beneficio","Estado pago","Voucher","Tramite nexo");
 
@@ -236,6 +251,8 @@ public function generarconsolidado(){
                 redirect('tramites/disponibles');
         }
 	
+    $oa = new Authorization();
+    $token = $oa->getToken();
 	$escolar =($this->input->get('escolar'))?$this->input->get('escolar'):null;
 	
 	$url = urlapi . "/fas/paidBenefit";
@@ -248,8 +265,9 @@ public function generarconsolidado(){
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
-                ));
+           "Content-Type: application/json",
+           "Authorization: Bearer ".$token
+        ));
         $result=curl_exec($ch);
         curl_close($ch);
 

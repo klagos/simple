@@ -1,5 +1,7 @@
 <?php
 require_once('campo.php');
+require_once('/var/www/html/simple/application/controllers/authorization.php');
+
 class CampoChosenUnitario extends Campo {
     
     protected function display($modo, $dato, $etapa_id) {
@@ -17,6 +19,9 @@ class CampoChosenUnitario extends Campo {
 	
 	if ($this->extra->ws and !$this->datos){
 
+        $oa = new Authorization();
+        $token = $oa->getToken(); 
+       
 		//Obtener data de WS	
 		$url = $this->extra->ws;
 	        $ch = curl_init($url);
@@ -24,7 +29,8 @@ class CampoChosenUnitario extends Campo {
 	        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	        curl_setopt($ch, CURLOPT_URL,$url);
 	        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-	                "Content-Type: application/json"
+	                "Content-Type: application/json",
+                    "Authorization: Bearer ".$token
 	            ));
 	        $result=curl_exec($ch);
 	        curl_close($ch);

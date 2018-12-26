@@ -1,5 +1,6 @@
 <?php
 require_once(FCPATH."procesos.php");
+require_once('authorization.php');
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -20,6 +21,9 @@ class Admindays extends MY_Controller {
                 
 	$json_ws = apcu_fetch('json_list_users_admin');
         if (!$json_ws){
+
+            $oa = new Authorization();
+            $token = $oa->getToken(); 
                 //Obtener data de usuarios
                 $url = urlapi . "users/list/small/admindays";
 	        $ch = curl_init($url);
@@ -27,7 +31,8 @@ class Admindays extends MY_Controller {
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_URL,$url);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
+                   "Content-Type: application/json",
+                    "Authorization: Bearer ".$token
                 ));
                 $result=curl_exec($ch);
                 curl_close($ch);
@@ -74,6 +79,9 @@ class Admindays extends MY_Controller {
                                 $user_id = UsuarioSesion::usuario()->id;
 
                                 if($tramite->usuarioHaParticipado($user_id)){
+                                        $oa = new Authorization();
+                                        $token = $oa->getToken();
+
                                         $fecha = new DateTime ();
                                         $proceso = $tramite->Proceso;
                                         // Auditar
@@ -101,6 +109,10 @@ class Admindays extends MY_Controller {
                                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                                         curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
+                                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                                            "Content-Type: application/json",
+                                            "Authorization: Bearer ".$token
+                                        ));
 
                                         $response = curl_exec($ch);
 

@@ -1,5 +1,6 @@
 <?php
 require_once('campo.php');
+//require_once('/var/www/html/simple/application/controllers/authorization.php');
 class CampoSelect extends Campo {
     
     protected function display($modo, $dato, $etapa_id) {
@@ -29,6 +30,9 @@ class CampoSelect extends Campo {
 
 
         if($this->extra && $this->extra->ws){
+            //$oa = new Authorization();
+            //$token = $oa->getToken(); 
+            //ChromePhp::log("AJAX: ".$token);
             $display.='
             <script>
                 $(document).ready(function(){

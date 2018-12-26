@@ -2,6 +2,7 @@
 require_once(FCPATH."procesos.php");
 require_once('accion.php');
 require_once('ChromePhp.php');
+require_once('/var/www/html/simple/application/controllers/authorization.php');
 
 class AccionGuardarUsuarioPersonal extends Accion {
 
@@ -28,9 +29,9 @@ class AccionGuardarUsuarioPersonal extends Accion {
         $display.='<input type="text" name="extra[estado_civil]" value="' . (isset($this->extra->estado_civil) ? $this->extra->estado_civil : '') . '" />';
         $display.= '<label>Tel&eacute;fono</label>';
         $display.='<input type="text" name="extra[telefono]" value="' . (isset($this->extra->telefono) ? $this->extra->telefono : '') . '" />';
- 	$display .= '<label>Correo Electr&oacute;nico</label>';
+ 	    $display .= '<label>Correo Electr&oacute;nico</label>';
         $display.='<input type="text" name="extra[correo]" value="' . (isset($this->extra->correo) ? $this->extra->correo : '') . '" />';
- 	$display.= '<label>Domicilio</label>';
+ 	    $display.= '<label>Domicilio</label>';
         $display.='<input type="text" name="extra[domicilio]" value="' . (isset($this->extra->domicilio) ? $this->extra->domicilio : '') . '" />';
         $display.= '<label>Ciudad</label>';
         $display.='<input type="text" name="extra[ciudad]" value="' . (isset($this->extra->ciudad) ? $this->extra->ciudad : '') . '" />';
@@ -44,15 +45,15 @@ class AccionGuardarUsuarioPersonal extends Accion {
 
     public function validateForm() {
         $CI = & get_instance();
-	$CI->form_validation->set_rules('extra[rut]', 'Rut', 'required');
-	$CI->form_validation->set_rules('extra[nombres]','Nombres','required');
-	$CI->form_validation->set_rules('extra[apellido_paterno]', 'Apellido Paterno', 'required');
+    	$CI->form_validation->set_rules('extra[rut]', 'Rut', 'required');
+    	$CI->form_validation->set_rules('extra[nombres]','Nombres','required');
+    	$CI->form_validation->set_rules('extra[apellido_paterno]', 'Apellido Paterno', 'required');
         $CI->form_validation->set_rules('extra[apellido_materno]','Apellido Materno','required');
-	$CI->form_validation->set_rules('extra[sexo]', 'Sexo', 'required');
+	    $CI->form_validation->set_rules('extra[sexo]', 'Sexo', 'required');
         $CI->form_validation->set_rules('extra[fecha_nacimiento]','Fecha de Nacimiento','required');
         $CI->form_validation->set_rules('extra[nacionalidad]', 'Nacionalidad', 'required');
         $CI->form_validation->set_rules('extra[profesion]','Profesi&oacute;n','required');
-	$CI->form_validation->set_rules('extra[estado_civil]', 'Estado Civil', 'required');
+	    $CI->form_validation->set_rules('extra[estado_civil]', 'Estado Civil', 'required');
         $CI->form_validation->set_rules('extra[telefono]','Tel&eacute;fono','required');
         $CI->form_validation->set_rules('extra[domicilio]', 'Domicilio', 'required');
         $CI->form_validation->set_rules('extra[ciudad]','Ciudad','required');
@@ -65,16 +66,16 @@ class AccionGuardarUsuarioPersonal extends Accion {
         $regla=new Regla($this->extra->rut);
         $rut=$regla->getExpresionParaOutput($etapa->id);
 
-	$regla=new Regla($this->extra->nombres);
+	    $regla=new Regla($this->extra->nombres);
         $nombres=$regla->getExpresionParaOutput($etapa->id);
 
         $regla=new Regla($this->extra->apellido_paterno);
         $apellido_paterno=$regla->getExpresionParaOutput($etapa->id);
 
-	$regla=new Regla($this->extra->apellido_materno);
+	    $regla=new Regla($this->extra->apellido_materno);
         $apellido_materno=$regla->getExpresionParaOutput($etapa->id);
 
-	$regla=new Regla($this->extra->sexo);
+	    $regla=new Regla($this->extra->sexo);
         $sexo=$regla->getExpresionParaOutput($etapa->id);
 
         $regla=new Regla($this->extra->fecha_nacimiento);
@@ -86,7 +87,7 @@ class AccionGuardarUsuarioPersonal extends Accion {
         $regla=new Regla($this->extra->profesion);
         $profesion=$regla->getExpresionParaOutput($etapa->id);
 
-	$regla=new Regla($this->extra->estado_civil);
+	    $regla=new Regla($this->extra->estado_civil);
         $estado_civil=$regla->getExpresionParaOutput($etapa->id);
 
         $regla=new Regla($this->extra->telefono);
@@ -98,7 +99,7 @@ class AccionGuardarUsuarioPersonal extends Accion {
         $regla=new Regla($this->extra->domicilio);
         $domicilio=$regla->getExpresionParaOutput($etapa->id);
 
-	$regla=new Regla($this->extra->ciudad);
+	    $regla=new Regla($this->extra->ciudad);
         $ciudad=$regla->getExpresionParaOutput($etapa->id);
 
         $regla=new Regla($this->extra->comuna);
@@ -107,7 +108,7 @@ class AccionGuardarUsuarioPersonal extends Accion {
         $regla=new Regla($this->extra->region);
         $region=$regla->getExpresionParaOutput($etapa->id);        
 
-	$tramite_id = $etapa->tramite_id;
+	    $tramite_id = $etapa->tramite_id;
 	
 	$json = new stdClass();
 	$json->rut = $rut;
@@ -130,8 +131,11 @@ class AccionGuardarUsuarioPersonal extends Accion {
 	$json = '['.$json.']';
 	
 	ChromePhp::log($json);
+
+    $oa = new Authorization();
+    $token = $oa->getToken();
 	
-        $ch = curl_init();
+    $ch = curl_init();
 	$url = urlapi."users/".$rut."/admindayrequest";
 	//$url = "http://private-120a8-apisimpleist.apiary-mock.com/"."users/".$rut."/admindayrequest";
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -139,8 +143,9 @@ class AccionGuardarUsuarioPersonal extends Accion {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                "Content-Type: application/json"
-                    ));
+            "Content-Type: application/json", 
+            "Authorization: Bearer ".$token
+        ));
         curl_exec($ch);
         curl_close($ch);
     }

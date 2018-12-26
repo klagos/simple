@@ -2,6 +2,7 @@
 require_once(FCPATH."procesos.php");
 require_once('accion.php');
 require_once('ChromePhp.php');
+require_once('/var/www/html/simple/application/controllers/authorization.php');
 
 class AccionGuardarMedico extends Accion {
 
@@ -48,7 +49,10 @@ class AccionGuardarMedico extends Accion {
 	
 	$json = json_encode($json);
         $json = '['.$json.']';
-	$url = urlapi."medico";	
+
+        $oa = new Authorization();
+        $token = $oa->getToken();
+	    $url = urlapi."medico";	
 	
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -56,8 +60,9 @@ class AccionGuardarMedico extends Accion {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                "Content-Type: application/json"
-                    ));
+            "Content-Type: application/json", 
+            "Authorization: Bearer ".$token
+        ));
         curl_exec($ch);
         curl_close($ch);
     }

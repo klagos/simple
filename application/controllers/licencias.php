@@ -1,5 +1,6 @@
 <?php
 require_once(FCPATH."procesos.php");
+require_once('authorization.php');
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -18,6 +19,10 @@ class Licencias extends MY_Controller {
 
                 $json_ws = apcu_fetch('json_list_users_vacation');
                 if (!$json_ws){
+
+                        $oa = new Authorization();
+                        $token = $oa->getToken();
+
                         //Obtener data de usuarios
                         $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
                         $ch = curl_init($url);
@@ -25,7 +30,8 @@ class Licencias extends MY_Controller {
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                         curl_setopt($ch, CURLOPT_URL,$url);
                         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                               "Content-Type: application/json"
+                               "Content-Type: application/json",
+                               "Authorization: Bearer ".$token
                         ));
                         $result=curl_exec($ch);
                         curl_close($ch);
@@ -298,13 +304,15 @@ class Licencias extends MY_Controller {
 	}
 
 	public function conectUrl($url,$json){
-		
+		$oa = new Authorization();
+        $token = $oa->getToken();
 		$ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json" ));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json",
+                                           "Authorization: Bearer ".$token ));
                 $result = curl_exec($ch);
                 curl_close($ch);                
                 return $result;
@@ -441,16 +449,19 @@ class Licencias extends MY_Controller {
                         $url.="&down=".$downloaded ;	
 			
 		//CALL API
+        $oa = new Authorization();
+        $token = $oa->getToken();
 		$ch = curl_init($url);
-                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_URL,$url);
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                               "Content-Type: application/json"
-                        ));
-                $result=curl_exec($ch);
-                curl_close($ch);
-               	$json_lic = json_decode($result);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Authorization: Bearer ".$token
+        ));
+        $result=curl_exec($ch);
+        curl_close($ch);
+	    $json_lic = json_decode($result);
 		
 		//EXCEL
 		$CI =& get_instance();
@@ -509,6 +520,8 @@ class Licencias extends MY_Controller {
 		//GET list workers
 		$json_ws = apcu_fetch('json_list_users_vacation');
                 if(!$json_ws){
+                    $oa = new Authorization();
+                    $token = $oa->getToken();
                         //Obtener data de usuarios
                         $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
                         $ch = curl_init($url);
@@ -516,7 +529,8 @@ class Licencias extends MY_Controller {
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                         curl_setopt($ch, CURLOPT_URL,$url);
                         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                               "Content-Type: application/json"
+                            "Content-Type: application/json",
+                            "Authorization: Bearer ".$token
                         ));
                         $result=curl_exec($ch);
                         curl_close($ch);
@@ -880,13 +894,20 @@ class Licencias extends MY_Controller {
 
 
                                         $registro_auditoria->detalles = json_encode($tramite_array);
-					
+					                    
+                                        $oa = new Authorization();
+                                        $token = $oa->getToken();
+
                                         $data = array();
                                         $url = urlapi."licenses/".$tramite_id."/delete";
                                         $ch = curl_init($url);
                                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                                         curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
+                                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                                            "cache-control: no-cache",
+                                           "Authorization: Bearer ".$token
+                                        ));
 
                                         $response = curl_exec($ch);
 

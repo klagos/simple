@@ -3,6 +3,8 @@
 require_once(FCPATH."procesos.php");
 require_once('accion.php');
 require_once('ChromePhp.php');
+require_once('/var/www/html/simple/application/controllers/authorization.php');
+
 
 class AccionGuardarRutAnnos extends Accion {
 
@@ -38,15 +40,17 @@ class AccionGuardarRutAnnos extends Accion {
             $years=0;
         }        
 
-       
+        $oa = new Authorization();
+        $token = $oa->getToken(); 
+               
 
-        $url = urlapi."users/".$rut."/validatedYears/".$years;	
+        $url = urlapi."users/".$rut."/validatedYears/".$years;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
         curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json"));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( "Content-Type: application/json", "Authorization: Bearer ".$token));
         $result = curl_exec($ch);
         $httpCodeResponse = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         
@@ -74,7 +78,12 @@ class AccionGuardarRutAnnos extends Accion {
             $dato2->save();
         }
 
+        ChromePhp::log("BYE: ".$token);
+    } 
 
-    }
 
 }
+
+
+?>
+

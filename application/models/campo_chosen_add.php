@@ -1,5 +1,6 @@
 <?php
 require_once('campo.php');
+require_once('/var/www/html/simple/application/controllers/authorization.php');
 class CampoChosenAdd extends Campo {
     	
     protected function display($modo, $dato, $etapa_id) {
@@ -17,16 +18,19 @@ class CampoChosenAdd extends Campo {
 
 	//Obtener data desde WS
 	if ($this->extra->ws and !$this->datos){
-                $url = $this->extra->ws;
-                $ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        "Content-Type: application/json"
-                    ));
-                $result=curl_exec($ch);
-                curl_close($ch);
+        $oa = new Authorization();
+        $token = $oa->getToken(); 
+        $url = $this->extra->ws;
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                "Content-Type: application/json",
+                "Authorization: Bearer ".$token
+            ));
+        $result=curl_exec($ch);
+        curl_close($ch);
 
 		$json_ws = json_decode($result);
 

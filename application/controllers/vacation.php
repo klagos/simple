@@ -1,5 +1,6 @@
 <?php
 require_once(FCPATH."procesos.php");
+require_once('authorization.php');
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -11,48 +12,57 @@ class Vacation extends MY_Controller {
 
     public function consultar(){
 	
+
 	  //Verificamos que el usuario ya se haya logeado 
         if (!UsuarioSesion::usuario()->registrado) {
         	$this->session->set_flashdata('redirect', current_url());
                 redirect('tramites/disponibles');
         }		
 
-                
-	$json_ws = apcu_fetch('json_list_users_vacation');
+        $oa = new Authorization();
+        $token = $oa->getToken();
+        
+         
+	    $json_ws = apcu_fetch('json_list_users_vacation');
+    
+        //if (!$json_ws){
         if (!$json_ws){
-                //Obtener data de usuarios
-                $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
-	        $ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_URL,$url);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
-                ));
-                $result=curl_exec($ch);
-                curl_close($ch);
+           
+            //Obtener data de usuarios
+            $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+               "Content-Type: application/json",
+               "Authorization: Bearer ".$token
+            ));
+            $result=curl_exec($ch);
+            curl_close($ch);
 
-                $json_ws = json_decode($result);
-                apcu_add('json_list_users_vacation',$json_ws,1800);
+            $json_ws = json_decode($result);
+            apcu_add('json_list_users_vacation',$json_ws,1800);
         }
-	
-	$data['json_list_users'] = $json_ws;
-        $data['title']='Consultar';
-	$data['sidebar']='vacation_consultar';
-        $data['content'] = 'vacation/consultar';
-       
-        $this->load->view('template', $data);
-   }
 
-  public function ajax_auditar_eliminar_tramite_vacation($tramite_id,$request_id,$rut){
+    	$data['json_list_users'] = $json_ws;
+        $data['title']='Consultar';
+    	$data['sidebar']='vacation_consultar';
+        $data['content'] = 'vacation/consultar';
+        $data['token']=$token;
+           
+        $this->load->view('template', $data);
+    }
+
+    public function ajax_auditar_eliminar_tramite_vacation($tramite_id,$request_id,$rut){
         $tramite = Doctrine::getTable("Tramite")->find($tramite_id);
         $data['tramite'] = $tramite;
         $data['requerimiento'] = $request_id;
-	$data['rut'] = $rut;
+        $data['rut'] = $rut;
         $this->load->view ( 'vacation/ajax_auditar_eliminar_tramite_vacation', $data );
-  }
+    }
   
-  public function borrar_tramite_vacation($tramite_id,$request_id,$rut) {
+    public function borrar_tramite_vacation($tramite_id,$request_id,$rut) {
 
                 //Verificamos que el usuario ya se haya logeado 
                 if (!UsuarioSesion::usuario()->registrado) {
@@ -86,7 +96,10 @@ class Vacation extends MY_Controller {
                         }
 
                         if($tramite!=null){
-                                $user_id = UsuarioSesion::usuario()->id;
+
+                            $oa = new Authorization();
+                            $token = $oa->getToken();
+                            $user_id = UsuarioSesion::usuario()->id;
 				
                                 //if($tramite->usuarioHaParticipado($user_id)){
                                         $fecha = new DateTime ();
@@ -116,7 +129,10 @@ class Vacation extends MY_Controller {
                                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                                         curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
-
+                                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                                            "cache-control: no-cache",
+                                           "Authorization: Bearer ".$token
+                                        ));
                                         $response = curl_exec($ch);
 
                                         if ($response){
@@ -148,9 +164,9 @@ class Vacation extends MY_Controller {
                 }
 
                 echo json_encode($respuesta);
-        }
+    }
 
-  public function detail($tramite_id){
+    public function detail($tramite_id){
 	 //Verificamos que el usuario ya se haya logeado 
         if (!UsuarioSesion::usuario()->registrado) {
                 $this->session->set_flashdata('redirect', current_url());
@@ -164,24 +180,24 @@ class Vacation extends MY_Controller {
   }
   
  public function print_tramite($tramite_id){
-         //Verificamos que el usuario ya se haya logeado 
-        if (!UsuarioSesion::usuario()->registrado) {
-                $this->session->set_flashdata('redirect', current_url());
-                redirect('tramites/disponibles');
-        }
+     //Verificamos que el usuario ya se haya logeado 
+    if (!UsuarioSesion::usuario()->registrado) {
+            $this->session->set_flashdata('redirect', current_url());
+            redirect('tramites/disponibles');
+    }
 
-        $tramite = Doctrine::getTable("Tramite")->find($tramite_id);
-	if($tramite!=null){
-        	$dato = Doctrine::getTable('file')->findOneByTipoAndTramite('documento',$tramite_id);
-                $filename = $dato[0]->filename;
-		$path = 'uploads/documentos/'.$filename;
-	
-		if(file_exists($path)){
-			$this->load->helper('download');
-			$data = file_get_contents ( $path );
-			force_download ( $path, $data );	
-		}else
-			 ChromePhp::log("ERROR PATH");
+    $tramite = Doctrine::getTable("Tramite")->find($tramite_id);
+   if($tramite!=null){
+    	$dato = Doctrine::getTable('file')->findOneByTipoAndTramite('documento',$tramite_id);
+            $filename = $dato[0]->filename;
+	$path = 'uploads/documentos/'.$filename;
+
+	if(file_exists($path)){
+		$this->load->helper('download');
+		$data = file_get_contents ( $path );
+		force_download ( $path, $data );	
+	}else
+		 ChromePhp::log("ERROR PATH");
 	}
   }
 
@@ -225,7 +241,7 @@ class Vacation extends MY_Controller {
         	$this->session->set_flashdata('redirect', current_url());
                 redirect('tramites/disponibles');
         }
-
+        
         //Variables de la query
        	$proceso_id = proceso_vacation;
        	$contador = 0;
@@ -307,6 +323,8 @@ public function reporte(){
                 redirect('tramites/disponibles');
         }
 	
+    $oa = new Authorization();
+    $token = $oa->getToken();
 	
 	$url = urlapi . "/users/list/vacationperiod";
         //$url = "https://www.api.nexoya.cl/users/list/vacationperiod";
@@ -315,8 +333,9 @@ public function reporte(){
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
-                ));
+            "cache-control: no-cache",
+            "Authorization: Bearer ".$token
+        ));
         $result=curl_exec($ch);
         curl_close($ch);
 	$json_ws = json_decode($result);
@@ -610,16 +629,19 @@ public function reporte(){
                 $this->session->set_flashdata('redirect', current_url());
                 redirect('tramites/disponibles');
         }
-	
 	$mes   =($this->input->get('mes'))?$this->input->get('mes'):null;
 	
+    $oa = new Authorization();
+        $token = $oa->getToken();
+    
 	$url = urlapi . "/vacation/".$mes."/request";
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
+                       "Content-Type: application/json",
+               "Authorization: Bearer ".$token
                 ));
         $result=curl_exec($ch);
         curl_close($ch);
@@ -677,6 +699,9 @@ public function reporte_solicitudes(){
                     $this->session->set_flashdata('redirect', current_url());
                     redirect('tramites/disponibles');
             }
+            ChromePhp::log("ACA");
+            $oa = new Authorization();
+            $token = $oa->getToken();
             //$url = "https://www.api.nexoya.cl/users/list/vacationrequest";
             $url = urlapi . "/users/list/vacationrequest";
             $ch = curl_init($url);
@@ -684,7 +709,8 @@ public function reporte_solicitudes(){
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_URL,$url);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                           "Content-Type: application/json"
+                           "Content-Type: application/json",
+               "Authorization: Bearer ".$token
                     ));
             $result=curl_exec($ch);
             curl_close($ch);
@@ -927,16 +953,22 @@ public function reporte_solicitudes(){
                 $this->session->set_flashdata('redirect', current_url());
                 redirect('tramites/disponibles');
         }
+ 
+        $oa = new Authorization();
+        $token = $oa->getToken();
 
         $mes   =($this->input->get('mes'))?$this->input->get('mes'):null;
-
+	
         $url = urlapi . "/vacation/".$mes."/provision";
-        $ch = curl_init($url);
+	ChromePhp::log($url);
+        
+$ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
+       curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		"cache-control: no-cache",
+                       "Authorization: Bearer ".$token
                 ));
         $result=curl_exec($ch);
         curl_close($ch);
@@ -1024,13 +1056,17 @@ public function request_all_descargar(){
 	
 	$fecha_final =trim(($this->input->get('fecha_termino'))?$this->input->get('fecha_termino'):null);
 
+        $oa = new Authorization();
+        $token = $oa->getToken();
+
         $url = urlapi . "/vacation/".$fecha_final."/vacationrequestdownloaded";
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       "Content-Type: application/json"
+                "cache-control: no-cache",
+                "Authorization: Bearer ".$token
                 ));
         $result=curl_exec($ch);
         curl_close($ch);
