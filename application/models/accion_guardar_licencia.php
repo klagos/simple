@@ -1,6 +1,7 @@
 <?php
 require_once('accion.php');
 require_once('ChromePhp.php');
+require_once('/var/www/html/simple/application/controllers/authorization.php');
 
 class AccionGuardarLicencia extends Accion {
 
@@ -215,6 +216,9 @@ class AccionGuardarLicencia extends Accion {
 	$json.= '"returnSaldo": '.(isset($return_saldo) ? ($return_saldo == null ? '0' : $return_saldo) : '0').', ';
 	$json.= '"returnObservation": '.(isset($return_observation) ? '"'.$return_observation.'"' : '""').'}';
 	
+    $oa = new Authorization();
+    $token = $oa->getToken();
+
 	$url = urlapi."licenses";
         
 	$ch = curl_init();
@@ -223,8 +227,9 @@ class AccionGuardarLicencia extends Accion {
         curl_setopt($ch, CURLOPT_POST, true);           
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);  
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                "Content-Type: application/json"
-                    ));
+            "Content-Type: application/json", 
+            "Authorization: Bearer ".$token
+        ));
         curl_exec($ch);
         curl_close($ch);
 
