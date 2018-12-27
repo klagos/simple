@@ -271,7 +271,9 @@ class PieFirma extends MY_Controller {
 			
 			$this->load->helper('download');
                         $data = file_get_contents ( $path );
-                        force_download ("pie_firma.jpg", $data );       
+                        ob_end_clean();
+        		ob_start();
+			force_download ("pie_firma.jpg", $data );       
                         
                         imagedestroy($im);
 			

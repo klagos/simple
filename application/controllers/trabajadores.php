@@ -551,11 +551,13 @@ class Trabajadores extends MY_Controller {
 
 	    $object->removeSheetByIndex(1); // ESTA LINEA SE USA PARA ELIMINAR LA HOJA QUE SE GENERA AUTOMATICAMENTE, FUNCIONAN COMO ARREGLOS. AHORA EXISTEN LAS HOJAS [0] Y [2] Y BORRO [1]
 	    // SE GENERAL EXCEL 
-	    $title = date("d-m-Y");
+	    $title = "test";//date("d-m-Y");
             $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
-            header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment;filename="reporte_solicitudes_'.$title.'".xls"');
-            $object_writer->save('php://output');
+            header('Content-Type: application/vnd.ms-excel;charset=iso-8859-15');
+            header('Content-Disposition: attachment;filename="reporte_solicitudes.xls"');
+            ob_end_clean();
+	    ob_start();
+	    $object_writer->save('php://output');
 
 	}
 

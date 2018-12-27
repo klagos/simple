@@ -60,11 +60,11 @@ class Authorization extends MY_Controller {
 
     //obtener token client y secret id hardcodeado
     private function getAccessToken(){
-   
+  	$url = urlapi ."oauth/token";
         $curl = curl_init();
         curl_setopt_array($curl, array(
-        CURLOPT_PORT => "8080",
-        CURLOPT_URL => "http://www.dev.nexoya.cl:8080/oauth/token",
+        CURLOPT_PORT => "443",
+        CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -90,10 +90,10 @@ class Authorization extends MY_Controller {
     //client y secret id Hardcodeado
     public function getAccessTokenPassword($username, $password){
         $curl = curl_init();
-
+	$url = urlapi ."oauth/token";
         curl_setopt_array($curl, array(
-        CURLOPT_PORT => "8080",
-        CURLOPT_URL => "http://www.dev.nexoya.cl:8080/oauth/token",
+        CURLOPT_PORT => "443",
+        CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -123,10 +123,10 @@ class Authorization extends MY_Controller {
     //Renovar Token modo Password
     public function refreshToken($rToken){
         $curl = curl_init();
-
+	$url = urlapi ."oauth/token";
         curl_setopt_array($curl, array(
-        CURLOPT_PORT => "8080",
-        CURLOPT_URL => "http://www.dev.nexoya.cl:8080/oauth/token",
+        CURLOPT_PORT => "443",
+        CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -156,10 +156,10 @@ class Authorization extends MY_Controller {
 
     public function checkToken($token){
         $curl = curl_init();
-
+	$url = urlapi;
         curl_setopt_array($curl, array(
-        CURLOPT_PORT => "8080",
-        CURLOPT_URL => "http://www.dev.nexoya.cl:8080/oauth/check_token?token=".$token,
+        CURLOPT_PORT => "443",
+        CURLOPT_URL => $url."oauth/check_token?token=".$token,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,

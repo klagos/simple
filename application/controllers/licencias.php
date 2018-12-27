@@ -836,6 +836,8 @@ class Licencias extends MY_Controller {
         	header('Content-Type: application/vnd.ms-excel');
         	header('Content-Disposition: attachment;filename="descarga_masiva_licencias".xls"');
 		header_remove('Set-Cookie');
+		ob_end_clean();
+		ob_start();
         	$object_writer->save('php://output');
 
 			

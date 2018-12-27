@@ -17,13 +17,12 @@ class Admindays extends MY_Controller {
         	$this->session->set_flashdata('redirect', current_url());
                 redirect('tramites/disponibles');
         }		
-
+	 $oa = new Authorization();
+            $token = $oa->getToken();
                 
 	$json_ws = apcu_fetch('json_list_users_admin');
         if (!$json_ws){
 
-            $oa = new Authorization();
-            $token = $oa->getToken(); 
                 //Obtener data de usuarios
                 $url = urlapi . "users/list/small/admindays";
 	        $ch = curl_init($url);
@@ -81,7 +80,7 @@ class Admindays extends MY_Controller {
                                 if($tramite->usuarioHaParticipado($user_id)){
                                         $oa = new Authorization();
                                         $token = $oa->getToken();
-
+					ChromePhp::log($token);
                                         $fecha = new DateTime ();
                                         $proceso = $tramite->Proceso;
                                         // Auditar
@@ -110,8 +109,8 @@ class Admindays extends MY_Controller {
                                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                                         curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
                                         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                                            "Content-Type: application/json",
-                                            "Authorization: Bearer ".$token
+                                            	"cache-control: no-cache",
+						"Authorization: Bearer ".$token
                                         ));
 
                                         $response = curl_exec($ch);

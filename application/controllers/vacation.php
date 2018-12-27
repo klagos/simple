@@ -18,16 +18,14 @@ class Vacation extends MY_Controller {
         	$this->session->set_flashdata('redirect', current_url());
                 redirect('tramites/disponibles');
         }		
-
-        $oa = new Authorization();
-        $token = $oa->getToken();
-        
          
-	    $json_ws = apcu_fetch('json_list_users_vacation');
-    
-        //if (!$json_ws){
+	$json_ws = apcu_fetch('json_list_users_vacation');
+   	
         if (!$json_ws){
-           
+       
+         	$oa = new Authorization();
+        	$token = $oa->getToken(); 
+ 
             //Obtener data de usuarios
             $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
             $ch = curl_init($url);
@@ -49,7 +47,6 @@ class Vacation extends MY_Controller {
         $data['title']='Consultar';
     	$data['sidebar']='vacation_consultar';
         $data['content'] = 'vacation/consultar';
-        $data['token']=$token;
            
         $this->load->view('template', $data);
     }
@@ -195,6 +192,8 @@ class Vacation extends MY_Controller {
 	if(file_exists($path)){
 		$this->load->helper('download');
 		$data = file_get_contents ( $path );
+		ob_end_clean();
+                ob_start();
 		force_download ( $path, $data );	
 	}else
 		 ChromePhp::log("ERROR PATH");
@@ -339,7 +338,7 @@ public function reporte(){
         $result=curl_exec($ch);
         curl_close($ch);
 	$json_ws = json_decode($result);
-        
+       	
 	$CI =& get_instance();
         $CI->load->library('Excel');
         $object = new PHPExcel();
@@ -616,7 +615,9 @@ public function reporte(){
         $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="vacation_reporte_'.$title.'".xls"');
-        $object_writer->save('php://output');	
+        ob_end_clean();
+        ob_start();
+	$object_writer->save('php://output');	
 }
  
 
@@ -943,7 +944,9 @@ public function reporte_solicitudes(){
         $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="reporte_solicitudes'.$title.'".xls"');
-        $object_writer->save('php://output');
+        ob_end_clean();
+        ob_start();
+	$object_writer->save('php://output');
 
 
 }
@@ -1036,7 +1039,9 @@ $ch = curl_init($url);
         $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="provision_vacation".xls"');
-        $object_writer->save('php://output');
+        ob_end_clean();
+        ob_start();
+	$object_writer->save('php://output');
 
         $data['sidebar']='vacation_provision';
         $data['content'] = 'vacation/provision';
@@ -1109,6 +1114,8 @@ public function request_all_descargar(){
         $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="request_all_vacation_'.$fecha.'.xls"');
+	ob_end_clean();
+        ob_start();
         $object_writer->save('php://output');
  }
 

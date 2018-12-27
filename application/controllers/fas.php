@@ -237,7 +237,9 @@ public function generarconsolidado(){
         $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="consolidado_fas".xls"');
-        $object_writer->save('php://output');
+        ob_end_clean();
+	ob_start();
+	$object_writer->save('php://output');
 
 
 }
@@ -298,7 +300,9 @@ public function generarconsolidado(){
 	$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="reporte_pago".xls"');
-        $object_writer->save('php://output');
+        ob_end_clean();
+	ob_start();
+	$object_writer->save('php://output');
  }
  
 

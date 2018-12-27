@@ -240,7 +240,9 @@ class GuiaTelefono extends MY_Controller {
             	$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
             	header('Content-Type: application/vnd.ms-excel');
             	header('Content-Disposition: attachment;filename="reporte_email_'.$title.'".xls"');
-            	$object_writer->save('php://output');
+            	ob_end_clean();
+		ob_start();
+		$object_writer->save('php://output');
         }	
 
 
