@@ -53,7 +53,7 @@ class PieFirma extends MY_Controller {
 	public function conectUrl($url){
 
 		$oa = new Authorization();
-        $token = $oa->getToken();
+        $token = $oa->getTokenWithOutLogin();
 
 		$ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -105,7 +105,7 @@ class PieFirma extends MY_Controller {
 			$rut = trim($rut);
 			$json = '{"rut":"'.$rut.'", "phone":"'.$celular.'","annexPhone":"'.$anexo.'","areaCode":"'.$codigo.'"}';
 
-			$this->update_user_api($json);
+			$this->update_user_api($json,false);
 		}
 		$this->descargar($nombre.' '.$apellido,$gerencia,$cargo, $celular, $anexo, $codigo);
 	}	
@@ -135,7 +135,7 @@ class PieFirma extends MY_Controller {
                 	$json=$json.'"annexPhone":"'.$anexo_trabajador.'","areaCode":"'.$codigo_trabajador.'"}';
 			
 	
-			$this->update_user_api($json);
+			$this->update_user_api($json,true);
 			
 			//Los datos actualizados del usuario
 			$rut 	= $rut_trabajador;
@@ -162,10 +162,12 @@ class PieFirma extends MY_Controller {
 		}
 	}
 
-	public function update_user_api($json){
+	//$verifyUser true= need Login false = No login
+	public function update_user_api($json,$verifyUser){
 		
+
 		$oa = new Authorization();
-        $token = $oa->getToken();
+        $token = ($verifyUser) ? $oa->getToken() : $oa->getTokenWithOutLogin() ;
 
         $url  = urlapi."users";
 

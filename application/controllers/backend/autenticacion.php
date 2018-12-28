@@ -1,4 +1,7 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+<?php 
+require_once('../simple/application/controllers/authorization.php');
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Autenticacion extends MY_BackendController {
 
@@ -79,6 +82,10 @@ class Autenticacion extends MY_BackendController {
         } catch (Exception $err) {
             log_message('error', '{"method" : "login_correcto", "location" : "END", "status" : "ERROR", "exception" : "' . $err .'"}');
         }
+
+        //Pedir Token
+        $oa = new Authorization();
+        $oa->newToken();
     }
 
     private function login_incorrecto($usuario_o_email) {
@@ -246,6 +253,9 @@ class Autenticacion extends MY_BackendController {
     function logout() {
         UsuarioBackendSesion::logout();
         redirect($this->input->server('HTTP_REFERER'));
+        //Quitar Token 
+        $oa = new Authorization();
+        $oa->revokeToken();
     }
 
 

@@ -6,39 +6,39 @@ if (!defined('BASEPATH'))
 
 class Licencias extends MY_Controller {
  
-    	public function __construct() {
-        	parent::__construct();
-    	}
+	public function __construct() {
+    	parent::__construct();
+	}
 
 	public function buscador_new(){
-                //Verificamos que el usuario ya se haya logeado 
-                if (!UsuarioSesion::usuario()->registrado) {
-                        $this->session->set_flashdata('redirect', current_url());
-                        redirect('tramites/disponibles');
-                }
+        //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+            $this->session->set_flashdata('redirect', current_url());
+            redirect('tramites/disponibles');
+        }
 
-                $json_ws = apcu_fetch('json_list_users_vacation');
-                if (!$json_ws){
+        $json_ws = apcu_fetch('json_list_users_vacation');
+        if (!$json_ws){
 
-                        $oa = new Authorization();
-                        $token = $oa->getToken();
+            $oa = new Authorization();
+            $token = $oa->getToken();
 
-                        //Obtener data de usuarios
-                        $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
-                        $ch = curl_init($url);
-                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_URL,$url);
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                               "Content-Type: application/json",
-                               "Authorization: Bearer ".$token
-                        ));
-                        $result=curl_exec($ch);
-                        curl_close($ch);
+            //Obtener data de usuarios
+            $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                   "Content-Type: application/json",
+                   "Authorization: Bearer ".$token
+            ));
+            $result=curl_exec($ch);
+            curl_close($ch);
 
-                        $json_ws = json_decode($result);
-                        apcu_add('json_list_users_vacation',$json_ws,1800);
-                }
+            $json_ws = json_decode($result);
+            apcu_add('json_list_users_vacation',$json_ws,1800);
+        }
 
                 $data['json_list_users'] = $json_ws;
                 $data['sidebar']='licencia';
@@ -411,6 +411,8 @@ class Licencias extends MY_Controller {
 		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
   		header('Content-Type: application/vnd.ms-excel');
   		header('Content-Disposition: attachment;filename="Pago_licencia_"'.$fecha_pago.'".xls"');
+        ob_end_clean();
+        ob_start();
   		$object_writer->save('php://output');
 
         }
@@ -502,9 +504,11 @@ class Licencias extends MY_Controller {
 	
 			
 		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
-                header('Content-Type: application/vnd.ms-excel');
-                header('Content-Disposition: attachment;filename="reporte_licencia.xls"');
-                $object_writer->save('php://output');	
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="reporte_licencia.xls"');
+        ob_end_clean();
+        ob_start();
+        $object_writer->save('php://output');	
 	}
 	
 	/*
@@ -512,32 +516,32 @@ class Licencias extends MY_Controller {
 	*/	
 	public function reporte_masivo(){
 		//Verificamos que el usuario ya se haya logeado 
-                if (!UsuarioSesion::usuario()->registrado) {
-                        $this->session->set_flashdata('redirect', current_url());
-                        redirect('tramites/disponibles');
-                }
+        if (!UsuarioSesion::usuario()->registrado) {
+            $this->session->set_flashdata('redirect', current_url());
+            redirect('tramites/disponibles');
+        }
 		
 		//GET list workers
 		$json_ws = apcu_fetch('json_list_users_vacation');
-                if(!$json_ws){
-                    $oa = new Authorization();
-                    $token = $oa->getToken();
-                        //Obtener data de usuarios
-                        $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
-                        $ch = curl_init($url);
-                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_URL,$url);
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                            "Content-Type: application/json",
-                            "Authorization: Bearer ".$token
-                        ));
-                        $result=curl_exec($ch);
-                        curl_close($ch);
+        if(!$json_ws){
+            $oa = new Authorization();
+            $token = $oa->getToken();
+            //Obtener data de usuarios
+            $url = urlapi . "users/list/small?parameter=name,lastname,location,rut";
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL,$url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                "Content-Type: application/json",
+                "Authorization: Bearer ".$token
+            ));
+            $result=curl_exec($ch);
+            curl_close($ch);
 
-                        $json_ws = json_decode($result);
-                        apcu_add('json_list_users_vacation',$json_ws,1800);
-                }	
+            $json_ws = json_decode($result);
+            apcu_add('json_list_users_vacation',$json_ws,1800);
+        }	
 		$lista_user =  array();
 		
 		foreach ($json_ws as $json) {
@@ -561,10 +565,10 @@ class Licencias extends MY_Controller {
 
 		$column = 0;
 
-                foreach($table_columns as $field){
-                        $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
-                        $column++;
-                }
+        foreach($table_columns as $field){
+            $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+            $column++;
+        }
 		
 		foreach ($rowtramites as $tramite){
 			$idTramite="";
@@ -614,7 +618,7 @@ class Licencias extends MY_Controller {
                         	       
 					//DATOS LICENCIA
 					if($tra_nro["nombre"] == 'rut_trabajador_subsidio'){
-                        	                $rut = str_replace('"','',$tra_nro["valor"]);
+    	                $rut = str_replace('"','',$tra_nro["valor"]);
 						$dv  = explode("-", $rut)[1];
 						if($dv=='k')
 							$rut = explode("-", $rut)[0].'-K';
@@ -624,52 +628,52 @@ class Licencias extends MY_Controller {
 						else
 							$nombre = "-";
 					}	
-                                	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio' && $nombre==""){
+                	if($tra_nro["nombre"] == 'nombre_trabajador_subsidio' && $nombre==""){
 						$nombre =str_replace('"','',$tra_nro["valor"]);
-                                	}
+                	}
 					if($tra_nro["nombre"] == 'numero_licencia')
-                                                $numero = str_replace('"','',$tra_nro["valor"]);
+                        $numero = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'fecha_recepcion_licencia')
-                                                $fecha_rec = str_replace('"','',$tra_nro["valor"]);
+                        $fecha_rec = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'organismo_salud_licencia')
-                                	        $org_salud = str_replace('"','',$tra_nro["valor"]);
-                                	if($tra_nro["nombre"] == 'fecha_inicio_licencia')
-                                	        $inicio = str_replace('"','',$tra_nro["valor"]);
+            	        $org_salud = str_replace('"','',$tra_nro["valor"]);
+                	if($tra_nro["nombre"] == 'fecha_inicio_licencia')
+            	        $inicio = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'fecha_termino_licencia')
-                                	        $termino = str_replace('"','',$tra_nro["valor"]);
-                                	if($tra_nro["nombre"] == 'dias_licencia')
-                                	        $dias = str_replace('"','',$tra_nro["valor"]);
+            	        $termino = str_replace('"','',$tra_nro["valor"]);
+                	if($tra_nro["nombre"] == 'dias_licencia')
+            	        $dias = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'tipo_licencia'){
-                                	        $tipo = str_replace('"','',$tra_nro["valor"]);
+            	        $tipo = str_replace('"','',$tra_nro["valor"]);
 						if ($tipo == 1) {
 							$tipo = 'Enfermedad o accidente comun';
 						}elseif($tipo == 2){
 							$tipo = 'Medicina preventiva';
 						}elseif($tipo == 3){
-                                                        $tipo = 'Pre y postnatal';
-                                                }elseif($tipo == 4){
-                                                        $tipo = 'Enfermedad grave del ninio menor del anio';
-                                                }elseif($tipo == 5){
-                                                        $tipo = 'Accidente del trabajo o del trayecto';
-                                                }elseif($tipo == 6){
-                                                        $tipo = 'Enfermedad profesional';
-                                                }elseif($tipo == 7){
-                                                        $tipo = 'Patologias del embarazo';
-                                                }elseif($tipo == 8){
-                                                        $tipo = 'Permiso post natal parental';
-                                                }
+                            $tipo = 'Pre y postnatal';
+                        }elseif($tipo == 4){
+                            $tipo = 'Enfermedad grave del ninio menor del anio';
+                        }elseif($tipo == 5){
+                            $tipo = 'Accidente del trabajo o del trayecto';
+                        }elseif($tipo == 6){
+                            $tipo = 'Enfermedad profesional';
+                        }elseif($tipo == 7){
+                            $tipo = 'Patologias del embarazo';
+                        }elseif($tipo == 8){
+                            $tipo = 'Permiso post natal parental';
+                        }
 					}
-                        		if($tra_nro["nombre"] == 'tipo_reposo_licencia')
-                                                $tipo_reposo = str_replace('"','',$tra_nro["valor"]);
+            		if($tra_nro["nombre"] == 'tipo_reposo_licencia')
+                        $tipo_reposo = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'lugar_reposo_licencia'){
-                                                $lugar_reposo = str_replace('"','',$tra_nro["valor"]);
+                        $lugar_reposo = str_replace('"','',$tra_nro["valor"]);
 						$lugar_reposo = str_replace('[','',$lugar_reposo);
 						$lugar_reposo = str_replace(']','',$lugar_reposo);
 					}
 					
 					//DATOS PAGO
 					if($tra_nro["nombre"] == 'fecha_pago_subsidio'){
-                                                $fecha_pago = str_replace('"','',$tra_nro["valor"]);
+                        $fecha_pago = str_replace('"','',$tra_nro["valor"]);
 						if(in_array($fecha_pago,$fecha_paga_array))
 							$flag_revisar = "REVISAR";
 						$fecha_paga_array[]= $fecha_pago;
@@ -685,39 +689,39 @@ class Licencias extends MY_Controller {
                                                 $complemento_ant = str_replace('"','',$tra_nro["valor"]);
 					*/
 					if($tra_nro["nombre"] == 'anticipo_subsidio'){
-                                                $anticipo_tmp = str_replace('"','',$tra_nro["valor"]);
+                        $anticipo_tmp = str_replace('"','',$tra_nro["valor"]);
 						$anticipo = $anticipo + $anticipo_tmp;	
 					}
 					if($tra_nro["nombre"] == 'meses_anteriores_subsidio'){
-                                                $meses_ant_tmp = str_replace('"','',$tra_nro["valor"]);
+                        $meses_ant_tmp = str_replace('"','',$tra_nro["valor"]);
 						$meses_ant = $meses_ant + $meses_ant_tmp;
 					}
 					
 					if($tra_nro["nombre"] == 'dias_no_cubiertos_subsidio'){
-                                                $dias_no_cu_tmp = str_replace('"','',$tra_nro["valor"]);
+                        $dias_no_cu_tmp = str_replace('"','',$tra_nro["valor"]);
 						$dias_no_cu = $dias_no_cu + $dias_no_cu_tmp;
 					}
 					if($tra_nro["nombre"] == 'complemento_subsidio'){
-                                               	$complemento_tmp = str_replace('"','',$tra_nro["valor"]);
+                       	$complemento_tmp = str_replace('"','',$tra_nro["valor"]);
 						$complemento = $complemento + $complemento_tmp;
 					}
 					if($tra_nro["nombre"] == 'observacion_pago_sub')
-                                                $obs_pago = str_replace('"','',$tra_nro["valor"]);
+                        $obs_pago = str_replace('"','',$tra_nro["valor"]);
 					
 					//DATOS RETORNO
 					if($tra_nro["nombre"] == 'fecha_retorno_subsidio')
-                                                 $fecha_retorno = str_replace('"','',$tra_nro["valor"]);
-                                        if($tra_nro["nombre"] == 'monto_retorno_subsidio')
-                                                $monto_retorno = str_replace('"','',$tra_nro["valor"]);
-                                        if($tra_nro["nombre"] == 'saldo_retorno_subsidio')
-                                                $saldo_retorno = str_replace('"','',$tra_nro["valor"]);
+                        $fecha_retorno = str_replace('"','',$tra_nro["valor"]);
+                    if($tra_nro["nombre"] == 'monto_retorno_subsidio')
+                        $monto_retorno = str_replace('"','',$tra_nro["valor"]);
+                    if($tra_nro["nombre"] == 'saldo_retorno_subsidio')
+                        $saldo_retorno = str_replace('"','',$tra_nro["valor"]);
 					if($tra_nro["nombre"] == 'observacion_retorno_sub')
-                                                $obs_retorno = str_replace('"','',$tra_nro["valor"]);
+                        $obs_retorno = str_replace('"','',$tra_nro["valor"]);
 
 
 					//ESTADO LICENCIA
 					if($tra_nro["nombre"] == 'ingreso_continuidad'){
-                                        	$estado = str_replace('"','',$tra_nro["valor"]);
+                    	$estado = str_replace('"','',$tra_nro["valor"]);
 						if($estado =='avanzar')
 							$estado = 1;
 						if($estado =='cerrar')
@@ -725,27 +729,27 @@ class Licencias extends MY_Controller {
 					}
 
 					if($tra_nro["nombre"] == 'pago_continuidad'){
-                                                $estado = str_replace('"','',$tra_nro["valor"]);
-                                                if($estado =='mantener')
-                                                        $estado = 2;
-                                                if($estado =='avanzar')
-                                                        $estado = 2;
+                        $estado = str_replace('"','',$tra_nro["valor"]);
+                        if($estado =='mantener')
+                            $estado = 2;
+                        if($estado =='avanzar')
+                            $estado = 2;
 						if($estado =='cerrar')
-                                                        $estado = 4;
-                                        }
+                            $estado = 4;
+                    }
 					
 					if($tra_nro["nombre"] == 'retorno_continuidad'){
-                                                $estado = str_replace('"','',$tra_nro["valor"]);
-                                                if($estado =='devolver')
-                                                        $estado = 3;
-                                                if($estado =='mantener')
-                                                        $estado = 3;
-                                                if($estado =='cerrar')
-                                                        $estado = 4;
-                                        }
+                        $estado = str_replace('"','',$tra_nro["valor"]);
+                        if($estado =='devolver')
+                            $estado = 3;
+                        if($estado =='mantener')
+                            $estado = 3;
+                        if($estado =='cerrar')
+                            $estado = 4;
+                    }
 					//RUT MEDICO
 					if($tra_nro["nombre"] == 'rut_medico')
-                                                 $rut_medico = str_replace('"','',$tra_nro["valor"]);
+                        $rut_medico = str_replace('"','',$tra_nro["valor"]);
 					
 					
 				}
@@ -788,7 +792,7 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->getStyle('O'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);			
 			//TOTAL RECUPERABLE
 			$object->getActiveSheet()->setCellValueByColumnAndRow(15, $excel_row, $meses_ant + $anticipo);
-                        $object->getActiveSheet()->getStyle('P'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+            $object->getActiveSheet()->getStyle('P'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
 
 			$object->getActiveSheet()->setCellValueByColumnAndRow(16, $excel_row, $dias_no_cu);
 			$object->getActiveSheet()->getStyle('Q'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);			
@@ -798,8 +802,8 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->getStyle('R'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
 			
 			//TOTAL NO RECUPERABLE
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(18, $excel_row, $dias_no_cu + $complemento );
-                        $object->getActiveSheet()->getStyle('S'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(18, $excel_row, $dias_no_cu + $complemento );
+            $object->getActiveSheet()->getStyle('S'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
 
 			$total = ( $anticipo + $meses_ant + $dias_no_cu + $complemento );
 			$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $total);
@@ -813,10 +817,10 @@ class Licencias extends MY_Controller {
 			if($fecha_retorno!="")
 				$object->getActiveSheet()->getStyle('V'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
 
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $monto_retorno);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $monto_retorno);
 			$object->getActiveSheet()->getStyle('W'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);			
 
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $monto_retorno - $anticipo - $meses_ant);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $monto_retorno - $anticipo - $meses_ant);
 			$object->getActiveSheet()->getStyle('X'.$excel_row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(24, $excel_row, $obs_retorno);
 			
@@ -824,7 +828,7 @@ class Licencias extends MY_Controller {
 			$object->getActiveSheet()->setCellValueByColumnAndRow(25, $excel_row, $estado);
 
 			//RUT MEDICO
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(26, $excel_row, $rut_medico);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(26, $excel_row, $rut_medico);
 
 			//REVISAR
 			$object->getActiveSheet()->setCellValueByColumnAndRow(27, $excel_row, $flag_revisar);
@@ -833,18 +837,19 @@ class Licencias extends MY_Controller {
 			
 		}
 		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
-        	header('Content-Type: application/vnd.ms-excel');
-        	header('Content-Disposition: attachment;filename="descarga_masiva_licencias".xls"');
+    	header('Content-Type: application/vnd.ms-excel');
+    	header('Content-Disposition: attachment;filename="descarga_masiva_licencias".xls"');
 		header_remove('Set-Cookie');
 		ob_end_clean();
 		ob_start();
-        	$object_writer->save('php://output');
+
+        $object_writer->save('php://output');
 
 			
 		$data['sidebar']='reporte';
-                $data['content'] = 'licencias/reporte';
-                $data['title'] = 'Reporte de Licencias';
-                $this->load->view('template', $data);
+        $data['content'] = 'licencias/reporte';
+        $data['title'] = 'Reporte de Licencias';
+        $this->load->view('template', $data);
 			
 	}
 	
@@ -857,93 +862,93 @@ class Licencias extends MY_Controller {
 	}
 
 
-	 public function borrar_tramite_licencias($tramite_id,$rut) {
+	public function borrar_tramite_licencias($tramite_id,$rut) {
                
-                //Verificamos que el usuario ya se haya logeado 
-                if (!UsuarioSesion::usuario()->registrado) {
-                        $this->session->set_flashdata('redirect', current_url());
-                        redirect('tramites/disponibles');
-                }
-
-                $this->form_validation->set_rules ( 'descripcion', 'Razón', 'required' );
-
-                $respuesta = new stdClass ();
-                if ($this->form_validation->run () == TRUE){
-
-                        $tramite = Doctrine::getTable ( 'Tramite' )->find ( $tramite_id );
-
-                        if($tramite!=null){
-                                $user_id = UsuarioSesion::usuario()->id;
-
-                                if(true){
-                                        $fecha = new DateTime ();
-                                        $proceso = $tramite->Proceso;
-                                        // Auditar
-                                        $registro_auditoria = new AuditoriaOperaciones ();
-                                        $registro_auditoria->fecha = $fecha->format ( "Y-m-d H:i:s" );
-                                        $registro_auditoria->operacion = 'Eliminaciónlicencia del rut '.$rut ;
-                                        $registro_auditoria->motivo = $this->input->post('descripcion');
-
-                                        $registro_auditoria->usuario= UsuarioSesion::usuario()->nombres .' '. UsuarioSesion::usuario()->apellido_paterno.' '.UsuarioSesion::usuario()->apellido_materno.' '.UsuarioSesion::usuario()->email;
-
-                                        $registro_auditoria->proceso = $proceso->nombre;
-                                        $registro_auditoria->cuenta_id = 1;
-
-                                        $tramite_array['proceso'] = $proceso->toArray(false);
-
-                                        $tramite_array['tramite'] = $tramite->toArray(false);
-                                        unset($tramite_array['tramite']['proceso_id']);
-
-
-                                        $registro_auditoria->detalles = json_encode($tramite_array);
-					                    
-                                        $oa = new Authorization();
-                                        $token = $oa->getToken();
-
-                                        $data = array();
-                                        $url = urlapi."licenses/".$tramite_id."/delete";
-                                        $ch = curl_init($url);
-                                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-                                        curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
-                                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                                            "cache-control: no-cache",
-                                           "Authorization: Bearer ".$token
-                                        ));
-
-                                        $response = curl_exec($ch);
-
-                                        if ($response){
-                                                $tramite->delete ();
-                                                $registro_auditoria->save();
-                                        }
-					$tramite->delete ();
-                                        $registro_auditoria->save();
-					
-                                        $respuesta->validacion = TRUE;
-                                        $respuesta->redirect = site_url('licencias/buscador_new');
-
-                                }else{
-                                        ChromePhp::log('El usuario no participo en el tramite');
-                                //El usuario no realizo esta solicitud
-                                        $respuesta->validacion = FALSE;
-                                        $respuesta->errores = validation_errors();
-
-                                }
-                        }
-                        else{
-
-                                $respuesta->validacion = FALSE;
-                                $respuesta->errores = validation_errors();
-                        }
-
-                }else {
-                        $respuesta->validacion = FALSE;
-                        $respuesta->errores = validation_errors();
-                }
-
-                echo json_encode($respuesta);
+        //Verificamos que el usuario ya se haya logeado 
+        if (!UsuarioSesion::usuario()->registrado) {
+            $this->session->set_flashdata('redirect', current_url());
+            redirect('tramites/disponibles');
         }
+
+        $this->form_validation->set_rules ( 'descripcion', 'Razón', 'required' );
+
+        $respuesta = new stdClass ();
+        if ($this->form_validation->run () == TRUE){
+
+            $tramite = Doctrine::getTable ( 'Tramite' )->find ( $tramite_id );
+
+            if($tramite!=null){
+                $user_id = UsuarioSesion::usuario()->id;
+
+                if(true){
+                    $fecha = new DateTime ();
+                    $proceso = $tramite->Proceso;
+                    // Auditar
+                    $registro_auditoria = new AuditoriaOperaciones ();
+                    $registro_auditoria->fecha = $fecha->format ( "Y-m-d H:i:s" );
+                    $registro_auditoria->operacion = 'Eliminaciónlicencia del rut '.$rut ;
+                    $registro_auditoria->motivo = $this->input->post('descripcion');
+
+                    $registro_auditoria->usuario= UsuarioSesion::usuario()->nombres .' '. UsuarioSesion::usuario()->apellido_paterno.' '.UsuarioSesion::usuario()->apellido_materno.' '.UsuarioSesion::usuario()->email;
+
+                    $registro_auditoria->proceso = $proceso->nombre;
+                    $registro_auditoria->cuenta_id = 1;
+
+                    $tramite_array['proceso'] = $proceso->toArray(false);
+
+                    $tramite_array['tramite'] = $tramite->toArray(false);
+                    unset($tramite_array['tramite']['proceso_id']);
+
+
+                    $registro_auditoria->detalles = json_encode($tramite_array);
+                    
+                    $oa = new Authorization();
+                    $token = $oa->getToken();
+
+                    $data = array();
+                    $url = urlapi."licenses/".$tramite_id."/delete";
+                    $ch = curl_init($url);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                    curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        "cache-control: no-cache",
+                       "Authorization: Bearer ".$token
+                    ));
+
+                    $response = curl_exec($ch);
+
+                    if ($response){
+                        $tramite->delete ();
+                        $registro_auditoria->save();
+                    }
+					$tramite->delete ();
+                    $registro_auditoria->save();
+
+                    $respuesta->validacion = TRUE;
+                    $respuesta->redirect = site_url('licencias/buscador_new');
+
+                }else{
+                    ChromePhp::log('El usuario no participo en el tramite');
+                    //El usuario no realizo esta solicitud
+                    $respuesta->validacion = FALSE;
+                    $respuesta->errores = validation_errors();
+
+                }
+            }
+            else{
+
+                $respuesta->validacion = FALSE;
+                $respuesta->errores = validation_errors();
+            }
+
+        }else {
+            $respuesta->validacion = FALSE;
+            $respuesta->errores = validation_errors();
+        }
+
+        echo json_encode($respuesta);
+    }
 
 
 
@@ -951,7 +956,7 @@ class Licencias extends MY_Controller {
 	public function loadColumn($object,$excel_row){
 		$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, 0);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, 2);
-                $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, 0);
+        $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, 0);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row,0);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row,0);
 		$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row,0);

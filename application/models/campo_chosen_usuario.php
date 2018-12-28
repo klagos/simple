@@ -1,6 +1,7 @@
 <?php
 require_once('campo.php');
-require_once('/var/www/html/simple/application/controllers/authorization.php');
+require_once(routecontrollers.'authorization.php');
+
 class CampoChosenUsuario extends Campo {
     
     protected function display($modo, $dato, $etapa_id) {

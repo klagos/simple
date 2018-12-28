@@ -1,6 +1,5 @@
 <?php
 require_once('campo.php');
-//require_once('/var/www/html/simple/application/controllers/authorization.php');
 class CampoSelect extends Campo {
     
     protected function display($modo, $dato, $etapa_id) {
@@ -29,10 +28,7 @@ class CampoSelect extends Campo {
         $display.='</div>';
 
 
-        if($this->extra && $this->extra->ws){
-            //$oa = new Authorization();
-            //$token = $oa->getToken(); 
-            //ChromePhp::log("AJAX: ".$token);
+        if($this->extra && $this->extra->ws){            
             $display.='
             <script>
                 $(document).ready(function(){
@@ -67,16 +63,16 @@ class CampoSelect extends Campo {
         $html.='<div class="help-block">
                 El WS debe ser REST JSONP con el siguiente formato: <a href="#" onclick="$(this).siblings(\'pre\').show()">Ver formato</a><br />
                 <pre style="display:none">
-callback([
-    {
-        "etiqueta": "Etiqueta 1",
-        "valor": "Valor 1"
-    },
-    {
-        "etiqueta": "Etiqueta 2",
-        "valor": "Valor 2"
-    },
-])
+    callback([
+        {
+            "etiqueta": "Etiqueta 1",
+            "valor": "Valor 1"
+        },
+        {
+            "etiqueta": "Etiqueta 2",
+            "valor": "Valor 2"
+        },
+    ])
                 </pre>
                 </div>';
 

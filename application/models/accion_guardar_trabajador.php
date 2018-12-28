@@ -2,7 +2,7 @@
 require_once(FCPATH."procesos.php");
 require_once('accion.php');
 require_once('ChromePhp.php');
-require_once('/var/www/html/simple/application/controllers/authorization.php');
+require_once(routecontrollers.'authorization.php');
 
 class AccionGuardarTrabajador extends Accion {
 
@@ -40,11 +40,11 @@ class AccionGuardarTrabajador extends Accion {
         $display.='<input type="text" name="extra[fContrato]" value="' . (isset($this->extra->fContrato) ? $this->extra->fContrato : '') . '" />';
         $display.= '<label>Empresa</label>';
         $display.='<input type="text" name="extra[empresa]" value="' . (isset($this->extra->empresa) ? $this->extra->empresa : '') . '" />';
-	$display.= '<label>Ubicación</label>';
+	    $display.= '<label>Ubicación</label>';
         $display.='<input type="text" name="extra[ubicacion]" value="' . (isset($this->extra->ubicacion) ? $this->extra->ubicacion : '') . '" />';
         $display.= '<label>Centro de Costo</label>';
         $display.='<input type="text" name="extra[centroCosto]" value="' . (isset($this->extra->centroCosto) ? $this->extra->centroCosto : '') . '" />';
-	$display.= '<label>Jornada</label>';
+	    $display.= '<label>Jornada</label>';
         $display.='<input type="text" name="extra[jornada]" value="' . (isset($this->extra->jornada) ? $this->extra->jornada : '') . '" />';
         $display.= '<label>Gerencia</label>';
         $display.='<input type="text" name="extra[gerencia]" value="' . (isset($this->extra->gerencia) ? $this->extra->gerencia : '') . '" />';
@@ -139,7 +139,7 @@ class AccionGuardarTrabajador extends Accion {
         $regla=new Regla($this->extra->centroCosto);
         $centerCost=$regla->getExpresionParaOutput($etapa->id);
 
-	$regla=new Regla($this->extra->jornada);
+	    $regla=new Regla($this->extra->jornada);
         $jornada=$regla->getExpresionParaOutput($etapa->id);
 
         $regla=new Regla($this->extra->gerencia);
@@ -160,7 +160,7 @@ class AccionGuardarTrabajador extends Accion {
         $regla=new Regla($this->extra->fTerminoContrato);
         $contract_end_date=$regla->getExpresionParaOutput($etapa->id);
 
-	$regla=new Regla($this->extra->empresa);
+	    $regla=new Regla($this->extra->empresa);
         $empresa=$regla->getExpresionParaOutput($etapa->id);
         
         // create json principal and 2 'sub-json'
@@ -178,8 +178,8 @@ class AccionGuardarTrabajador extends Accion {
         $jsonCD->positionCode = explode(" - ",$position)[1];//split(" - ",$position)[1];
         $jsonCD->init_date = $contract_date;
         $jsonCD->end_date = $contract_end_date;
-	$jsonCD->workdayCode = $jornada;
-	$jsonCD->companyCode = $empresa;	
+    	$jsonCD->workdayCode = $jornada;
+    	$jsonCD->companyCode = $empresa;	
 
         // Principal Json 
         $json->rut = $rut ;

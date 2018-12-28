@@ -3,13 +3,12 @@
 require_once(FCPATH."procesos.php");
 require_once('accion.php');
 require_once('ChromePhp.php');
-require_once('/var/www/html/simple/application/controllers/authorization.php');
+require_once(routecontrollers.'authorization.php');
 
 
 class AccionGuardarRutAnnos extends Accion {
 
     public function displayForm() {
-
 
     	$display= '<label>Rut</label>';
         $display.='<input type="text" name="extra[rut]" value="' . (isset($this->extra->rut) ? $this->extra->rut : '') . '" />';
@@ -41,9 +40,8 @@ class AccionGuardarRutAnnos extends Accion {
         }        
 
         $oa = new Authorization();
-        $token = $oa->getToken(); 
-               
-
+        $token = $oa->getToken();
+      
         $url = urlapi."users/".$rut."/validatedYears/".$years;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -78,12 +76,9 @@ class AccionGuardarRutAnnos extends Accion {
             $dato2->save();
         }
 
-        ChromePhp::log("BYE: ".$token);
     } 
 
-
 }
-
 
 ?>
 
