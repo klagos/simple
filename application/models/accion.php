@@ -28,7 +28,8 @@ class Accion extends Doctrine_Record {
 		'AccionGuardarConvenio' => array('tipo'=> 'accion_guardar_convenio'),
 		'AccionGuardarConvenioMedico' => array('tipo'=>'accion_guardar_convenio_medico'),
 		'AccionGuardarTrabajador' => array('tipo'=>'guardar_trabajador'),
-        'AccionGuardarRutAnnos' => array('tipo'=>'guardar_rut_annos')
+        'AccionGuardarRutAnnos' => array('tipo'=>'guardar_rut_annos'),
+        'AccionCorreoMasivo' => array('tipo'=>'accion_correo_masivo')
             )
         );
     }

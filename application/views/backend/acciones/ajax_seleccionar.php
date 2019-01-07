@@ -20,7 +20,7 @@
 	    <option value="validar_excel_licencia">Validar Excel Licencia</option>
 	    <option value="editar_licencia">Editar Licencia</option>
 	    <option value="guardar_finiquito">Guardar Finiquito</option>
-            <option value="guardar_licencia">Guardar Licencia</option>
+        <option value="guardar_licencia">Guardar Licencia</option>
 	    <option value="guardar_fas_medico">Guardar FAS Medico</option>
 	    <option value="guardar_medico">Guardar Medico</option>
 	    <option value="accion_usuario_personal">Guardar Usuarios D.Pers.</option>
@@ -29,6 +29,7 @@
 	    <option value="accion_guardar_convenio_medico">Guardar Convenio Medico</option>
 	    <option value="guardar_trabajador">Guardar Trabajador</option>
         <option value="guardar_rut_annos">Guardar Rut Años</option>
+        <option value="accion_correo_masivo">Correo Masivo</option>
         </select>
     </form>
 </div>

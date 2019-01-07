@@ -50,7 +50,7 @@ class AccionEnviarCorreo extends Accion {
         $cuenta=$etapa->Tramite->Proceso->Cuenta;
 
         $CI->email->from('gerencia.personas@ist.cl', $cuenta->nombre_largo);
-	$CI->email->to($to);
+	    $CI->email->to($to);
         if(isset($cc))$CI->email->cc($cc);
         if(isset($bcc))$CI->email->bcc($bcc);
 

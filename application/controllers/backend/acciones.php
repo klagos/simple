@@ -112,6 +112,8 @@ class Acciones extends MY_BackendController {
 	    $accion=new AccionGuardarTrabajador();
     else if ($tipo=='guardar_rut_annos')
         $accion=new AccionGuardarRutAnnos();
+    else if ($tipo=='accion_correo_masivo')
+        $accion=new AccionCorreoMasivo();
         
         $data['edit']=FALSE;
         $data['proceso']=$proceso;
@@ -192,6 +194,9 @@ class Acciones extends MY_BackendController {
 
         else if($this->input->post('tipo')=='guardar_rut_annos')
             $accion=new AccionGuardarRutAnnos();
+
+        else if($this->input->post('tipo')=='accion_correo_masivo')
+            $accion=new AccionCorreoMasivo();
 
             $accion->proceso_id=$this->input->post('proceso_id');
             $accion->tipo=$this->input->post('tipo');
